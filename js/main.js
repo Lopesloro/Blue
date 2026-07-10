@@ -6,11 +6,7 @@
 const BSP = {
   // Número do WhatsApp (não é exibido no site — usado só para abrir a conversa)
   whatsapp: '5519998334896',
-  whatsappMsg: 'Olá! Visitei o site da BlueShieldPro e quero falar com um atendente sobre um projeto.',
-  // E-mail de destino do formulário de orçamento (FormSubmit).
-  // Quando tiver o e-mail definitivo, troque abaixo e o envio passa a funcionar:
-  // https://formsubmit.co/  →  action = https://formsubmit.co/SEU_EMAIL
-  formEmail: 'SEU_EMAIL_AQUI@exemplo.com'
+  whatsappMsg: 'Olá! Visitei o site da BlueShieldPro e quero falar com um atendente sobre um projeto.'
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -204,24 +200,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
   }
 
-  // ---------- Formulário de orçamento ----------
+  // ---------- Formulário de orçamento (Web3Forms) ----------
   const form = document.querySelector('#form-orcamento');
   if (form) {
-    form.setAttribute('action', `https://formsubmit.co/${BSP.formEmail}`);
-    form.addEventListener('submit', e => {
-      // Se o e-mail ainda não foi configurado, evita envio quebrado
-      if (BSP.formEmail.includes('SEU_EMAIL_AQUI')) {
-        e.preventDefault();
-        const dados = new FormData(form);
-        let msg = '*Solicitação de Orçamento — BlueShieldPro*%0A%0A';
-        dados.forEach((v, k) => {
-          if (v && k[0] !== '_') msg += `*${k}:* ${encodeURIComponent(v)}%0A`;
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' }
         });
-        // fallback temporário: envia via WhatsApp até o e-mail ser configurado
-        window.open(`https://wa.me/${BSP.whatsapp}?text=${msg}`, '_blank');
-        form.style.display = 'none';
-        const ok = document.querySelector('.form-success');
-        if (ok) ok.classList.add('show');
+        const data = await res.json();
+
+        if (data.success) {
+          form.style.display = 'none';
+          const ok = document.querySelector('.form-success');
+          if (ok) ok.classList.add('show');
+        } else {
+          throw new Error(data.message || 'Falha no envio');
+        }
+      } catch (err) {
+        alert('Não foi possível enviar agora. Tente novamente ou fale com um atendente pelo WhatsApp.');
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
       }
     });
   }

@@ -125,17 +125,17 @@
     <section class="section" style="padding-top:30px" aria-label="Formulário de orçamento">
       <div class="container" style="max-width:860px">
         <div class="form-card reveal">
-          <form id="form-orcamento" method="POST" action="#">
-            <!-- Configurações do FormSubmit -->
-            <input type="hidden" name="_subject" value="Nova solicitação de orçamento — BlueShieldPro">
-            <input type="hidden" name="_template" value="table">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <form id="form-orcamento" method="POST" action="https://api.web3forms.com/submit">
+            <!-- Configurações do Web3Forms -->
+            <input type="hidden" name="access_key" value="6c39a839-f610-49ee-97c1-bbcdfed68fe1">
+            <input type="hidden" name="subject" value="Nova solicitação de orçamento — BlueShieldPro">
+            <input type="hidden" name="from_name" value="Site BlueShieldPro">
+            <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
 
             <div class="form-grid">
               <div class="form-field">
                 <label for="f-nome">Nome <em>*</em></label>
-                <input type="text" id="f-nome" name="Nome" placeholder="Seu nome completo" required autocomplete="name">
+                <input type="text" id="f-nome" name="name" placeholder="Seu nome completo" required autocomplete="name">
               </div>
               <div class="form-field">
                 <label for="f-empresa">Empresa</label>
@@ -143,7 +143,7 @@
               </div>
               <div class="form-field">
                 <label for="f-email">E-mail <em>*</em></label>
-                <input type="email" id="f-email" name="E-mail" placeholder="voce@empresa.com.br" required autocomplete="email">
+                <input type="email" id="f-email" name="email" placeholder="voce@empresa.com.br" required autocomplete="email">
               </div>
               <div class="form-field">
                 <label for="f-whats">Telefone / WhatsApp <em>*</em></label>

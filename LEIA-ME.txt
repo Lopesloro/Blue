@@ -7,27 +7,24 @@ O site é 100% estático (HTML + CSS + JS). Não precisa de
 servidor, banco de dados nem instalação. É só hospedar.
 
 -----------------------------------------------------
-1. CONFIGURAR O E-MAIL DO FORMULÁRIO (importante!)
+1. FORMULÁRIO DE ORÇAMENTO (Web3Forms)
 -----------------------------------------------------
-Abra o arquivo:  js/main.js
+O envio usa o Web3Forms (https://web3forms.com) com a chave
+de acesso já configurada em orcamento.html:
 
-No topo, localize:
+    <input type="hidden" name="access_key" value="6c39a839-...">
 
-    formEmail: 'SEU_EMAIL_AQUI@exemplo.com'
+Essa chave está vinculada ao e-mail cadastrado no Web3Forms.
+Para trocar o e-mail de destino, acesse web3forms.com, entre
+com a conta usada para gerar essa chave (ou gere uma nova
+chave lá) e atualize o value do campo access_key nesse arquivo.
 
-Troque pelo e-mail que vai receber os orçamentos, ex.:
-
-    formEmail: 'contato@blueshieldpro.com.br'
-
-O envio usa o FormSubmit (https://formsubmit.co) — gratuito
-e sem cadastro. No PRIMEIRO envio, o FormSubmit manda um
-e-mail de confirmação para essa caixa; clique em "Activate"
-uma única vez e pronto, todos os próximos formulários chegam
-direto no seu e-mail em formato de tabela.
-
-ENQUANTO O E-MAIL NÃO FOR CONFIGURADO: o formulário abre o
-WhatsApp com todos os dados preenchidos (fallback automático),
-então nenhum lead é perdido.
+O envio acontece via JavaScript (fetch), sem sair da página:
+ao confirmar, o botão mostra "Enviando..." e, se der certo,
+o formulário é substituído pela mensagem de sucesso. Se falhar
+(sem internet, chave inválida etc.), aparece um aviso pedindo
+para tentar de novo ou chamar no WhatsApp — nenhum lead trava
+sem explicação.
 
 -----------------------------------------------------
 2. WHATSAPP
