@@ -1,0 +1,86 @@
+=====================================================
+  BLUESHIELDPRO — SITE INSTITUCIONAL
+  Guia rápido de configuração
+=====================================================
+
+O site é 100% estático (HTML + CSS + JS). Não precisa de
+servidor, banco de dados nem instalação. É só hospedar.
+
+-----------------------------------------------------
+1. CONFIGURAR O E-MAIL DO FORMULÁRIO (importante!)
+-----------------------------------------------------
+Abra o arquivo:  js/main.js
+
+No topo, localize:
+
+    formEmail: 'SEU_EMAIL_AQUI@exemplo.com'
+
+Troque pelo e-mail que vai receber os orçamentos, ex.:
+
+    formEmail: 'contato@blueshieldpro.com.br'
+
+O envio usa o FormSubmit (https://formsubmit.co) — gratuito
+e sem cadastro. No PRIMEIRO envio, o FormSubmit manda um
+e-mail de confirmação para essa caixa; clique em "Activate"
+uma única vez e pronto, todos os próximos formulários chegam
+direto no seu e-mail em formato de tabela.
+
+ENQUANTO O E-MAIL NÃO FOR CONFIGURADO: o formulário abre o
+WhatsApp com todos os dados preenchidos (fallback automático),
+então nenhum lead é perdido.
+
+-----------------------------------------------------
+2. WHATSAPP
+-----------------------------------------------------
+O número (19) 99833-4896 NÃO aparece em nenhum texto do site.
+Ele é usado apenas nos botões "Falar com um atendente" e no
+botão flutuante verde. Para trocar o número ou a mensagem
+inicial, edite no topo de js/main.js:
+
+    whatsapp: '5519998334896',
+    whatsappMsg: '...'
+
+-----------------------------------------------------
+3. DOMÍNIO
+-----------------------------------------------------
+As meta tags de SEO usam https://www.blueshieldpro.com.br
+Quando você registrar o domínio definitivo, se for OUTRO,
+faça um "localizar e substituir" em todos os .html, no
+sitemap.xml e no robots.txt.
+
+-----------------------------------------------------
+4. COMO HOSPEDAR (opções gratuitas ou baratas)
+-----------------------------------------------------
+- Netlify / Vercel / Cloudflare Pages: arraste a pasta
+  inteira no painel e o site entra no ar em minutos (grátis).
+- Hostinger / HostGator etc.: envie os arquivos para a
+  pasta public_html via gerenciador de arquivos ou FTP.
+
+-----------------------------------------------------
+5. IMAGEM DE COMPARTILHAMENTO (og-image.png)
+-----------------------------------------------------
+As meta tags apontam para og-image.png (imagem exibida ao
+compartilhar o link no WhatsApp/redes). Crie uma imagem
+1200x630 px com a logo e o slogan e salve na raiz do site
+com esse nome.
+
+-----------------------------------------------------
+ESTRUTURA
+-----------------------------------------------------
+index.html                 Home
+sobre.html                 Sobre a empresa
+servicos.html              Todos os serviços
+solucoes.html              Soluções por segmento
+portfolio.html             Portfólio de projetos
+processo.html              Como funciona (8 etapas)
+tecnologias.html           Stack de tecnologias
+faq.html                   43 perguntas frequentes
+blog.html                  Estrutura do blog
+contato.html               Canais de contato
+orcamento.html             Formulário de orçamento
+politica-privacidade.html  LGPD
+termos-de-uso.html         Termos
+css/styles.css             Todo o visual
+js/main.js                 Animações + configurações
+favicon.svg                Ícone do site
+robots.txt / sitemap.xml   SEO
