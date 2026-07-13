@@ -219,6 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await res.json();
 
         if (data.success) {
+          // Conversão do Google Ads: lead enviado pelo formulário
+          if (typeof gtag === 'function') {
+            gtag('event', 'conversion', {
+              send_to: 'AW-17972527330/YEcKCOn7r88cEOKB_PlC',
+              value: 1.0,
+              currency: 'BRL'
+            });
+          }
           form.style.display = 'none';
           const ok = document.querySelector('.form-success');
           if (ok) ok.classList.add('show');
