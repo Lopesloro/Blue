@@ -27,7 +27,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap"></noscript>
 
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -127,7 +127,7 @@
           <span>Solicitar Orçamento</span>
         </nav>
         <h1>Conte sua ideia e receba uma <span class="grad-text">proposta sob medida</span></h1>
-        <p>Quanto mais detalhes você compartilhar, mais precisa será a proposta. Leva menos de 3 minutos — e não custa nada.</p>
+        <p>Conte rápido o que você precisa e receba uma proposta sob medida. Leva menos de 1 minuto — e não custa nada.</p>
       </div>
     </section>
 
@@ -147,102 +147,25 @@
                 <input type="text" id="f-nome" name="name" placeholder="Seu nome completo" required autocomplete="name">
               </div>
               <div class="form-field">
-                <label for="f-empresa">Empresa</label>
-                <input type="text" id="f-empresa" name="Empresa" placeholder="Nome da sua empresa" autocomplete="organization">
-              </div>
-              <div class="form-field">
-                <label for="f-email">E-mail <em>*</em></label>
-                <input type="email" id="f-email" name="email" placeholder="voce@empresa.com.br" required autocomplete="email">
-              </div>
-              <div class="form-field">
-                <label for="f-whats">Telefone / WhatsApp <em>*</em></label>
+                <label for="f-whats">WhatsApp <em>*</em></label>
                 <input type="tel" id="f-whats" name="WhatsApp" placeholder="(00) 00000-0000" required autocomplete="tel">
               </div>
-              <div class="form-field">
-                <label for="f-cidade">Cidade</label>
-                <input type="text" id="f-cidade" name="Cidade" placeholder="Sua cidade">
-              </div>
-              <div class="form-field">
-                <label for="f-estado">Estado</label>
-                <select id="f-estado" name="Estado">
-                  <option value="">Selecione</option>
-                  <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
-                  <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-                  <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
-                  <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
-                  <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
-                  <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
-                  <option>SP</option><option>SE</option><option>TO</option>
-                </select>
-              </div>
-              <div class="form-field">
-                <label for="f-segmento">Segmento da empresa</label>
-                <select id="f-segmento" name="Segmento">
-                  <option value="">Selecione</option>
-                  <option>Indústria</option>
-                  <option>Comércio / Loja física</option>
-                  <option>E-commerce</option>
-                  <option>Clínica / Saúde</option>
-                  <option>Escritório / Advocacia</option>
-                  <option>Contabilidade</option>
-                  <option>Academia</option>
-                  <option>Restaurante / Alimentação</option>
-                  <option>Hotel / Turismo</option>
-                  <option>Construtora / Imobiliária</option>
-                  <option>Educação</option>
-                  <option>Agronegócio</option>
-                  <option>Transporte / Logística</option>
-                  <option>Tecnologia / Startup</option>
-                  <option>Franquia</option>
-                  <option>Prestador de serviços</option>
-                  <option>Outro</option>
-                </select>
-              </div>
-              <div class="form-field">
-                <label for="f-nicho">Qual é o seu nicho?</label>
-                <input type="text" id="f-nicho" name="Nicho" placeholder="Ex: odontologia estética, moda feminina...">
+              <div class="form-field full">
+                <label for="f-email">E-mail (opcional)</label>
+                <input type="email" id="f-email" name="email" placeholder="voce@empresa.com.br" autocomplete="email">
               </div>
               <div class="form-field full">
-                <label for="f-problema">Qual problema deseja resolver? <em>*</em></label>
-                <textarea id="f-problema" name="Problema a resolver" placeholder="Ex: perco vendas porque não tenho site; minha gestão é toda em planilhas; preciso automatizar o atendimento..." required></textarea>
+                <label for="f-problema">O que você precisa? <em>*</em></label>
+                <textarea id="f-problema" name="O que você precisa" placeholder="Ex: quero um site pra minha empresa; preciso de um sistema de gestão; quero automatizar o atendimento pelo WhatsApp..." required></textarea>
               </div>
               <div class="form-field full">
-                <label for="f-func">Quais funcionalidades você precisa?</label>
-                <textarea id="f-func" name="Funcionalidades" placeholder="Ex: agendamento online, controle de estoque, relatórios, integração com WhatsApp e PIX..."></textarea>
-              </div>
-              <div class="form-field">
-                <label for="f-site">Possui site atualmente?</label>
-                <select id="f-site" name="Possui site">
-                  <option value="">Selecione</option>
-                  <option>Não tenho site</option>
-                  <option>Tenho, mas quero um novo</option>
-                  <option>Tenho e quero melhorar</option>
-                </select>
-              </div>
-              <div class="form-field">
                 <label for="f-prazo">Prazo desejado</label>
                 <select id="f-prazo" name="Prazo desejado">
                   <option value="">Selecione</option>
                   <option>É urgente</option>
                   <option>Até 1 mês</option>
                   <option>1 a 3 meses</option>
-                  <option>Sem pressa, quero fazer bem feito</option>
                 </select>
-              </div>
-              <div class="form-field full">
-                <label for="f-origem">Como conheceu a BlueShieldPro?</label>
-                <select id="f-origem" name="Como conheceu">
-                  <option value="">Selecione</option>
-                  <option>Google</option>
-                  <option>Instagram</option>
-                  <option>Indicação</option>
-                  <option>WhatsApp</option>
-                  <option>Outro</option>
-                </select>
-              </div>
-              <div class="form-field full">
-                <label for="f-msg">Mensagem</label>
-                <textarea id="f-msg" name="Mensagem" placeholder="Algo mais que devemos saber sobre o seu projeto?"></textarea>
               </div>
             </div>
 

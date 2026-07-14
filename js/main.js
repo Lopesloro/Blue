@@ -14,9 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- Loader ----------
   const loader = document.querySelector('.loader');
   if (loader) {
-    window.addEventListener('load', () => setTimeout(() => loader.classList.add('hidden'), 350));
-    // fallback: nunca deixar o loader preso
-    setTimeout(() => loader.classList.add('hidden'), 2500);
+    // Esconde assim que o HTML está pronto — não espera fontes/imagens/canvas.
+    requestAnimationFrame(() => loader.classList.add('hidden'));
+    // rede: garante que nunca fique preso mesmo se algo acima falhar
+    setTimeout(() => loader.classList.add('hidden'), 800);
   }
 
   // ---------- Links WhatsApp (número oculto) ----------
@@ -146,11 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---------- Partículas (canvas leve) ----------
+  // Só em telas grandes: em celular pesa e não some no fundo escuro.
   const canvas = document.querySelector('.bg-canvas');
-  if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (canvas && window.innerWidth >= 900 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const ctx = canvas.getContext('2d');
     let W, H, parts;
-    const N = window.innerWidth < 700 ? 28 : 60;
+    const N = 60;
     const resize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
