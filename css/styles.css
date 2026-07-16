@@ -65,8 +65,11 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
   display: flex; align-items: center; justify-content: center;
   flex-direction: column; gap: 20px;
   transition: opacity .6s ease, visibility .6s ease;
+  /* Rede de segurança: some sozinho mesmo se o JS falhar/não carregar (evita site travado no overlay). */
+  animation: loaderFailsafe 0s linear 4s forwards;
 }
 .loader.hidden { opacity: 0; visibility: hidden; }
+@keyframes loaderFailsafe { to { opacity: 0; visibility: hidden; } }
 .loader-shield {
   width: 64px; height: 64px;
   animation: loaderPulse 1.4s ease-in-out infinite;
