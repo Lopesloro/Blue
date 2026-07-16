@@ -28,6 +28,18 @@ document.addEventListener('DOMContentLoaded', () => {
     el.setAttribute('rel', 'noopener');
   });
 
+  // ---------- Botão flutuante WhatsApp (CTA principal, número oculto) ----------
+  if (!document.querySelector('.wa-float')) {
+    const wa = document.createElement('a');
+    wa.className = 'wa-float';
+    wa.href = waUrl;
+    wa.target = '_blank';
+    wa.rel = 'noopener';
+    wa.setAttribute('aria-label', 'Falar no WhatsApp');
+    wa.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.8-.9-2.08-1-.28-.1-.48-.15-.68.15-.2.3-.78 1-.96 1.2-.18.2-.35.22-.65.08-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.68-2.08-.17-.3-.02-.46.13-.6.14-.14.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.53.08-.8.38-.28.3-1.05 1.03-1.05 2.5s1.08 2.9 1.23 3.1c.15.2 2.12 3.24 5.13 4.54.72.3 1.28.49 1.71.63.72.23 1.37.2 1.88.12.57-.08 1.8-.73 2.05-1.44.25-.7.25-1.3.18-1.44-.07-.13-.27-.2-.57-.35zM12 2a10 10 0 0 0-8.6 15.05L2 22l5.05-1.32A10 10 0 1 0 12 2z"/></svg><span class="wa-label">Falar no WhatsApp</span>';
+    document.body.appendChild(wa);
+  }
+
   // ---------- Item ativo do menu ----------
   const page = (location.pathname.split('/').pop() || 'index.html');
   document.querySelectorAll('.nav a, .mobile-nav a').forEach(a => {
