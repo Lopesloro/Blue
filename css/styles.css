@@ -87,27 +87,6 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 @keyframes loaderPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 @keyframes loaderSlide { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }
 
-/* ============ BOTÃO FLUTUANTE WHATSAPP ============ */
-.wa-float {
-  position: fixed; right: 20px; bottom: 20px; z-index: 9997;
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 12px 18px 12px 14px;
-  background: #25D366; color: #062b16;
-  font-weight: 700; font-size: 15px; text-decoration: none;
-  border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
-  transition: transform .2s ease, box-shadow .2s ease;
-  animation: waPop .4s ease both;
-}
-.wa-float:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6); }
-.wa-float svg { width: 26px; height: 26px; flex: none; fill: #062b16; }
-.wa-float .wa-label { white-space: nowrap; }
-@keyframes waPop { from { opacity: 0; transform: translateY(16px) scale(.9); } to { opacity: 1; transform: none; } }
-@media (max-width: 560px) {
-  .wa-float { right: 14px; bottom: 14px; padding: 12px; }
-  .wa-float .wa-label { display: none; }
-}
-
 /* ============ CURSOR PERSONALIZADO ============ */
 .cursor-dot, .cursor-ring {
   position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998;
