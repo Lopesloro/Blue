@@ -171,9 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Só em telas grandes: em celular pesa e não some no fundo escuro.
   const canvas = document.querySelector('.bg-canvas');
   if (canvas && window.innerWidth >= 900 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     let W, H, parts;
-    const N = 60;
+    // N reduzido de 60 -> 42: o loop de conexões é O(N²), então cair de
+    // ~1770 para ~861 checagens por frame quase dobra o fôlego da CPU.
+    const N = 42;
     const resize = () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
