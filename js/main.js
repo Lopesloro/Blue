@@ -1,5 +1,5 @@
 /* ============================================================
-   BLUESHIELDPRO — Interações e animações
+   BLUESHIELDPRO — Interações + animação (design "mono")
    ============================================================ */
 
 // ------------- CONFIGURAÇÃO CENTRAL (edite aqui) -------------
@@ -9,8 +9,6 @@ const BSP = {
   whatsappMsg: 'Olá! Visitei o site da BlueShieldPro e quero falar com um atendente sobre um projeto.',
 
   // Ações de conversão do Google Ads (AW-17972527330).
-  // Cada CTA tem seu próprio rótulo para que o lance possa pesar os dois de forma diferente:
-  // o formulário é um lead mais forte que um clique no WhatsApp.
   conversaoFormulario: 'AW-17972527330/YEcKCOn7r88cEOKB_PlC',
   conversaoWhatsapp: 'AW-17972527330/YEcKCOn7r88cEOKB_PlC'
 };
@@ -23,12 +21,12 @@ function bspConversao(sendTo, valor) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // ---------- Loader ----------
   const loader = document.querySelector('.loader');
   if (loader) {
-    // Esconde assim que o HTML está pronto — não espera fontes/imagens/canvas.
     requestAnimationFrame(() => loader.classList.add('hidden'));
-    // rede: garante que nunca fique preso mesmo se algo acima falhar
     setTimeout(() => loader.classList.add('hidden'), 800);
   }
 
@@ -41,9 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- Conversão: clique em qualquer CTA de WhatsApp ----------
-  // O WhatsApp é o CTA principal do site. Sem isto o Google Ads não registra
-  // nenhum lead vindo daqui e o lance automático fica sem sinal para otimizar.
-  // Os links abrem em nova aba, então a página continua viva e o evento envia.
   document.addEventListener('click', e => {
     const link = e.target.closest('a[href*="wa.me"], [data-whats]');
     if (link) bspConversao(BSP.conversaoWhatsapp, 1.0);
@@ -55,11 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (a.getAttribute('href') === page) a.classList.add('active');
   });
 
-  // ---------- Header scroll ----------
+  // ---------- Header scroll + progress ----------
   const header = document.querySelector('.header');
   const progress = document.querySelector('.scroll-progress');
   const onScroll = () => {
-    if (header) header.classList.toggle('scrolled', window.scrollY > 30);
+    if (header) header.classList.toggle('scrolled', window.scrollY > 24);
     if (progress) {
       const h = document.documentElement.scrollHeight - window.innerHeight;
       progress.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
@@ -108,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = e.target;
         const target = parseInt(el.dataset.count, 10);
         const suffix = el.dataset.suffix || '';
-        const dur = 1800;
+        const dur = 1600;
         const t0 = performance.now();
         const tick = now => {
           const p = Math.min((now - t0) / dur, 1);
@@ -131,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!q || !a) return;
     q.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
-      // fecha os demais do mesmo grupo
       item.parentElement.querySelectorAll('.faq-item.open').forEach(o => {
         o.classList.remove('open');
         o.querySelector('.faq-a').style.maxHeight = null;
@@ -146,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- Cursor personalizado ----------
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     const dot = document.createElement('div');
     const ring = document.createElement('div');
     dot.className = 'cursor-dot';
@@ -167,62 +161,128 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ---------- Partículas (canvas leve) ----------
-  // Só em telas grandes: em celular pesa e não some no fundo escuro.
-  const canvas = document.querySelector('.bg-canvas');
-  if (canvas && window.innerWidth >= 900 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const ctx = canvas.getContext('2d', { alpha: true });
-    let W, H, parts;
-    // N reduzido de 60 -> 42: o loop de conexões é O(N²), então cair de
-    // ~1770 para ~861 checagens por frame quase dobra o fôlego da CPU.
-    const N = 42;
+  // ---------- HERO — burst radial de nós conectados ----------
+  // Constelação radial: pontos brancos de tamanhos variados ligados por raios
+  // finos a um núcleo central + teias entre vizinhos. Reage sutilmente ao mouse.
+  const heroCanvas = document.querySelector('.hero-nodes');
+  if (heroCanvas) {
+    const ctx = heroCanvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0, cx = 0, cy = 0;
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
+    const N = isMobile ? 46 : 88;              // nós
+    let mouseX = 0, mouseY = 0, tmx = 0, tmy = 0;
+
+    // Modelo de cada nó: ângulo, distância base, raio, fase de "respiração"
+    const nodes = Array.from({ length: N }, (_, i) => {
+      const ang = Math.random() * Math.PI * 2;
+      // distribuição de distância: mistura curto/longo (mais denso perto do centro)
+      const t = Math.pow(Math.random(), 0.7);
+      return {
+        ang,
+        dist: t,                                // 0..1 (multiplicado por raio depois)
+        size: Math.random() * 2.6 + 0.6 + (t > 0.75 ? Math.random() * 2 : 0),
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.4 + Math.random() * 0.8,
+        sortA: ang
+      };
+    }).sort((a, b) => a.sortA - b.sortA);        // ordena por ângulo p/ teia entre vizinhos
+
     const resize = () => {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
+      const rect = heroCanvas.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      heroCanvas.width = W * dpr; heroCanvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx = W * 0.52; cy = H * 0.5;
     };
     resize();
     window.addEventListener('resize', resize, { passive: true });
-    parts = Array.from({ length: N }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
-      r: Math.random() * 1.6 + 0.4
-    }));
-    (function draw() {
+    window.addEventListener('load', resize);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
+    // ResizeObserver: garante medir o container real mesmo quando o layout muda
+    // (stack mobile -> desktop, orientação) sem depender só do evento window.resize.
+    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(heroCanvas);
+
+    if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
+      window.addEventListener('mousemove', e => {
+        const rect = heroCanvas.getBoundingClientRect();
+        tmx = ((e.clientX - rect.left) / rect.width - 0.5);
+        tmy = ((e.clientY - rect.top) / rect.height - 0.5);
+      }, { passive: true });
+    }
+
+    const maxR = () => Math.min(W, H) * 0.46;
+
+    const positions = new Array(N);
+    const render = (time) => {
+      // Auto-sincroniza o tamanho do buffer com o container (self-heal p/ qualquer
+      // corrida de layout — troca de coluna, fontes carregando, etc.)
+      const rect = heroCanvas.getBoundingClientRect();
+      if (rect.width && (Math.abs(rect.width - W) > 1 || Math.abs(rect.height - H) > 1)) resize();
+      const R = maxR();
+      // parallax suave do mouse
+      mouseX += (tmx - mouseX) * 0.06;
+      mouseY += (tmy - mouseY) * 0.06;
+      const ox = mouseX * 26, oy = mouseY * 26;
+      const rot = reduceMotion ? 0 : time * 0.00002;   // rotação lenta global
+
       ctx.clearRect(0, 0, W, H);
+      const ccx = cx + ox, ccy = cy + oy;
+
+      // posições
       for (let i = 0; i < N; i++) {
-        const p = parts[i];
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > W) p.vx *= -1;
-        if (p.y < 0 || p.y > H) p.vy *= -1;
+        const n = nodes[i];
+        const breathe = reduceMotion ? 0 : Math.sin(time * 0.0006 * n.speed + n.phase) * 0.05;
+        const d = (n.dist + breathe) * R;
+        const a = n.ang + rot;
+        positions[i] = { x: ccx + Math.cos(a) * d, y: ccy + Math.sin(a) * d, s: n.size, d: n.dist };
+      }
+
+      // raios centro -> nó
+      for (let i = 0; i < N; i++) {
+        const p = positions[i];
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(46,143,255,0.55)';
-        ctx.fill();
-        for (let j = i + 1; j < N; j++) {
-          const q = parts[j];
-          const dx = p.x - q.x, dy = p.y - q.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 16900) { // 130px
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            ctx.strokeStyle = `rgba(46,143,255,${0.12 * (1 - d2 / 16900)})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
+        ctx.moveTo(ccx, ccy);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = `rgba(231,231,231,${0.05 + (1 - p.d) * 0.10})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+
+      // teia entre vizinhos (por ângulo) — apenas se próximos
+      for (let i = 0; i < N; i++) {
+        const p = positions[i], q = positions[(i + 1) % N];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < (R * 0.5) * (R * 0.5)) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(199,199,199,${0.10 * (1 - d2 / ((R * 0.5) * (R * 0.5)))})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
         }
       }
-      requestAnimationFrame(draw);
-    })();
-  }
 
-  // ---------- Parallax suave no hero ----------
-  const heroVisual = document.querySelector('.hero-visual');
-  if (heroVisual && window.matchMedia('(hover: hover)').matches) {
-    window.addEventListener('scroll', () => {
-      const y = window.scrollY;
-      if (y < window.innerHeight) heroVisual.style.translate = `0 ${y * 0.08}px`;
-    }, { passive: true });
+      // núcleo
+      ctx.beginPath();
+      ctx.arc(ccx, ccy, 2.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#F7F7FF';
+      ctx.fill();
+
+      // nós
+      for (let i = 0; i < N; i++) {
+        const p = positions[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+        ctx.fillStyle = p.d > 0.75 ? '#F7F7FF' : 'rgba(231,231,231,0.85)';
+        ctx.fill();
+      }
+
+      if (!reduceMotion) requestAnimationFrame(render);
+    };
+
+    if (reduceMotion) render(0);
+    else requestAnimationFrame(render);
   }
 
   // ---------- Formulário de orçamento (Web3Forms) ----------
@@ -244,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await res.json();
 
         if (data.success) {
-          // Conversão do Google Ads: lead enviado pelo formulário
           bspConversao(BSP.conversaoFormulario, 1.0);
           form.style.display = 'none';
           const ok = document.querySelector('.form-success');
