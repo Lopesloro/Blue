@@ -62,29 +62,34 @@ compartilhar o link no WhatsApp/redes). Crie uma imagem
 com esse nome.
 
 -----------------------------------------------------
-6. GOOGLE ANALYTICS 4 (o que falta preencher)
+6. GOOGLE ANALYTICS 4
 -----------------------------------------------------
-O site já carrega o Google tag (gtag.js). Hoje ele envia
-dados apenas para o Google Ads (AW-17972527330).
+O site carrega UM unico gtag.js e envia para DOIS destinos:
 
-Para passar a medir acessos e origem dos visitantes:
+    Google Ads       AW-17972527330
+    Google Analytics G-RH3Y7G97J5   (ID do fluxo: 15467399592)
 
-  1. Crie a propriedade em analytics.google.com e copie
-     o "ID de métrica", no formato G-XXXXXXXXXX.
-  2. Cole esse ID entre as aspas, no <head> das páginas:
+IMPORTANTE: nao cole o snippet pronto que o Google oferece
+no painel. Ele traz um segundo <script src=".../gtag/js">,
+e dois carregadores na mesma pagina geram dados duplicados.
+O padrao correto, ja aplicado aqui, e um carregador so com
+uma linha gtag('config', ...) para cada destino.
 
-         window.BSP_GA4_ID = '';        <-- vazio hoje
-         window.BSP_GA4_ID = 'G-ABC123';  <-- preenchido
+Para trocar o ID do GA4, edite esta linha no <head> das 13
+paginas .html (se ficar vazia, nada e enviado e nenhum erro
+e gerado):
 
-     A linha aparece nas 13 páginas .html. Enquanto ficar
-     vazia, nada é enviado ao GA4 e nenhum erro é gerado.
+    window.BSP_GA4_ID = 'G-RH3Y7G97J5';
 
-Com o ID preenchido, além dos acessos normais, o site passa
-a registrar no GA4 o evento "generate_lead" em dois pontos:
+Alem dos acessos normais, o site registra no GA4 o evento
+"generate_lead" em dois pontos:
 
   - method: whatsapp             -> clique em qualquer CTA
                                     de WhatsApp
-  - method: formulario_orcamento -> envio do formulário
+  - method: formulario_orcamento -> envio do formulario
+
+Esses dois eventos continuam disparando a conversao do
+Google Ads em paralelo, como antes.
 
 -----------------------------------------------------
 7. GOOGLE SEARCH CONSOLE
