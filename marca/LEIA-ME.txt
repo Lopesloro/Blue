@@ -1,0 +1,25 @@
+IMAGENS DA MARCA — BlueShieldPro
+=====================================================
+Geradas a partir do favicon.svg, entao sao identicas ao
+icone do site. Cores: gradiente #2E8FFF -> #00D4FF sobre
+azul-marinho #060B1A.
+
+perfil-logo.png        720x720   Logotipo (fundo escuro)
+perfil-logo-claro.png  720x720   Mesma marca em fundo branco
+perfil-capa.png        1024x576  Foto de capa (16:9)
+
+ONDE USAR
+-----------------------------------------------------
+Perfil da Empresa no Google
+  Logotipo     -> perfil-logo.png
+  Foto de capa -> perfil-capa.png
+
+O Google recorta o logotipo em CIRCULO em varias telas.
+O escudo foi dimensionado com margem para isso: nada e
+cortado no recorte circular.
+
+Use perfil-logo-claro.png onde o fundo do sistema ja e
+escuro, ou em impressos.
+
+Para regerar em outro tamanho, edite o script no historico
+do commit ou parta do favicon.svg.
