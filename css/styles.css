@@ -71,6 +71,13 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 .h3 { font-size: clamp(1.3rem, 2.4vw, 2rem); }
 .lead { font-size: clamp(1rem, 1.5vw, 1.25rem); color: var(--text-2); }
 .muted { color: var(--text-3); }
+/* Titulo lido por leitores de tela, invisivel na tela. Serve para a
+   secao ter um h2 proprio e a hierarquia nao pular de h1 para h3. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
 
 /* Label / kicker minimalista */
 .label {
@@ -290,7 +297,16 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 .section-head.center p { margin-left: auto; margin-right: auto; }
 
 /* Seção CLARA (inversão) */
-.section--light { background: var(--soft-silver); color: #2a2a2a; border-top-color: rgba(0,0,0,.1); }
+.section--light {
+  background: var(--soft-silver); color: #2a2a2a; border-top-color: rgba(0,0,0,.1);
+  /* Redefine os tokens de texto: os valores do tema escuro nao tem
+     contraste suficiente sobre #E8E8E8 (--text-3 dava 2.82:1). */
+  --text-1: var(--obsidian);
+  --text-2: #3a3a3a;
+  --text-3: #5a5a5a;
+  --line: rgba(0,0,0,0.12);
+  --line-strong: rgba(0,0,0,0.28);
+}
 .section--light h1, .section--light h2, .section--light h3, .section--light h4 { color: var(--obsidian); }
 .section--light .kicker, .section--light .section-head p, .section--light .muted { color: #5a5a5a; }
 .section--light .card { background: var(--white); border-color: rgba(0,0,0,.1); color: #3a3a3a; }
@@ -487,7 +503,7 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 /* ============ FOOTER ============ */
 .footer { border-top: 1px solid var(--line); padding: 90px 0 0; margin-top: 0; }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 50px; padding-bottom: 60px; }
-.footer h4 { font-size: .76rem; margin-bottom: 22px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); font-weight: 600; }
+.footer h2 { font-size: .76rem; margin-bottom: 22px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); font-weight: 600; }
 .footer-links { display: flex; flex-direction: column; gap: 12px; }
 .footer-links a { font-size: .9rem; color: var(--text-2); transition: color .2s; }
 .footer-links a:hover { color: var(--text-1); }
@@ -498,7 +514,7 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 .footer-legal { display: flex; gap: 20px; }
 
 .seo-areas { padding: 44px 0; border-top: 1px solid var(--line); }
-.seo-areas h4 { font-size: .72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: .18em; margin-bottom: 16px; }
+.seo-areas h2 { font-size: .72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: .18em; margin-bottom: 16px; }
 .seo-areas p { font-size: .74rem; color: #5a5a5a; line-height: 2; }
 
 /* ============ REVEAL ============ */
