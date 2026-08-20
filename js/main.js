@@ -13,10 +13,24 @@ const BSP = {
   conversaoWhatsapp: 'AW-17972527330/YEcKCOn7r88cEOKB_PlC'
 };
 
-// Dispara a conversão do Google Ads. Silencioso se o gtag ainda não carregou.
-function bspConversao(sendTo, valor) {
+// Dispara a conversão no Google Ads e o evento de lead no Google Analytics 4.
+// Silencioso se o gtag ainda não carregou — nunca quebra a página.
+function bspConversao(sendTo, valor, origem) {
   if (typeof gtag !== 'function') return;
+
+  // Google Ads: conversão da campanha.
   gtag('event', 'conversion', { send_to: sendTo, value: valor, currency: 'BRL' });
+
+  // Google Analytics 4: evento de lead (só dispara se o ID G-XXXXXXXXXX
+  // estiver preenchido no <head> das páginas).
+  if (window.BSP_GA4_ID) {
+    gtag('event', 'generate_lead', {
+      send_to: window.BSP_GA4_ID,
+      value: valor,
+      currency: 'BRL',
+      method: origem || 'site'
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- Conversão: clique em qualquer CTA de WhatsApp ----------
   document.addEventListener('click', e => {
     const link = e.target.closest('a[href*="wa.me"], [data-whats]');
-    if (link) bspConversao(BSP.conversaoWhatsapp, 1.0);
+    if (link) bspConversao(BSP.conversaoWhatsapp, 1.0, 'whatsapp');
   });
 
   // ---------- Item ativo do menu ----------
@@ -304,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await res.json();
 
         if (data.success) {
-          bspConversao(BSP.conversaoFormulario, 1.0);
+          bspConversao(BSP.conversaoFormulario, 1.0, 'formulario_orcamento');
           form.style.display = 'none';
           const ok = document.querySelector('.form-success');
           if (ok) ok.classList.add('show');

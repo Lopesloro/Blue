@@ -62,6 +62,78 @@ compartilhar o link no WhatsApp/redes). Crie uma imagem
 com esse nome.
 
 -----------------------------------------------------
+6. GOOGLE ANALYTICS 4 (o que falta preencher)
+-----------------------------------------------------
+O site já carrega o Google tag (gtag.js). Hoje ele envia
+dados apenas para o Google Ads (AW-17972527330).
+
+Para passar a medir acessos e origem dos visitantes:
+
+  1. Crie a propriedade em analytics.google.com e copie
+     o "ID de métrica", no formato G-XXXXXXXXXX.
+  2. Cole esse ID entre as aspas, no <head> das páginas:
+
+         window.BSP_GA4_ID = '';        <-- vazio hoje
+         window.BSP_GA4_ID = 'G-ABC123';  <-- preenchido
+
+     A linha aparece nas 13 páginas .html. Enquanto ficar
+     vazia, nada é enviado ao GA4 e nenhum erro é gerado.
+
+Com o ID preenchido, além dos acessos normais, o site passa
+a registrar no GA4 o evento "generate_lead" em dois pontos:
+
+  - method: whatsapp             -> clique em qualquer CTA
+                                    de WhatsApp
+  - method: formulario_orcamento -> envio do formulário
+
+-----------------------------------------------------
+7. GOOGLE SEARCH CONSOLE
+-----------------------------------------------------
+A verificação já está no ar pelo arquivo
+google7187f39ab48a0e46.html (não apague esse arquivo).
+
+Depois de cada publicação importante, envie o sitemap em
+Search Console -> Sitemaps -> "sitemap.xml".
+
+-----------------------------------------------------
+8. IA: llms.txt (como o ChatGPT/Claude/Perplexity
+   passam a indicar o site)
+-----------------------------------------------------
+O arquivo llms.txt na raiz descreve, em texto simples, o
+que a empresa faz, para quem atende e quais páginas
+existem. É o formato que assistentes de IA leem para
+entender e citar um site.
+
+Três peças trabalham juntas:
+
+  - llms.txt          o resumo lido pela IA
+  - robots.txt        libera explicitamente os robôs de IA
+                      (OAI-SearchBot, ChatGPT-User, GPTBot,
+                      Claude-SearchBot, PerplexityBot,
+                      Google-Extended e outros)
+  - JSON-LD no index  dados estruturados da empresa e do
+                      catálogo de serviços
+
+Sempre que mudar serviços, segmentos ou páginas, atualize
+o llms.txt junto — ele não é gerado automaticamente.
+
+-----------------------------------------------------
+9. RENDER (publicação e headers)
+-----------------------------------------------------
+O arquivo render.yaml traz headers de cache e segurança.
+
+ATENÇÃO: se o serviço no Render já existe e foi criado à
+mão pelo painel, NÃO o converta em Blueprint (o Render
+pode criar um serviço novo em vez de atualizar o atual).
+Nesse caso copie os headers em:
+    Dashboard -> serviço -> Settings -> Headers
+
+Para publicar uma alteração: o Render reconstrói sozinho a
+cada push na branch configurada no serviço. Se o push foi
+para outra branch, faça o merge nela ou use
+    Dashboard -> serviço -> Manual Deploy
+
+-----------------------------------------------------
 ESTRUTURA
 -----------------------------------------------------
 index.html                 Home
@@ -80,4 +152,7 @@ termos-de-uso.html         Termos
 css/styles.css             Todo o visual
 js/main.js                 Animações + configurações
 favicon.svg                Ícone do site
-robots.txt / sitemap.xml   SEO
+robots.txt                 Regras dos robôs (busca + IA)
+sitemap.xml                Mapa do site para o Google
+llms.txt                   Resumo do site para IA
+render.yaml                Headers de cache/segurança (Render)

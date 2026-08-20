@@ -1,0 +1,91 @@
+# =====================================================
+#  BlueShieldPro — Blueprint do Render (site estático)
+# =====================================================
+#  ATENÇÃO antes de usar este arquivo:
+#
+#  Se o seu serviço no Render JÁ EXISTE e foi criado à mão
+#  pelo painel, NÃO o converta em Blueprint — o Render pode
+#  criar um segundo serviço em vez de atualizar o atual.
+#  Nesse caso, copie os headers abaixo em:
+#      Dashboard -> seu serviço -> Settings -> Headers
+#
+#  Este arquivo só entra em ação se o serviço for criado/
+#  gerenciado como Blueprint (New -> Blueprint).
+# =====================================================
+
+services:
+  - type: web
+    name: blueshieldpro
+    runtime: static
+
+    # Site 100% estático: não há build. O comando abaixo é
+    # apenas um no-op para satisfazer a validação do Render.
+    buildCommand: echo "site estatico - sem etapa de build"
+
+    # Os arquivos ficam na raiz do repositório.
+    staticPublishPath: .
+
+    headers:
+      # ---------- Segurança (vale para tudo) ----------
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=31536000; includeSubDomains
+      - path: /*
+        name: Permissions-Policy
+        value: geolocation=(), microphone=(), camera=()
+
+      # ---------- llms.txt (descoberta por IA, spec v2) ----------
+      - path: /*
+        name: Link
+        value: </llms.txt>; rel="describedby"
+
+      # ---------- Cache ----------
+      # HTML sempre revalidado: uma correção no texto entra no ar
+      # no próximo acesso, sem o visitante precisar limpar o cache.
+      - path: /*.html
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+
+      # CSS e JS têm nome fixo (styles.css / main.js), por isso o
+      # cache é curto: 1 hora. Assim um deploy novo é percebido
+      # rápido, mas o visitante que navega entre páginas reaproveita.
+      - path: /css/*
+        name: Cache-Control
+        value: public, max-age=3600
+      - path: /js/*
+        name: Cache-Control
+        value: public, max-age=3600
+
+      # Ícones e imagem de compartilhamento mudam muito pouco.
+      - path: /*.png
+        name: Cache-Control
+        value: public, max-age=604800
+      - path: /*.svg
+        name: Cache-Control
+        value: public, max-age=604800
+      - path: /*.ico
+        name: Cache-Control
+        value: public, max-age=604800
+
+      # Arquivos de SEO: revalidação diária.
+      - path: /robots.txt
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /sitemap.xml
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /llms.txt
+        name: Cache-Control
+        value: public, max-age=86400

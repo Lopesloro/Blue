@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BlueShieldPro · Desenvolvimento de Sites, Sistemas Web, ERP, CRM e Dashboards</title>
-  <meta name="description" content="Transformando ideias em soluções digitais inteligentes. Desenvolvimento de sites profissionais, sistemas web personalizados, ERP, CRM, dashboards, integrações e automações para empresas de todos os segmentos.">
+  <title>Criação de Sites e Sistemas Web sob Medida · BlueShieldPro</title>
+  <meta name="description" content="Sites profissionais, sistemas web, ERP, CRM, dashboards e automações sob medida para sua empresa. Orçamento sem compromisso, atendimento em todo o Brasil.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://blueshieldpro.com.br/">
+  <!-- llms.txt: descreve o site para buscadores e assistentes de IA -->
+  <link rel="describedby" type="text/plain" href="/llms.txt">
   <meta name="theme-color" content="#0B0B0B">
 
   <!-- Open Graph -->
@@ -36,41 +38,212 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-  <!-- Schema.org / JSON-LD -->
+  <!-- Schema.org / JSON-LD — descreve a empresa para o Google e para assistentes de IA -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    "name": "BlueShieldPro",
-    "slogan": "Transformando ideias em soluções digitais inteligentes",
-    "description": "Empresa de desenvolvimento de soluções digitais: sites profissionais, landing pages, sistemas web, ERP, CRM, dashboards, APIs, integrações e automações para empresas de todos os segmentos.",
-    "url": "https://blueshieldpro.com.br/",
-    "areaServed": "BR",
-    "priceRange": "Sob consulta",
-    "knowsAbout": ["Desenvolvimento de Sites", "Sistemas Web", "ERP", "CRM", "Dashboards", "Business Intelligence", "Banco de Dados", "APIs", "Integrações", "Automações", "Aplicativos"],
-    "makesOffer": [
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Desenvolvimento de Sites Profissionais" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Sistemas Web Personalizados (ERP, CRM)" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dashboards e Business Intelligence" } },
-      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Integrações e Automações" } }
-    ]
-  }
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "Organization",
+        "ProfessionalService"
+      ],
+      "@id": "https://blueshieldpro.com.br/#organizacao",
+      "name": "BlueShieldPro",
+      "slogan": "Transformando ideias em soluções digitais inteligentes",
+      "description": "Empresa de desenvolvimento de soluções digitais sob medida: sites profissionais, landing pages, sistemas web, ERP, CRM, dashboards de Business Intelligence, bancos de dados, APIs, integrações, automações e segurança da informação para empresas de todos os portes e segmentos.",
+      "url": "https://blueshieldpro.com.br/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://blueshieldpro.com.br/favicon-192.png",
+        "width": 192,
+        "height": 192
+      },
+      "image": "https://blueshieldpro.com.br/og-image.png",
+      "inLanguage": "pt-BR",
+      "areaServed": {
+        "@type": "Country",
+        "name": "Brasil"
+      },
+      "availableLanguage": {
+        "@type": "Language",
+        "name": "Português",
+        "alternateName": "pt-BR"
+      },
+      "priceRange": "Sob consulta",
+      "knowsAbout": [
+        "Desenvolvimento de Sites",
+        "Landing Pages",
+        "Lojas Virtuais",
+        "Sistemas Web",
+        "ERP",
+        "CRM",
+        "SaaS",
+        "Banco de Dados",
+        "Dashboards",
+        "Business Intelligence",
+        "APIs",
+        "Integrações",
+        "Automação de Processos",
+        "LGPD",
+        "Segurança da Informação"
+      ],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "name": "Atendimento comercial",
+          "url": "https://blueshieldpro.com.br/contato.html",
+          "areaServed": "BR",
+          "availableLanguage": [
+            "Portuguese"
+          ]
+        }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Serviços da BlueShieldPro",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Criação de Sites e Landing Pages",
+              "description": "Sites institucionais, landing pages de conversão, lojas virtuais e portais, responsivos e otimizados para SEO.",
+              "provider": {
+                "@id": "https://blueshieldpro.com.br/#organizacao"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Brasil"
+              }
+            },
+            "url": "https://blueshieldpro.com.br/servicos.html"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Sistemas Web Personalizados (ERP e CRM)",
+              "description": "Sistemas de gestão empresarial, ERP, CRM, sistemas por área e plataformas SaaS desenvolvidos sob medida.",
+              "provider": {
+                "@id": "https://blueshieldpro.com.br/#organizacao"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Brasil"
+              }
+            },
+            "url": "https://blueshieldpro.com.br/servicos.html"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Banco de Dados",
+              "description": "Modelagem, otimização de performance, backup, migração e auditoria de bancos de dados.",
+              "provider": {
+                "@id": "https://blueshieldpro.com.br/#organizacao"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Brasil"
+              }
+            },
+            "url": "https://blueshieldpro.com.br/servicos.html"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Dashboards e Business Intelligence",
+              "description": "KPIs e indicadores, painéis em tempo real, relatórios automáticos e análise de dados para decisão.",
+              "provider": {
+                "@id": "https://blueshieldpro.com.br/#organizacao"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Brasil"
+              }
+            },
+            "url": "https://blueshieldpro.com.br/servicos.html"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Integrações e Automações",
+              "description": "APIs, integração entre sistemas, automação de processos, bots inteligentes, agendamentos e notificações.",
+              "provider": {
+                "@id": "https://blueshieldpro.com.br/#organizacao"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Brasil"
+              }
+            },
+            "url": "https://blueshieldpro.com.br/servicos.html"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Segurança da Informação e LGPD",
+              "description": "Adequação à LGPD, HTTPS, controle de acesso, backup, firewall, logs e auditoria.",
+              "provider": {
+                "@id": "https://blueshieldpro.com.br/#organizacao"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Brasil"
+              }
+            },
+            "url": "https://blueshieldpro.com.br/servicos.html"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://blueshieldpro.com.br/#site",
+      "url": "https://blueshieldpro.com.br/",
+      "name": "BlueShieldPro",
+      "inLanguage": "pt-BR",
+      "publisher": {
+        "@id": "https://blueshieldpro.com.br/#organizacao"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://blueshieldpro.com.br/#pagina-inicial",
+      "url": "https://blueshieldpro.com.br/",
+      "name": "Criação de Sites e Sistemas Web sob Medida · BlueShieldPro",
+      "isPartOf": {
+        "@id": "https://blueshieldpro.com.br/#site"
+      },
+      "about": {
+        "@id": "https://blueshieldpro.com.br/#organizacao"
+      },
+      "inLanguage": "pt-BR"
+    }
+  ]
+}
   </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "BlueShieldPro",
-    "url": "https://blueshieldpro.com.br/"
-  }
-  </script>
-  <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) — Google Ads + Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17972527330"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+
+    /* Google Ads — rastreia as conversoes das campanhas. */
     gtag('config', 'AW-17972527330');
+
+    /* Google Analytics 4 — acessos e origem dos visitantes.
+       Cole entre as aspas o ID de metrica da propriedade (formato G-XXXXXXXXXX).
+       Enquanto estiver vazio nada e enviado ao GA4 e nenhum erro e gerado. */
+    window.BSP_GA4_ID = '';
+    if (window.BSP_GA4_ID) gtag('config', window.BSP_GA4_ID);
   </script>
 
 </head>

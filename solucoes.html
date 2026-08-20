@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Soluções por Segmento · Tecnologia para Qualquer Tipo de Empresa</title>
-  <meta name="description" content="Soluções digitais sob medida para clínicas, restaurantes, indústrias, imobiliárias, academias, escritórios, e-commerce, agronegócio e empresas de todos os segmentos.">
+  <title>Soluções por Segmento · Tecnologia para a Sua Empresa</title>
+  <meta name="description" content="Soluções digitais sob medida para clínicas, restaurantes, indústrias, imobiliárias, academias, escritórios, e-commerce, agronegócio e franquias.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://blueshieldpro.com.br/solucoes.html">
+  <!-- llms.txt: descreve o site para buscadores e assistentes de IA -->
+  <link rel="describedby" type="text/plain" href="/llms.txt">
   <meta name="theme-color" content="#0B0B0B">
 
   <!-- Open Graph -->
@@ -48,13 +50,21 @@
   }
   </script>
 
-  <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) — Google Ads + Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17972527330"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+
+    /* Google Ads — rastreia as conversoes das campanhas. */
     gtag('config', 'AW-17972527330');
+
+    /* Google Analytics 4 — acessos e origem dos visitantes.
+       Cole entre as aspas o ID de metrica da propriedade (formato G-XXXXXXXXXX).
+       Enquanto estiver vazio nada e enviado ao GA4 e nenhum erro e gerado. */
+    window.BSP_GA4_ID = '';
+    if (window.BSP_GA4_ID) gtag('config', window.BSP_GA4_ID);
   </script>
 
 </head>
