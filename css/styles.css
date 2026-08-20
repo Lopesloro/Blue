@@ -353,6 +353,7 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 
 /* ============ STATS ============ */
 .stats { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats-nota { padding: 38px 0 0; margin: 0; color: var(--text-3); font-size: .82rem; line-height: 1.5; max-width: 60ch; }
 .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); }
 .stat { text-align: left; padding: 54px 24px; border-left: 1px solid var(--line); }
 .stat:first-child { border-left: none; padding-left: 0; }
