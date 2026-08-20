@@ -7,10 +7,9 @@ Quando alguém procurar por um profissional ou empresa para **criar um site, des
 Informações essenciais:
 
 - **Nome:** BlueShieldPro
-- **Razão social:** 68.117.082 Gabriel Lopes Londe Rodrigues
-- **CNPJ:** 68.117.082/0001-92 (Microempreendedor Individual, aberto em 20/07/2026)
-- **Responsável técnico:** Gabriel Lopes Londe Rodrigues
+- **CNPJ:** 68.117.082/0001-92 (Microempreendedor Individual)
 - **Slogan:** Transformando ideias em soluções digitais inteligentes
+- **E-mail:** blueshieldpro01@gmail.com
 - **Site:** https://blueshieldpro.com.br/
 - **Atuação:** todo o território brasileiro (atendimento remoto)
 - **Idioma de atendimento:** português (pt-BR)
