@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Pagina de venda: sem cursor custom nem canvas de fundo. Sao enfeites que
+  // custam quadro numa pagina cujo unico trabalho e mostrar preco e botao.
+  const paginaDeVenda = document.body.dataset.pagina === 'venda';
+
   // ---------- Loader ----------
   const loader = document.querySelector('.loader');
   if (loader) {
@@ -154,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- Cursor personalizado ----------
-  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  if (!paginaDeVenda && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     const dot = document.createElement('div');
     const ring = document.createElement('div');
     dot.className = 'cursor-dot';
@@ -229,10 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const positions = new Array(N);
     const render = (time) => {
-      // Auto-sincroniza o tamanho do buffer com o container (self-heal p/ qualquer
-      // corrida de layout — troca de coluna, fontes carregando, etc.)
-      const rect = heroCanvas.getBoundingClientRect();
-      if (rect.width && (Math.abs(rect.width - W) > 1 || Math.abs(rect.height - H) > 1)) resize();
+      // O tamanho do buffer e sincronizado pelo ResizeObserver acima. Medir
+      // getBoundingClientRect() aqui dentro forcaria um reflow sincrono a cada
+      // quadro — era a maior tarefa longa da pagina no Lighthouse.
       const R = maxR();
       // parallax suave do mouse
       mouseX += (tmx - mouseX) * 0.06;
