@@ -30,6 +30,25 @@
 
   /* WhatsApp mantém verde só no glyph/CTA dedicado */
   --wa: #15803D;
+
+  /* Declara o tema para o navegador. Sem isto o iOS e o Android divergem:
+     o Safari aplica o esquema claro em barras de rolagem, campos de
+     formulário e no fundo além do documento, e o Chrome do Android usa
+     outro padrão. Com color-scheme fixo os dois renderizam igual. */
+  color-scheme: dark;
+}
+
+/* O Safari do iOS interpreta hex como Display P3 e satura os tons.
+   Ancorar em sRGB mantém o obsidian igual nos dois sistemas. */
+@supports (color: color(srgb 0 0 0)) {
+  :root {
+    --obsidian:    color(srgb 0.043 0.043 0.043);
+    --carbon:      color(srgb 0.114 0.114 0.114);
+    --graphite:    color(srgb 0.290 0.290 0.290);
+    --silver-mist: color(srgb 0.780 0.780 0.780);
+    --soft-silver: color(srgb 0.910 0.910 0.910);
+    --ghost:       color(srgb 0.969 0.969 1.000);
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,6 +63,7 @@ body {
   font-size: 16px;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
