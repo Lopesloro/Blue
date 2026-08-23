@@ -197,6 +197,34 @@
      2. So Payment Link      -> redireciona para o link do plano.
      3. Nada configurado     -> painel mostra o aviso pendente.
      --------------------------------------------------------- */
+  /* ---------- Atribuicao da Meta ----------------------------
+     O Purchase nao pode sair do navegador: a compra termina no
+     dominio da Stripe, onde nosso pixel nao roda. Quem manda o
+     Purchase e o blue-skills-api pela Conversions API. O que o
+     navegador tem de exclusivo — os cookies _fbp e _fbc — segue
+     junto no client_reference_id e chega ao servidor pelo webhook.
+     Sem isso o evento chega sem pareamento de clique e o Gerenciador
+     nao consegue creditar a venda ao anuncio certo.
+     --------------------------------------------------------- */
+  function comAtribuicao(url) {
+    var ref = (window.bsp && window.bsp.refAtribuicao) ? window.bsp.refAtribuicao() : '';
+    if (!ref) return url;
+    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'client_reference_id=' + ref;
+  }
+
+  function rastrearInicio(chave) {
+    if (typeof window.fbq !== 'function') return;
+    var plano = CONFIG.planos[chave];
+    if (!plano) return;
+    window.fbq('track', 'InitiateCheckout', {
+      content_name: 'Skills de IA — ' + plano.nome,
+      content_ids: [chave],
+      content_type: 'product',
+      value: mensal ? plano.mensal : plano.unico,
+      currency: 'BRL'
+    });
+  }
+
   function iniciarStripe(chave) {
     var s = CONFIG.stripe;
 
@@ -211,8 +239,13 @@
       ir.className = 'btn btn-primary btn-lg btn-arrow';
       ir.style.width = '100%';
       ir.style.justifyContent = 'center';
-      ir.href = s.paymentLinks[chave];
+      ir.href = comAtribuicao(s.paymentLinks[chave]);
       ir.textContent = 'Ir para o pagamento seguro';
+
+      // A pessoa esta saindo do site: o InitiateCheckout precisa
+      // sair agora, nao no clique, porque a navegacao pode cortar
+      // a requisicao do pixel pela metade.
+      rastrearInicio(chave);
 
       var nota = document.createElement('p');
       nota.className = 'checkout-pending';
