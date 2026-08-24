@@ -34,6 +34,45 @@
     ref.hidden = false;
   }
 
+  /* ---------- Google ----------------------------------------
+     O GA4 aceita o evento de compra sem configuracao nenhuma, entao ele
+     dispara ja. O Google Ads exige um rotulo de acao de conversao, que so
+     existe depois de criada no painel: enquanto BSP_ADS_COMPRA estiver
+     vazio, nada e enviado e nenhum erro aparece.
+
+     transaction_id e o mesmo id de sessao usado no Purchase da Meta. E o que
+     impede a mesma venda de ser contada duas vezes se a pessoa recarregar
+     esta pagina. */
+  var BSP_ADS_COMPRA = ''; // ex.: 'AW-17972527330/AbCdEfGhIj_kLmNoPqR'
+
+  if (typeof window.gtag === 'function' && sessionId) {
+    var itens = [{
+      item_id: chave || 'skills',
+      item_name: plano ? 'Skills de IA — ' + plano.nome : 'Skills de IA',
+      price: plano ? plano.valor : undefined,
+      quantity: 1
+    }];
+
+    if (window.BSP_GA4_ID) {
+      window.gtag('event', 'purchase', {
+        send_to: window.BSP_GA4_ID,
+        transaction_id: sessionId,
+        value: plano ? plano.valor : undefined,
+        currency: 'BRL',
+        items: itens
+      });
+    }
+
+    if (BSP_ADS_COMPRA) {
+      window.gtag('event', 'conversion', {
+        send_to: BSP_ADS_COMPRA,
+        transaction_id: sessionId,
+        value: plano ? plano.valor : undefined,
+        currency: 'BRL'
+      });
+    }
+  }
+
   if (typeof window.fbq !== 'function') return;
 
   // Sem session_id nao ha como deduplicar. Nesse caso o servidor ja manda o

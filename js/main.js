@@ -8,7 +8,16 @@ const BSP = {
   whatsapp: '5519998334896',
   whatsappMsg: 'Olá! Visitei o site da BlueShieldPro e quero falar com um atendente sobre um projeto.',
 
-  // Ações de conversão do Google Ads (AW-17972527330).
+  /* Ações de conversão do Google Ads (AW-17972527330).
+
+     ATENÇÃO: as duas apontam para o MESMO rótulo hoje. No Google Ads isso faz
+     lead de formulário e lead de WhatsApp virarem a mesma linha do relatório —
+     não dá para saber qual origem traz cliente, e o lance é otimizado no
+     escuro para as duas.
+
+     Para separar: Google Ads → Metas → Conversões → Nova ação de conversão →
+     Site → "Criar manualmente". Crie duas, uma por origem, e cole aqui o
+     rótulo de cada uma (formato AW-17972527330/XXXXXXXXXXXXXXXXXXX). */
   conversaoFormulario: 'AW-17972527330/YEcKCOn7r88cEOKB_PlC',
   conversaoWhatsapp: 'AW-17972527330/YEcKCOn7r88cEOKB_PlC'
 };
@@ -21,8 +30,7 @@ function bspConversao(sendTo, valor, origem) {
   // Google Ads: conversão da campanha.
   gtag('event', 'conversion', { send_to: sendTo, value: valor, currency: 'BRL' });
 
-  // Google Analytics 4: evento de lead (só dispara se o ID G-XXXXXXXXXX
-  // estiver preenchido no <head> das páginas).
+  // Google Analytics 4: evento de lead. O ID vem de js/google.js.
   if (window.BSP_GA4_ID) {
     gtag('event', 'generate_lead', {
       send_to: window.BSP_GA4_ID,

@@ -213,14 +213,26 @@
   }
 
   function rastrearInicio(chave) {
-    if (typeof window.fbq !== 'function') return;
     var plano = CONFIG.planos[chave];
     if (!plano) return;
+    var valor = mensal ? plano.mensal : plano.unico;
+
+    // Google Analytics 4: mesma intencao, vocabulario da casa.
+    if (typeof window.gtag === 'function' && window.BSP_GA4_ID) {
+      window.gtag('event', 'begin_checkout', {
+        send_to: window.BSP_GA4_ID,
+        value: valor,
+        currency: 'BRL',
+        items: [{ item_id: chave, item_name: 'Skills de IA — ' + plano.nome, price: valor, quantity: 1 }]
+      });
+    }
+
+    if (typeof window.fbq !== 'function') return;
     window.fbq('track', 'InitiateCheckout', {
       content_name: 'Skills de IA — ' + plano.nome,
       content_ids: [chave],
       content_type: 'product',
-      value: mensal ? plano.mensal : plano.unico,
+      value: valor,
       currency: 'BRL'
     });
   }
