@@ -550,6 +550,22 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 .d1 { transition-delay: .08s; } .d2 { transition-delay: .16s; } .d3 { transition-delay: .24s; }
 .d4 { transition-delay: .32s; } .d5 { transition-delay: .40s; } .d6 { transition-delay: .48s; }
 
+/* Pagina de venda: nada nasce invisivel.
+   O navegador embutido do Instagram e do Facebook nem sempre dispara o
+   IntersectionObserver que adiciona a classe .in — e quando nao dispara, a
+   pessoa que veio do anuncio ve a pagina preta e vazia. Aqui o conteudo e o
+   padrao e a animacao e o extra: o :not(.in) faz a regra valer so ate o
+   observador chegar, entao o efeito 3D dos planos no desktop continua
+   funcionando quando o script roda. */
+body[data-pagina="venda"] .reveal:not(.in),
+body[data-pagina="venda"] .reveal-left:not(.in),
+body[data-pagina="venda"] .reveal-right:not(.in),
+body[data-pagina="venda"] .reveal-zoom:not(.in),
+body[data-pagina="venda"] .plan:not(.in) {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   html { scroll-behavior: auto; }
@@ -762,3 +778,65 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
   body.checkout-open .page-shift { transform: scale(.965) translateX(-40px); }
   .page-shift { transition: transform .42s cubic-bezier(.22,1,.36,1); transform-origin: center left; }
 }
+
+/* ============ ESTANTE (skills.html) ============
+   O que a pessoa que veio do anuncio precisa ver antes do preco. Nada aqui
+   depende de rolagem nem de script: e HTML e CSS, e aparece renderizado. */
+
+.prova {
+  max-width: 780px; margin: 0 auto 56px; padding: 26px 28px;
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.prova-linha { display: flex; gap: 18px; align-items: baseline; padding: 9px 0; }
+.prova-linha + .prova-linha { border-top: 1px solid var(--line); }
+.prova-rot {
+  font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-3); min-width: 62px; flex-shrink: 0;
+}
+.prova-txt { color: var(--text-2); font-size: .95rem; line-height: 1.55; }
+.prova-linha--depois .prova-txt { color: var(--text-1); }
+.prova-num { font-family: var(--font-head); font-size: 1.05rem; color: var(--ghost); }
+
+.estante-head { text-align: center; max-width: 720px; margin: 0 auto 40px; }
+.estante-head h3 {
+  font-family: var(--font-head); font-weight: 600;
+  font-size: clamp(1.5rem, 4vw, 2.1rem); line-height: 1.18; margin: 0 0 12px;
+}
+.estante-head p { color: var(--text-2); font-size: .96rem; line-height: 1.6; margin: 0; }
+
+.estante {
+  display: grid; grid-template-columns: 1fr; gap: 14px;
+  max-width: 1080px; margin: 0 auto 64px;
+}
+@media (min-width: 720px)  { .estante { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1060px) { .estante { grid-template-columns: repeat(3, 1fr); } }
+
+.prateleira {
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 24px 22px; background: var(--bg);
+  transition: border-color .25s ease, background .25s ease;
+}
+.prateleira:hover { border-color: var(--line-strong); background: var(--surface); }
+.prateleira-topo { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.prateleira-num {
+  font-family: var(--font-head); font-weight: 600; font-size: 1.9rem;
+  line-height: 1; color: var(--ghost);
+}
+.prateleira-tipo { font-size: .7rem; letter-spacing: .13em; text-transform: uppercase; color: var(--text-3); }
+.prateleira h4 {
+  font-family: var(--font-head); font-weight: 500; font-size: 1.06rem;
+  margin: 0 0 14px; color: var(--text-1);
+}
+.prateleira ul { list-style: none; margin: 0; padding: 0; }
+.prateleira li { padding: 7px 0; font-size: .86rem; line-height: 1.5; color: var(--text-2); }
+.prateleira li + li { border-top: 1px solid rgba(255,255,255,.06); }
+.prateleira li b { color: var(--text-1); font-weight: 600; }
+.prateleira-rodape { margin-top: 14px; font-size: .78rem; color: var(--text-3); line-height: 1.5; }
+
+.estante-total {
+  max-width: 1080px; margin: 0 auto 64px; padding: 22px 26px; text-align: center;
+  border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+}
+.estante-total strong { font-family: var(--font-head); font-weight: 600; color: var(--ghost); }
+.estante-total p { margin: 0; color: var(--text-2); font-size: .94rem; line-height: 1.6; }
