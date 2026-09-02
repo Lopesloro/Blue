@@ -190,3 +190,58 @@
      sentido depois de alguns dias acumulando historico.
      ------------------------------------------------------------ */
 })(window, document);
+
+/* ============================================================
+   BlueShieldPro — a estante leva aos planos
+
+   Cada prateleira e um argumento diferente. Antes disso elas eram
+   um beco: a pessoa lia e tinha que procurar o preco sozinha, e no
+   celular sao seis cartoes empilhados ate chegar la.
+
+   O ganho maior nao e o atalho, e saber QUAL argumento move a
+   pessoa. O evento abaixo grava a categoria clicada, e em alguns
+   dias isso responde o que o proximo anuncio deve dizer — uma
+   pergunta que hoje nao tem resposta em lugar nenhum.
+   ============================================================ */
+(function (w, d) {
+  'use strict';
+
+  function irParaPrecos(cartao) {
+    // Quem estava selecionando texto nao pode ser arrastado para outro
+    // lugar da pagina. Clique com texto selecionado nao e navegacao.
+    var sel = w.getSelection && w.getSelection();
+    if (sel && String(sel).length > 0) return;
+
+    var destino = d.getElementById('precos');
+    if (!destino) return;
+
+    if (typeof w.gtag === 'function') {
+      w.gtag('event', 'estante_para_precos', {
+        categoria: cartao.getAttribute('data-categoria') || 'sem-categoria',
+        send_to: w.BSP_GA4_ID,
+        transport_type: 'beacon'
+      });
+    }
+
+    var suave = !w.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    destino.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' });
+  }
+
+  function ligar() {
+    var cartoes = d.querySelectorAll('.prateleira[data-categoria]');
+    for (var i = 0; i < cartoes.length; i++) {
+      (function (cartao) {
+        cartao.addEventListener('click', function () { irParaPrecos(cartao); });
+        cartao.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            irParaPrecos(cartao);
+          }
+        });
+      })(cartoes[i]);
+    }
+  }
+
+  if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', ligar);
+  else ligar();
+})(window, document);

@@ -840,3 +840,55 @@ body[data-pagina="venda"] .plan:not(.in) {
 }
 .estante-total strong { font-family: var(--font-head); font-weight: 600; color: var(--ghost); }
 .estante-total p { margin: 0; color: var(--text-2); font-size: .94rem; line-height: 1.6; }
+
+/* A prateleira leva aos planos. Card que parece conteudo e se comporta como
+   botao irrita, entao a afordancia e explicita: cursor, linha dizendo para
+   onde vai, e foco visivel para quem navega por teclado. */
+.prateleira[role="button"] { cursor: pointer; }
+.prateleira[role="button"]:focus-visible {
+  outline: 2px solid var(--ghost); outline-offset: 3px;
+}
+.prateleira-cta {
+  display: inline-block; margin-top: 16px;
+  font-size: .78rem; letter-spacing: .02em; color: var(--text-3);
+  transition: color .25s ease;
+}
+.prateleira-cta span { display: inline-block; transition: transform .25s ease; }
+.prateleira:hover .prateleira-cta { color: var(--text-1); }
+.prateleira:hover .prateleira-cta span { transform: translateY(3px); }
+.prateleira-cta + .prateleira-rodape { margin-top: 10px; }
+
+/* ============ OFERTA DE LANCAMENTO (skills.html) ============
+   Faixa unica acima dos planos, em vez de um selo por card: o card do
+   meio ja carrega o "Mais escolhido" e dois selos brigam.
+   Tudo estatico, sem depender de script — a licao do reveal vale aqui. */
+.oferta {
+  max-width: 1080px; margin: 0 auto 26px; padding: 18px 24px;
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 10px 16px; text-align: center;
+  border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.oferta-selo {
+  font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--obsidian); background: var(--ghost);
+  padding: 5px 11px; border-radius: 999px; white-space: nowrap;
+}
+.oferta p { margin: 0; font-size: .9rem; line-height: 1.55; color: var(--text-2); }
+.oferta p b { color: var(--text-1); }
+
+.plan-cheio {
+  margin: 0 0 2px; font-size: .8rem; color: var(--text-3);
+  letter-spacing: .01em;
+}
+.plan-cheio s { text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+.estante-nota {
+  margin: 12px 0 0; text-align: center;
+  font-size: .8rem; line-height: 1.6; color: var(--text-3);
+}
+
+/* O cabecalho e fixo e tem 75px. Sem esta margem, qualquer rolagem ate uma
+   ancora para o alvo colado no topo da janela — e o nome do plano e a linha
+   do valor cheio ficam escondidos atras dele. */
+#precos, #planos { scroll-margin-top: 96px; }

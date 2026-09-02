@@ -95,7 +95,8 @@
           <span class="kicker">Skills de IA</span>
           <h2>Sua equipe para de executar e passa a aprovar.</h2>
           <p>Skill é um manual que você instala na IA. Ela passa a seguir o processo da sua
-             agência — no seu padrão, na sua ordem, sem esquecer etapa.</p>
+             agência — no seu padrão, na sua ordem, sem esquecer etapa.<br>
+             <b>Funciona no Claude e no Cursor.</b> Você recebe um guia em PDF, por e-mail.</p>
         </div>
 
         <!-- ============ Prova concreta ============ -->
@@ -130,7 +131,8 @@
 
         <div class="estante">
 
-          <article class="prateleira">
+          <article class="prateleira" data-categoria="marketing-vendas" role="button" tabindex="0"
+                   aria-label="Ver os planos">
             <div class="prateleira-topo">
               <span class="prateleira-num">16</span>
               <span class="prateleira-tipo">Skills</span>
@@ -145,11 +147,13 @@
               <li><b>Domain Name Brainstormer</b> — gera nomes de domínio e checa quais
                   estão livres</li>
             </ul>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
             <p class="prateleira-rodape">Mais Semrush, Ahrefs, Similarweb, HubSpot, Apollo,
                Clay e Mailchimp ligados por conector.</p>
           </article>
 
-          <article class="prateleira">
+          <article class="prateleira" data-categoria="documentos-escritorio" role="button" tabindex="0"
+                   aria-label="Ver os planos">
             <div class="prateleira-topo">
               <span class="prateleira-num">30</span>
               <span class="prateleira-tipo">Skills</span>
@@ -164,10 +168,12 @@
                   PowerPoint</li>
               <li><b>File Organizer</b> — arruma pasta bagunçada, renomeia e classifica</li>
             </ul>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
             <p class="prateleira-rodape">É a categoria que devolve tempo no primeiro dia.</p>
           </article>
 
-          <article class="prateleira">
+          <article class="prateleira" data-categoria="financeiro-rh-gestao" role="button" tabindex="0"
+                   aria-label="Ver os planos">
             <div class="prateleira-topo">
               <span class="prateleira-num">36</span>
               <span class="prateleira-tipo">Skills</span>
@@ -182,11 +188,13 @@
               <li><b>Tailored Resume Generator</b> — adapta currículo para uma vaga
                   específica</li>
             </ul>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
             <p class="prateleira-rodape">Mais QuickBooks, Xero, Gusto, Workable e
                PagerDuty por conector.</p>
           </article>
 
-          <article class="prateleira">
+          <article class="prateleira" data-categoria="desenvolvimento-design" role="button" tabindex="0"
+                   aria-label="Ver os planos">
             <div class="prateleira-topo">
               <span class="prateleira-num">51</span>
               <span class="prateleira-tipo">Skills</span>
@@ -201,11 +209,13 @@
               <li><b>Skill Creator</b> — cria Skills novas do zero, guiando você passo
                   a passo</li>
             </ul>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
             <p class="prateleira-rodape">É aqui que a IA para de ser genérica e passa a
                ter a cara da sua empresa.</p>
           </article>
 
-          <article class="prateleira">
+          <article class="prateleira" data-categoria="conectores" role="button" tabindex="0"
+                   aria-label="Ver os planos">
             <div class="prateleira-topo">
               <span class="prateleira-num">135</span>
               <span class="prateleira-tipo">Conectores</span>
@@ -218,11 +228,13 @@
               <li><b>Jurídico</b> — Harvey, Ironclad, iManage, CourtListener</li>
               <li><b>Financeiro e RH</b> — QuickBooks, Gusto, Indeed, Metaview</li>
             </ul>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
             <p class="prateleira-rodape">Cada um com o endereço oficial de instalação e
                para quem serve.</p>
           </article>
 
-          <article class="prateleira">
+          <article class="prateleira" data-categoria="mcps-fontes" role="button" tabindex="0"
+                   aria-label="Ver os planos">
             <div class="prateleira-topo">
               <span class="prateleira-num">54</span>
               <span class="prateleira-tipo">MCPs e fontes</span>
@@ -236,6 +248,7 @@
                   as suas</li>
               <li><b>Guia de instalação</b> — passo a passo, sem terminal obrigatório</li>
             </ul>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
             <p class="prateleira-rodape">Você sai sabendo onde procurar quando precisar de
                algo que não está aqui.</p>
           </article>
@@ -246,6 +259,8 @@
           <p><strong>322 itens catalogados</strong>, cada um com link oficial clicável e uma
              linha em português dizendo o que resolve e para quem serve. Você recebe em PDF,
              por e-mail, logo depois do pagamento.</p>
+          <p class="estante-nota">Este é o catálogo completo, do plano Premium.
+             Cada plano entrega uma parte dele — o que entra em cada um está abaixo.</p>
         </div>
 
         <!-- Seletor. Some enquanto PLANOS.assinatura estiver false em js/main.js. -->
@@ -255,11 +270,18 @@
           <span class="switch-label">Assinatura mensal <b>(novas Skills toda semana)</b></span>
         </div>
 
-        <div class="plans" data-plans>
+        <div class="oferta">
+          <span class="oferta-selo">Oferta de lançamento</span>
+          <p><b>35% de desconto</b> em todos os planos, até 30 de setembro de 2026.
+             Depois dessa data cada plano volta ao valor cheio.</p>
+        </div>
+
+        <div class="plans" id="precos" data-plans>
 
           <!-- ---------- BÁSICO ---------- -->
           <article class="plan" data-plan="basico">
             <p class="plan-name">Básico</p>
+            <p class="plan-cheio">Valor cheio <s>R$ 61,90</s></p>
             <div class="plan-price">
               <span class="cur">R$</span>
               <span class="val" data-price data-amount="39.90">39,90</span>
@@ -288,6 +310,7 @@
             </span>
 
             <p class="plan-name">Medium</p>
+            <p class="plan-cheio">Valor cheio <s>R$ 107,90</s></p>
             <div class="plan-price">
               <span class="cur">R$</span>
               <span class="val" data-price data-amount="69.90">69,90</span>
@@ -312,6 +335,7 @@
           <!-- ---------- PREMIUM ---------- -->
           <article class="plan" data-plan="premium">
             <p class="plan-name">Premium</p>
+            <p class="plan-cheio">Valor cheio <s>R$ 153,90</s></p>
             <div class="plan-price">
               <span class="cur">R$</span>
               <span class="val" data-price data-amount="99.90">99,90</span>
