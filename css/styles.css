@@ -218,15 +218,33 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* Mobile nav */
+/* O menu era centrado verticalmente e nao rolava. Com 11 links a
+   1,5rem cada, o conteudo fica mais alto que a tela de um celular — e
+   conteudo centrado que nao cabe vaza pelos DOIS lados: some o primeiro
+   item em cima e o botao de acao embaixo, ao mesmo tempo, sem nenhuma
+   pista de que ha mais coisa. O item cortado embaixo era justamente o
+   unico que leva a algum lugar que vende.
+
+   Agora alinha no topo, rola quando precisa, e reserva espaco para as
+   barras do navegador do celular, que comem altura sem avisar. */
 .mobile-nav {
   position: fixed; inset: 0; z-index: 1001; background: var(--obsidian);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-start; gap: 2px;
+  padding: max(84px, env(safe-area-inset-top) + 84px) 20px max(40px, env(safe-area-inset-bottom) + 40px);
+  overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
   opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s;
 }
 .mobile-nav.open { opacity: 1; visibility: visible; }
-.mobile-nav a { font-size: 1.5rem; font-weight: 600; color: var(--text-2); padding: 10px 24px; transition: color .2s; }
+.mobile-nav a { font-size: 1.28rem; font-weight: 600; color: var(--text-2); padding: 11px 24px; transition: color .2s; }
 .mobile-nav a:hover, .mobile-nav a.active { color: var(--text-1); }
-.mobile-nav .btn { margin-top: 20px; }
+.mobile-nav .btn { margin-top: 18px; flex-shrink: 0; }
+
+/* Telas baixas — celular pequeno ou com teclado aberto. */
+@media (max-height: 700px) {
+  .mobile-nav { padding-top: 72px; }
+  .mobile-nav a { font-size: 1.12rem; padding: 8px 20px; }
+}
 
 /* ============ CROP-MARKS / MOLDURAS (estilo print) ============ */
 .framed { position: relative; }

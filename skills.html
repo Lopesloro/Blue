@@ -173,110 +173,31 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-  <!-- Estilo das tres portas. Fica embutido de proposito: e a primeira
-       coisa que a pessoa ve, e uma requisicao a mais atrasaria justamente
-       o momento que estamos tentando salvar. Paleta monocromatica da
-       marca, sem cor inventada. -->
+  <!-- Estilo da barra de oferta e dos selos. Embutido de proposito: sao
+       a primeira coisa que a pessoa ve, e uma requisicao a mais atrasaria
+       justamente o quadro que estamos tentando salvar. -->
   <style>
-    .portas[hidden] { display: none; }
-    .portas {
-      position: fixed; inset: 0; z-index: 120;
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px;
+    /* Barra de oferta. Fina, no topo, sem cobrir conteudo. */
+    .cupom[hidden] { display: none; }
+    .cupom {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 10px 14px; padding: 9px 16px;
+      background: var(--carbon); border-bottom: 1px solid var(--line);
+      font-size: 13px; color: var(--text-2); text-align: center;
     }
-    .portas-fundo {
-      position: absolute; inset: 0;
-      background: rgba(6,6,6,.86);
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-      opacity: 0; transition: opacity .34s ease;
+    .cupom-txt b { color: var(--text-1); }
+    .cupom-cod {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: none; border: 1px dashed var(--line-strong); border-radius: 8px;
+      padding: 5px 12px; cursor: pointer;
+      font: inherit; font-weight: 700; letter-spacing: .08em; color: var(--text-1);
     }
-    .portas.em .portas-fundo { opacity: 1; }
-
-    .portas-caixa {
-      position: relative; z-index: 1;
-      width: 100%; max-width: 560px;
-      background: linear-gradient(180deg, #141414 0%, #0D0D0D 100%);
-      border: 1px solid var(--line); border-radius: var(--radius-lg);
-      padding: 40px 26px 30px; text-align: center;
-      box-shadow: 0 30px 90px rgba(0,0,0,.6);
-      opacity: 0; transform: translateY(16px) scale(.97);
-      transition: opacity .34s ease, transform .34s cubic-bezier(.2,.8,.3,1);
+    .cupom-cod:hover { border-color: var(--text-2); background: rgba(255,255,255,.04); }
+    .cupom-cod::after {
+      content: 'copiar'; font-weight: 500; font-size: 11px;
+      letter-spacing: .04em; text-transform: none; color: var(--text-3);
     }
-    .portas.em .portas-caixa { opacity: 1; transform: none; }
-
-    .portas-x {
-      position: absolute; top: 12px; right: 12px;
-      width: 38px; height: 38px; padding: 9px;
-      background: none; border: 0; border-radius: 50%;
-      color: var(--text-3); cursor: pointer;
-    }
-    .portas-x:hover { color: var(--text-1); background: rgba(255,255,255,.06); }
-    .portas-x svg { width: 100%; height: 100%; }
-
-    .portas-kicker {
-      font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
-      color: var(--text-3); margin-bottom: 10px;
-    }
-    .portas-titulo { font-size: clamp(24px, 6vw, 32px); line-height: 1.1; margin: 0 0 8px; }
-    .portas-sub { color: var(--text-2); font-size: 15px; margin: 0 0 26px; }
-
-    .portas-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-
-    .porta {
-      position: relative; aspect-ratio: 3 / 4;
-      background: none; border: 0; padding: 0; cursor: pointer;
-      perspective: 800px;
-    }
-    .porta[aria-disabled="true"] { cursor: default; }
-
-    .porta-folha, .porta-atras {
-      position: absolute; inset: 0;
-      border-radius: 10px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    .porta-folha {
-      background: linear-gradient(160deg, #262626 0%, #171717 100%);
-      border: 1px solid var(--line-strong);
-      transform-origin: left center;
-      transition: transform .62s cubic-bezier(.4,.1,.2,1), opacity .3s ease;
-      z-index: 2;
-    }
-    .porta:hover .porta-folha { border-color: rgba(255,255,255,.4); }
-    .porta-num {
-      font-family: var(--font-display, Georgia, serif);
-      font-size: 26px; color: var(--text-2); letter-spacing: .06em;
-    }
-    .porta-maca {
-      position: absolute; right: 10px; top: 50%;
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--silver-mist); box-shadow: 0 0 0 3px rgba(199,199,199,.14);
-    }
-    .porta-atras {
-      background: var(--carbon); border: 1px solid var(--line);
-      z-index: 1; gap: 2px;
-    }
-    .porta-atras b { font-size: clamp(20px, 5.5vw, 28px); line-height: 1; color: var(--text-1); }
-    .porta-atras small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
-
-    /* So a porta escolhida abre. As outras recuam fechadas, o que
-       resolve dois problemas: a folha girando de uma nao passa mais
-       por cima da revelacao da outra, e a leitura fica obvia — voce
-       abriu a sua. */
-    .porta.aberta { z-index: 3; }
-    .porta.aberta .porta-folha {
-      transform: rotateY(-104deg);
-      box-shadow: 12px 0 30px rgba(0,0,0,.55);
-    }
-    .porta.recuada { opacity: .32; transform: scale(.94); transition: opacity .4s ease, transform .4s ease; }
-
-    .portas-pos {
-      max-height: 0; overflow: hidden; opacity: 0;
-      transition: max-height .5s ease, opacity .4s ease .12s, margin-top .5s ease;
-    }
-    .portas.revelado .portas-pos { max-height: 220px; opacity: 1; margin-top: 26px; }
-    .portas-resultado { color: var(--text-2); font-size: 15px; margin: 0 0 16px; }
-    .portas-resultado b { color: var(--text-1); }
-    .portas-pos .btn { width: 100%; justify-content: center; }
+    .cupom-cod.copiado::after { content: 'copiado'; color: var(--text-1); }
 
     .selos {
       list-style: none; padding: 0; margin: 0 auto 30px; max-width: 900px;
@@ -290,13 +211,6 @@
     .selos b { display: block; font-size: 14px; color: var(--text-1); margin-bottom: 3px; }
     .selos span { display: block; font-size: 12.5px; line-height: 1.45; color: var(--text-3); }
 
-    body.portas-abertas { overflow: hidden; }
-
-    /* Quem pediu menos movimento recebe o mesmo conteudo, sem giro. */
-    @media (prefers-reduced-motion: reduce) {
-      .portas-fundo, .portas-caixa, .porta-folha, .portas-pos { transition-duration: .01ms; }
-      .porta.aberta .porta-folha, .porta.recuada .porta-folha { transform: none; opacity: 0; }
-    }
   </style>
 </head>
 <body data-pagina="venda">
@@ -305,44 +219,25 @@
 
   <div class="scroll-progress" aria-hidden="true"></div>
 
-  <!-- ============ As tres portas da oferta ============
-       Primeira micro-decisao da visita, e ela termina exatamente nos
-       planos. Nada aqui fala em sorte ou chance: a oferta de 35% e
-       real, publica logo abaixo e vale para todo mundo ate 30/09.
-       Prometer probabilidade inexistente seria enganoso, entao o
-       texto convida a escolher por onde entrar, nao a apostar. -->
-  <div class="portas" data-portas hidden>
-    <div class="portas-fundo" data-portas-fundo></div>
+  <!-- ============ Cupom da oferta, sem bloquear a chegada ============
+       As portas eram um modal que tomava a tela 700ms depois de entrar.
+       Medido: a pagina pinta em 728ms e carrega inteira em 1.062ms — ou
+       seja, o modal chegava exatamente junto com o conteudo e roubava a
+       primeira impressao de quem veio do anuncio. Quem paga R$ 1,56 por
+       visita nao pode gastar o primeiro segundo dela numa animacao.
 
-    <div class="portas-caixa" role="dialog" aria-modal="true" aria-labelledby="portas-titulo">
-      <button class="portas-x" type="button" data-portas-fechar aria-label="Fechar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-
-      <p class="portas-kicker">Oferta de lançamento</p>
-      <h2 class="portas-titulo" id="portas-titulo">Escolha uma porta.</h2>
-      <p class="portas-sub">Você está a um clique de ver quanto custa.</p>
-
-      <div class="portas-grade">
-        <button class="porta" type="button" data-porta="1" aria-label="Abrir a primeira porta">
-          <span class="porta-folha"><span class="porta-num">I</span><span class="porta-maca"></span></span>
-          <span class="porta-atras"><b>35%</b><small>de desconto</small></span>
-        </button>
-        <button class="porta" type="button" data-porta="2" aria-label="Abrir a segunda porta">
-          <span class="porta-folha"><span class="porta-num">II</span><span class="porta-maca"></span></span>
-          <span class="porta-atras"><b>35%</b><small>de desconto</small></span>
-        </button>
-        <button class="porta" type="button" data-porta="3" aria-label="Abrir a terceira porta">
-          <span class="porta-folha"><span class="porta-num">III</span><span class="porta-maca"></span></span>
-          <span class="porta-atras"><b>35%</b><small>de desconto</small></span>
-        </button>
-      </div>
-
-      <div class="portas-pos">
-        <p class="portas-resultado"><b>35% de desconto</b> em qualquer plano, até 30 de setembro.</p>
-        <button class="btn btn-primary btn-lg btn-arrow" type="button" data-portas-seguir data-cta="portas">Ver os planos com desconto</button>
-      </div>
-    </div>
+       Agora a oferta vira uma barra fina no topo, com o codigo pronto
+       para copiar. Nao cobre nada, nao espera nada, nao anima na
+       entrada: a pessoa ve a manchete e o preco no primeiro quadro, e
+       o desconto fica visivel o tempo todo em vez de aparecer uma vez
+       e sumir. O codigo e o mesmo 35% que ja esta no preco anunciado —
+       ele existe para dar nome a oferta, nao para condicionar nada. -->
+  <div class="cupom" data-cupom hidden>
+    <span class="cupom-txt">Oferta de lançamento &middot; <b>35% já aplicado</b> até 30/09</span>
+    <button class="cupom-cod" type="button" data-cupom-copiar
+            aria-label="Copiar o código LANCAMENTO35">
+      <span data-cupom-rotulo>LANCAMENTO35</span>
+    </button>
   </div>
 
   <!-- Header -->
@@ -807,6 +702,6 @@
   <script src="js/main.js" defer></script>
   <script src="js/skills.js" defer></script>
   <script src="js/medicao.js" defer></script>
-  <script src="js/portas.js" defer></script>
+  <script src="js/cupom.js" defer></script>
 </body>
 </html>

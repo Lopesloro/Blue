@@ -38,6 +38,18 @@
   <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <style>
+    /* Mesmo estilo dos selos da pagina de venda. Duplicado aqui de
+       proposito: sao poucas regras e evitam uma requisicao extra numa
+       pagina que a pessoa abre logo apos pagar, quando qualquer espera
+       parece problema com a compra. */
+    .selos { list-style: none; padding: 0; display: grid; gap: 14px;
+             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .selos li { text-align: left; padding: 14px 16px; border: 1px solid var(--line);
+                border-radius: var(--radius); background: rgba(255,255,255,.02); }
+    .selos b { display: block; font-size: 14px; color: var(--text-1); margin-bottom: 3px; }
+    .selos span { display: block; font-size: 12.5px; line-height: 1.45; color: var(--text-3); }
+  </style>
 </head>
 <body>
 <noscript><img height="1" width="1" style="display:none" alt=""
@@ -101,10 +113,17 @@
 
     <section class="section" style="padding-top:170px;min-height:70vh;">
       <div class="container">
+        <!-- Dois estados, e confundir os dois custa caro. O Pix chega
+             aqui pelo back_urls.pending no instante em que a pessoa GERA
+             o codigo, antes de pagar. Mostrar "Pagamento confirmado" nessa
+             hora e mentira, gera chamado de suporte de quem nao recebeu
+             o e-mail, e ensina a pessoa a desconfiar do proprio sistema
+             quando o e-mail chegar de verdade. O JS troca o texto quando
+             a URL traz estado=pendente. -->
         <div class="pricing-head">
-          <span class="kicker">Pagamento confirmado</span>
-          <h1>Pronto. Seu acesso está a caminho.</h1>
-          <p>Enviamos para o e-mail informado no pagamento um link com as Skills do plano
+          <span class="kicker" data-estado-rotulo>Pagamento confirmado</span>
+          <h1 data-estado-titulo>Pronto. Seu acesso está a caminho.</h1>
+          <p data-estado-texto>Enviamos para o e-mail informado no pagamento um link com as Skills do plano
              <b data-plano-nome style="color:var(--text-1);">contratado</b> e o guia de uso de
              cada uma delas.</p>
         </div>
@@ -128,6 +147,18 @@
           <a data-whats href="#" class="btn btn-whats btn-lg">Falar com um atendente</a>
           <a href="skills.html" class="btn btn-ghost btn-lg">Voltar para os planos</a>
         </div>
+
+        <!-- O que fazer com o que acabou de comprar. Este e o momento de
+             maior atencao da relacao inteira: a pessoa acabou de pagar e
+             esta olhando a tela esperando o proximo passo. Uma tela que so
+             diz "obrigado" desperdica isso, e quem nao sabe instalar nao
+             usa, nao ve valor e pede reembolso dentro dos 7 dias. -->
+        <ul class="selos" style="max-width:820px;margin:44px auto 0;" data-instalar hidden>
+          <li><b>1 · Baixe o PDF do e-mail</b><span>ele traz o diretório das Skills, cada uma com link direto de instalação</span></li>
+          <li><b>2 · Abra a Skill que resolve a sua dor de hoje</b><span>não instale tudo de uma vez; comece pela tarefa que mais se repete na semana</span></li>
+          <li><b>3 · Cole o conteúdo na sua IA</b><span>funciona no ChatGPT, Claude, Gemini, Copilot e Cursor — sem código e sem instalar nada no computador</span></li>
+          <li><b>4 · Rode uma vez com um caso real</b><span>use um cliente de verdade, não um exemplo: é assim que você vê se o processo saiu do seu jeito</span></li>
+        </ul>
 
         <p class="plan-desc" style="margin-top:32px;max-width:600px;margin-left:auto;margin-right:auto;">
           A nota fiscal é enviada para o mesmo e-mail. Você tem 7 dias para solicitar reembolso,

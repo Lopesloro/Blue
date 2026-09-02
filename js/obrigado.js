@@ -90,3 +90,44 @@
 
   window.fbq('track', 'Purchase', evento, { eventID: sessionId });
 })();
+
+/* ---------- Pago x pendente ------------------------------
+   O Pix manda a pessoa para esta pagina duas vezes: uma quando ela
+   GERA o codigo (estado=pendente, nada pago ainda) e outra quando o
+   pagamento cai. O texto padrao da pagina confirma a compra, e
+   confirmar compra que nao aconteceu e o tipo de erro que a pessoa
+   nao esquece — ela espera o e-mail, nao recebe, e conclui que foi
+   enganada.
+
+   Os passos de instalacao so aparecem no estado pago: instrucao de
+   uso antes de existir acesso e ruido.
+   --------------------------------------------------------- */
+(function (w, d) {
+  'use strict';
+  var params = new URLSearchParams(w.location.search);
+  var pendente = params.get('estado') === 'pendente'
+    || params.get('status') === 'pending'
+    || params.get('collection_status') === 'pending';
+
+  var instalar = d.querySelector('[data-instalar]');
+  var rotulo = d.querySelector('[data-estado-rotulo]');
+  var titulo = d.querySelector('[data-estado-titulo]');
+  var texto  = d.querySelector('[data-estado-texto]');
+
+  if (!pendente) {
+    if (instalar) instalar.hidden = false;
+    return;
+  }
+
+  // O titulo da aba tambem confirmava a compra. E a unica coisa que
+  // sobra visivel quando a pessoa troca de aba para abrir o banco.
+  d.title = 'Aguardando o pagamento · BlueShieldPro';
+  if (rotulo) rotulo.textContent = 'Aguardando o pagamento';
+  if (titulo) titulo.textContent = 'Falta só o pagamento cair.';
+  if (texto) {
+    texto.innerHTML = 'Assim que o Pix for confirmado — normalmente em segundos — '
+      + 'enviamos o acesso para o e-mail informado no pagamento. '
+      + '<b style="color:var(--text-1);">Não é preciso fazer mais nada nesta página.</b> '
+      + 'Se você fechou o código antes de pagar, é só voltar aos planos e gerar outro.';
+  }
+})(window, document);
