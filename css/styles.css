@@ -892,3 +892,77 @@ body[data-pagina="venda"] .plan:not(.in) {
    ancora para o alvo colado no topo da janela — e o nome do plano e a linha
    do valor cheio ficam escondidos atras dele. */
 #precos, #planos { scroll-margin-top: 96px; }
+
+/* ============================================================
+   Página de venda — ação acima da dobra e barra fixa de compra
+   Acrescentado em 01/09/2026, depois da primeira campanha paga.
+   O diagnóstico: o anúncio entregava (CTR de saída 3,26%, acima
+   da faixa de mercado), a página é que não pedia a compra. Não
+   havia botão nenhum na primeira tela, e o único elemento
+   colorido do layout inteiro era o botão flutuante do WhatsApp —
+   que levou 37% do tráfego pago para a conversa em vez do
+   checkout.
+   ============================================================ */
+
+.hero-acao {
+  margin-top: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-acao-nota {
+  margin: 0;
+  max-width: 460px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-3);
+}
+
+.hero-acao-nota b { color: var(--text-2); font-weight: 600; }
+
+/* ---------- Barra fixa de compra ---------- */
+
+.compra-fixa {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 990;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(11, 11, 11, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+  transform: translateY(110%);
+  transition: transform .32s cubic-bezier(.22, 1, .36, 1);
+}
+
+.compra-fixa[data-visivel] { transform: none; }
+
+.compra-fixa-info { display: flex; flex-direction: column; line-height: 1.15; }
+
+.compra-fixa-plano {
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.compra-fixa-preco {
+  font-family: var(--font-head);
+  font-size: 22px;
+  color: var(--text-1);
+}
+
+.compra-fixa .btn { flex: 0 0 auto; padding: 13px 20px; font-size: 14px; }
+
+/* A barra é uma solução de polegar: no desktop o cartão de preço já
+   fica visível e ela só rouba altura útil. */
+@media (min-width: 861px) { .compra-fixa { display: none; } }
+
+/* O painel de checkout já é a camada da vez — a barra sai de baixo dele. */
+body.checkout-open .compra-fixa { transform: translateY(110%); }

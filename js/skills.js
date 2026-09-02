@@ -237,6 +237,49 @@
     });
   }
 
+  /* ---------- Barra fixa de compra ---------------------------
+     Reusa o mesmo [data-buy] dos cartoes, entao o painel de
+     checkout, o InitiateCheckout e a atribuicao saem iguais.
+
+     A visibilidade NAO depende de evento de rolagem nem de o
+     observador continuar disparando. Ja levamos esse prejuizo uma
+     vez nesta pagina: dentro do navegador embutido do Instagram, o
+     que dependia de rolagem para aparecer simplesmente nao
+     apareceu. Aqui a barra nasce visivel e so some enquanto os
+     cartoes de preco estao na tela — dois botoes de compra na
+     mesma tela competem entre si. Se o observador nunca disparar,
+     sobra um botao de compra. Se a regra fosse ao contrario,
+     faltaria o unico.
+     ----------------------------------------------------------- */
+  var barra = document.querySelector('[data-compra-fixa]');
+  if (barra) {
+    barra.hidden = false;
+    barra.setAttribute('data-visivel', '');
+
+    var precos = document.getElementById('precos');
+    if (precos && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entradas) {
+        if (entradas[0].isIntersecting) barra.removeAttribute('data-visivel');
+        else barra.setAttribute('data-visivel', '');
+      }, { threshold: 0 }).observe(precos);
+    }
+  }
+
+  /* ---------- De onde veio o clique de compra -----------------
+     Sem isso nao da para saber se a barra fixa e o CTA do topo
+     pagam o espaco que ocupam. O evento vai junto com o
+     begin_checkout, no mesmo vocabulario da casa.
+     ----------------------------------------------------------- */
+  document.addEventListener('click', function (e) {
+    var alvo = e.target.closest('[data-cta]');
+    if (!alvo) return;
+    if (typeof window.gtag !== 'function' || !window.BSP_GA4_ID) return;
+    window.gtag('event', 'clique_cta', {
+      send_to: window.BSP_GA4_ID,
+      origem: alvo.getAttribute('data-cta')
+    });
+  });
+
   function iniciarStripe(chave) {
     var s = CONFIG.stripe;
 
