@@ -172,6 +172,132 @@
   <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Estilo das tres portas. Fica embutido de proposito: e a primeira
+       coisa que a pessoa ve, e uma requisicao a mais atrasaria justamente
+       o momento que estamos tentando salvar. Paleta monocromatica da
+       marca, sem cor inventada. -->
+  <style>
+    .portas[hidden] { display: none; }
+    .portas {
+      position: fixed; inset: 0; z-index: 120;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .portas-fundo {
+      position: absolute; inset: 0;
+      background: rgba(6,6,6,.86);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      opacity: 0; transition: opacity .34s ease;
+    }
+    .portas.em .portas-fundo { opacity: 1; }
+
+    .portas-caixa {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 560px;
+      background: linear-gradient(180deg, #141414 0%, #0D0D0D 100%);
+      border: 1px solid var(--line); border-radius: var(--radius-lg);
+      padding: 40px 26px 30px; text-align: center;
+      box-shadow: 0 30px 90px rgba(0,0,0,.6);
+      opacity: 0; transform: translateY(16px) scale(.97);
+      transition: opacity .34s ease, transform .34s cubic-bezier(.2,.8,.3,1);
+    }
+    .portas.em .portas-caixa { opacity: 1; transform: none; }
+
+    .portas-x {
+      position: absolute; top: 12px; right: 12px;
+      width: 38px; height: 38px; padding: 9px;
+      background: none; border: 0; border-radius: 50%;
+      color: var(--text-3); cursor: pointer;
+    }
+    .portas-x:hover { color: var(--text-1); background: rgba(255,255,255,.06); }
+    .portas-x svg { width: 100%; height: 100%; }
+
+    .portas-kicker {
+      font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--text-3); margin-bottom: 10px;
+    }
+    .portas-titulo { font-size: clamp(24px, 6vw, 32px); line-height: 1.1; margin: 0 0 8px; }
+    .portas-sub { color: var(--text-2); font-size: 15px; margin: 0 0 26px; }
+
+    .portas-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+    .porta {
+      position: relative; aspect-ratio: 3 / 4;
+      background: none; border: 0; padding: 0; cursor: pointer;
+      perspective: 800px;
+    }
+    .porta[aria-disabled="true"] { cursor: default; }
+
+    .porta-folha, .porta-atras {
+      position: absolute; inset: 0;
+      border-radius: 10px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .porta-folha {
+      background: linear-gradient(160deg, #262626 0%, #171717 100%);
+      border: 1px solid var(--line-strong);
+      transform-origin: left center;
+      transition: transform .62s cubic-bezier(.4,.1,.2,1), opacity .3s ease;
+      z-index: 2;
+    }
+    .porta:hover .porta-folha { border-color: rgba(255,255,255,.4); }
+    .porta-num {
+      font-family: var(--font-display, Georgia, serif);
+      font-size: 26px; color: var(--text-2); letter-spacing: .06em;
+    }
+    .porta-maca {
+      position: absolute; right: 10px; top: 50%;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--silver-mist); box-shadow: 0 0 0 3px rgba(199,199,199,.14);
+    }
+    .porta-atras {
+      background: var(--carbon); border: 1px solid var(--line);
+      z-index: 1; gap: 2px;
+    }
+    .porta-atras b { font-size: clamp(20px, 5.5vw, 28px); line-height: 1; color: var(--text-1); }
+    .porta-atras small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+
+    /* So a porta escolhida abre. As outras recuam fechadas, o que
+       resolve dois problemas: a folha girando de uma nao passa mais
+       por cima da revelacao da outra, e a leitura fica obvia — voce
+       abriu a sua. */
+    .porta.aberta { z-index: 3; }
+    .porta.aberta .porta-folha {
+      transform: rotateY(-104deg);
+      box-shadow: 12px 0 30px rgba(0,0,0,.55);
+    }
+    .porta.recuada { opacity: .32; transform: scale(.94); transition: opacity .4s ease, transform .4s ease; }
+
+    .portas-pos {
+      max-height: 0; overflow: hidden; opacity: 0;
+      transition: max-height .5s ease, opacity .4s ease .12s, margin-top .5s ease;
+    }
+    .portas.revelado .portas-pos { max-height: 220px; opacity: 1; margin-top: 26px; }
+    .portas-resultado { color: var(--text-2); font-size: 15px; margin: 0 0 16px; }
+    .portas-resultado b { color: var(--text-1); }
+    .portas-pos .btn { width: 100%; justify-content: center; }
+
+    .selos {
+      list-style: none; padding: 0; margin: 0 auto 30px; max-width: 900px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
+    }
+    .selos li {
+      text-align: left; padding: 14px 16px;
+      border: 1px solid var(--line); border-radius: var(--radius);
+      background: rgba(255,255,255,.02);
+    }
+    .selos b { display: block; font-size: 14px; color: var(--text-1); margin-bottom: 3px; }
+    .selos span { display: block; font-size: 12.5px; line-height: 1.45; color: var(--text-3); }
+
+    body.portas-abertas { overflow: hidden; }
+
+    /* Quem pediu menos movimento recebe o mesmo conteudo, sem giro. */
+    @media (prefers-reduced-motion: reduce) {
+      .portas-fundo, .portas-caixa, .porta-folha, .portas-pos { transition-duration: .01ms; }
+      .porta.aberta .porta-folha, .porta.recuada .porta-folha { transform: none; opacity: 0; }
+    }
+  </style>
 </head>
 <body data-pagina="venda">
 <noscript><img height="1" width="1" style="display:none" alt=""
@@ -179,46 +305,69 @@
 
   <div class="scroll-progress" aria-hidden="true"></div>
 
+  <!-- ============ As tres portas da oferta ============
+       Primeira micro-decisao da visita, e ela termina exatamente nos
+       planos. Nada aqui fala em sorte ou chance: a oferta de 35% e
+       real, publica logo abaixo e vale para todo mundo ate 30/09.
+       Prometer probabilidade inexistente seria enganoso, entao o
+       texto convida a escolher por onde entrar, nao a apostar. -->
+  <div class="portas" data-portas hidden>
+    <div class="portas-fundo" data-portas-fundo></div>
+
+    <div class="portas-caixa" role="dialog" aria-modal="true" aria-labelledby="portas-titulo">
+      <button class="portas-x" type="button" data-portas-fechar aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+
+      <p class="portas-kicker">Oferta de lançamento</p>
+      <h2 class="portas-titulo" id="portas-titulo">Escolha uma porta.</h2>
+      <p class="portas-sub">Você está a um clique de ver quanto custa.</p>
+
+      <div class="portas-grade">
+        <button class="porta" type="button" data-porta="1" aria-label="Abrir a primeira porta">
+          <span class="porta-folha"><span class="porta-num">I</span><span class="porta-maca"></span></span>
+          <span class="porta-atras"><b>35%</b><small>de desconto</small></span>
+        </button>
+        <button class="porta" type="button" data-porta="2" aria-label="Abrir a segunda porta">
+          <span class="porta-folha"><span class="porta-num">II</span><span class="porta-maca"></span></span>
+          <span class="porta-atras"><b>35%</b><small>de desconto</small></span>
+        </button>
+        <button class="porta" type="button" data-porta="3" aria-label="Abrir a terceira porta">
+          <span class="porta-folha"><span class="porta-num">III</span><span class="porta-maca"></span></span>
+          <span class="porta-atras"><b>35%</b><small>de desconto</small></span>
+        </button>
+      </div>
+
+      <div class="portas-pos">
+        <p class="portas-resultado"><b>35% de desconto</b> em qualquer plano, até 30 de setembro.</p>
+        <button class="btn btn-primary btn-lg btn-arrow" type="button" data-portas-seguir data-cta="portas">Ver os planos com desconto</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="header">
     <div class="container header-inner">
-      <a href="index.html" class="logo" aria-label="BlueShieldPro · Home">
+      <!-- A marca continua visivel, mas nao leva mais para fora: no
+           cabecalho de uma pagina de venda o logo e a saida que ninguem
+           conta, porque parece inofensiva. -->
+      <a href="#topo" class="logo" aria-label="BlueShieldPro">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M24 4 6 11v13c0 11 7.7 17.6 18 20 10.3-2.4 18-9 18-20V11L24 4z" fill="currentColor"/>
           <path d="m17 24 5 5 9-11" stroke="#0B0B0B" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span>BlueShield<em>Pro</em></span>
       </a>
-      <nav class="nav" aria-label="Navegação principal">
-        <a href="index.html">Home</a>
-        <a href="sobre.html">Sobre</a>
-        <a href="servicos.html">Serviços</a>
-        <a href="solucoes.html">Soluções</a>
-        <a href="skills.html" class="active">Skills</a>
-        <a href="portfolio.html">Portfólio</a>
-        <a href="processo.html">Processo</a>
-        <a href="faq.html">FAQ</a>
-        <a href="contato.html">Contato</a>
-      </nav>
-      <a href="#planos" class="btn btn-primary btn-sm btn-cta btn-arrow">Ver planos</a>
-      <button class="hamburger" aria-label="Abrir menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+      <!-- Sem menu nesta pagina, de proposito. Ela recebe trafego pago,
+           e menu em pagina de venda nao e navegacao: e porta de saida.
+           Em 02/09 o cabecalho tinha 21 links, cada um uma forma de sair
+           do funil antes de chegar no preco, e a medicao mostrava 27% das
+           sessoes rolando a pagina. Quem chega aqui vindo de anuncio tem
+           uma decisao para tomar e agora tem uma acao para tomar ela.
+           O site inteiro continua alcancavel pelo rodape. -->
+      <a href="#precos" class="btn btn-primary btn-sm btn-cta btn-arrow" data-cta="cabecalho">Ver planos</a>
     </div>
   </header>
-
-  <nav class="mobile-nav" aria-label="Menu mobile">
-    <a href="index.html">Home</a>
-    <a href="sobre.html">Sobre</a>
-    <a href="servicos.html">Serviços</a>
-    <a href="solucoes.html">Soluções</a>
-    <a href="skills.html" class="active">Skills</a>
-    <a href="portfolio.html">Portfólio</a>
-    <a href="processo.html">Processo</a>
-    <a href="faq.html">FAQ</a>
-    <a href="contato.html">Contato</a>
-    <a href="#planos" class="btn btn-primary btn-arrow">Ver planos</a>
-  </nav>
 
   <main class="page-shift">
 
@@ -239,6 +388,121 @@
                e-mail logo após a confirmação. 7 dias para desistir.</p>
           </div>
         </div>
+
+
+        <!-- ============ Preco, na primeira tela ============
+             Antes os tres cartoes ficavam na tela 3,3 de uma pagina
+             de 4,6 telas, e a medicao mostrava 27% das sessoes
+             rolando alguma coisa. Ou seja: a maioria de quem pagamos
+             para trazer nunca chegou a ver quanto custa. Agora o
+             preco aparece antes do argumento, e o argumento fica
+             abaixo para quem precisa dele. -->
+        <div class="oferta">
+          <span class="oferta-selo">Oferta de lançamento</span>
+          <p><b>35% de desconto</b> em todos os planos, até 30 de setembro de 2026.
+             Depois dessa data cada plano volta ao valor cheio.</p>
+        </div>
+
+        <!-- Confianca junto do preco, que e onde a duvida aparece.
+             Nada aqui e depoimento: sao quatro fatos que a pessoa pode
+             conferir sozinha em trinta segundos. Para comprador B2B
+             cetico isso pesa mais do que elogio de desconhecido, e nao
+             corre o risco de ser desmentido. -->
+        <ul class="selos">
+          <li><b>Entrega automática</b><span>o PDF chega no seu e-mail em minutos, não em dias úteis</span></li>
+          <li><b>7 dias para desistir</b><span>direito de arrependimento do Código de Defesa do Consumidor</span></li>
+          <li><b>Pagamento pela Stripe</b><span>seus dados de cartão não passam por nós em momento algum</span></li>
+          <li><b>CNPJ 68.117.082/0001-92</b><span>empresa registrada, com nota e endereço verificáveis</span></li>
+        </ul>
+
+        <div class="plans" id="precos" data-plans>
+
+          <!-- ---------- BÁSICO ---------- -->
+          <article class="plan" data-plan="basico">
+            <p class="plan-name">Básico</p>
+            <p class="plan-cheio">Valor cheio <s>R$ 61,90</s></p>
+            <div class="plan-price">
+              <span class="cur">R$</span>
+              <span class="val" data-price data-amount="39.90">39,90</span>
+            </div>
+            <p class="plan-note" data-period>pagamento único</p>
+
+            <ul class="plan-features">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>40 Skills prontas para instalar</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Relatórios de cliente e de campanha</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Pesquisa de mercado e de concorrente</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Revisão de texto e de entrega</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Guia de instalação passo a passo</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Acesso imediato por e-mail</span></li>
+            </ul>
+
+            <hr>
+            <button class="btn btn-ghost btn-lg" type="button" data-buy="basico">Começar</button>
+            <p class="plan-desc">Para quem quer tirar o trabalho repetitivo da mesa hoje.</p>
+          </article>
+
+          <!-- ---------- MEDIUM (destaque) ---------- -->
+          <article class="plan plan--popular" data-plan="medium">
+            <span class="plan-badge">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>
+              Mais escolhido
+            </span>
+
+            <p class="plan-name">Medium</p>
+            <p class="plan-cheio">Valor cheio <s>R$ 107,90</s></p>
+            <div class="plan-price">
+              <span class="cur">R$</span>
+              <span class="val" data-price data-amount="69.90">69,90</span>
+            </div>
+            <p class="plan-note" data-period>pagamento único</p>
+
+            <ul class="plan-features">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Básico incluído</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills de várias etapas encadeadas</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Análise de dados e leitura de planilha</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Geração de proposta e de briefing</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Ajuste das Skills ao seu processo</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Suporte por e-mail em até 24h</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Atualizações por 12 meses</span></li>
+            </ul>
+
+            <hr>
+            <button class="btn btn-primary btn-lg btn-arrow" type="button" data-buy="medium">Quero o Medium</button>
+            <p class="plan-desc">O ponto de equilíbrio para agência com equipe pequena.</p>
+          </article>
+
+          <!-- ---------- PREMIUM ---------- -->
+          <article class="plan" data-plan="premium">
+            <p class="plan-name">Premium</p>
+            <p class="plan-cheio">Valor cheio <s>R$ 153,90</s></p>
+            <div class="plan-price">
+              <span class="cur">R$</span>
+              <span class="val" data-price data-amount="99.90">99,90</span>
+            </div>
+            <p class="plan-note" data-period>pagamento único</p>
+
+            <ul class="plan-features">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Medium incluído</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills que criam as próprias automações</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Rotinas que rodam sozinhas todo dia</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Conexão com planilhas, e-mail e APIs</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Licença de uso com os seus clientes</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Suporte prioritário em até 4h</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Sessão de implantação de 1 hora</span></li>
+            </ul>
+
+            <hr>
+            <button class="btn btn-ghost btn-lg" type="button" data-buy="premium">Ver o que há de melhor</button>
+            <p class="plan-desc">Para quem quer a IA construindo o próprio fluxo de trabalho.</p>
+          </article>
+
+        </div>
+
+        <p class="plan-desc reveal" style="margin-top:38px;max-width:640px;margin-left:auto;margin-right:auto;">
+          Pagamento seguro processado pela Stripe. Cartão de crédito, Apple Pay e Link. Você recebe o acesso por e-mail
+          logo após a confirmação, com o guia de uso de cada Skill.
+          Direito de arrependimento de 7 dias, conforme o Código de Defesa do Consumidor.
+        </p>
 
         <!-- ============ Prova concreta ============ -->
         <div class="prova">
@@ -460,100 +724,6 @@
           <span class="switch-label">Assinatura mensal <b>(novas Skills toda semana)</b></span>
         </div>
 
-        <div class="oferta">
-          <span class="oferta-selo">Oferta de lançamento</span>
-          <p><b>35% de desconto</b> em todos os planos, até 30 de setembro de 2026.
-             Depois dessa data cada plano volta ao valor cheio.</p>
-        </div>
-
-        <div class="plans" id="precos" data-plans>
-
-          <!-- ---------- BÁSICO ---------- -->
-          <article class="plan" data-plan="basico">
-            <p class="plan-name">Básico</p>
-            <p class="plan-cheio">Valor cheio <s>R$ 61,90</s></p>
-            <div class="plan-price">
-              <span class="cur">R$</span>
-              <span class="val" data-price data-amount="39.90">39,90</span>
-            </div>
-            <p class="plan-note" data-period>pagamento único</p>
-
-            <ul class="plan-features">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>40 Skills prontas para instalar</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Relatórios de cliente e de campanha</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Pesquisa de mercado e de concorrente</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Revisão de texto e de entrega</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Guia de instalação passo a passo</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Acesso imediato por e-mail</span></li>
-            </ul>
-
-            <hr>
-            <button class="btn btn-ghost btn-lg" type="button" data-buy="basico">Começar</button>
-            <p class="plan-desc">Para quem quer tirar o trabalho repetitivo da mesa hoje.</p>
-          </article>
-
-          <!-- ---------- MEDIUM (destaque) ---------- -->
-          <article class="plan plan--popular" data-plan="medium">
-            <span class="plan-badge">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>
-              Mais escolhido
-            </span>
-
-            <p class="plan-name">Medium</p>
-            <p class="plan-cheio">Valor cheio <s>R$ 107,90</s></p>
-            <div class="plan-price">
-              <span class="cur">R$</span>
-              <span class="val" data-price data-amount="69.90">69,90</span>
-            </div>
-            <p class="plan-note" data-period>pagamento único</p>
-
-            <ul class="plan-features">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Básico incluído</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills de várias etapas encadeadas</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Análise de dados e leitura de planilha</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Geração de proposta e de briefing</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Ajuste das Skills ao seu processo</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Suporte por e-mail em até 24h</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Atualizações por 12 meses</span></li>
-            </ul>
-
-            <hr>
-            <button class="btn btn-primary btn-lg btn-arrow" type="button" data-buy="medium">Quero o Medium</button>
-            <p class="plan-desc">O ponto de equilíbrio para agência com equipe pequena.</p>
-          </article>
-
-          <!-- ---------- PREMIUM ---------- -->
-          <article class="plan" data-plan="premium">
-            <p class="plan-name">Premium</p>
-            <p class="plan-cheio">Valor cheio <s>R$ 153,90</s></p>
-            <div class="plan-price">
-              <span class="cur">R$</span>
-              <span class="val" data-price data-amount="99.90">99,90</span>
-            </div>
-            <p class="plan-note" data-period>pagamento único</p>
-
-            <ul class="plan-features">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Medium incluído</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills que criam as próprias automações</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Rotinas que rodam sozinhas todo dia</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Conexão com planilhas, e-mail e APIs</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Licença de uso com os seus clientes</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Suporte prioritário em até 4h</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Sessão de implantação de 1 hora</span></li>
-            </ul>
-
-            <hr>
-            <button class="btn btn-ghost btn-lg" type="button" data-buy="premium">Ver o que há de melhor</button>
-            <p class="plan-desc">Para quem quer a IA construindo o próprio fluxo de trabalho.</p>
-          </article>
-
-        </div>
-
-        <p class="plan-desc reveal" style="margin-top:38px;max-width:640px;margin-left:auto;margin-right:auto;">
-          Pagamento seguro processado pela Stripe. Cartão de crédito, Apple Pay e Link. Você recebe o acesso por e-mail
-          logo após a confirmação, com o guia de uso de cada Skill.
-          Direito de arrependimento de 7 dias, conforme o Código de Defesa do Consumidor.
-        </p>
 
       </div>
     </section>
@@ -628,5 +798,6 @@
   <script src="js/main.js" defer></script>
   <script src="js/skills.js" defer></script>
   <script src="js/medicao.js" defer></script>
+  <script src="js/portas.js" defer></script>
 </body>
 </html>
