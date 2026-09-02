@@ -55,6 +55,14 @@
   }
   var CONTEXTO = contexto();
 
+  // Exposto porque o evento de ida para o pagamento, que mora em
+  // skills.js, precisa da mesma classificacao. Sem ela nao da para
+  // saber se quem desiste no caminho do pagamento desiste mais no
+  // navegador embutido do que no comum — que e justamente a
+  // suspeita que o evento existe para testar.
+  w.bsp = w.bsp || {};
+  w.bsp.contexto = contexto;
+
   // Envia para o Analytics. Silencioso se a tag ainda nao carregou —
   // medicao nunca pode quebrar a pagina que ela mede.
   function enviar(nome, parametros) {

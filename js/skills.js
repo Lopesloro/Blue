@@ -145,9 +145,52 @@
   var focoAnterior = null;
   var checkoutStripe = null;
 
+  /* ---------- Ida direta para o pagamento -------------------
+     Enquanto o site roda por Payment Link, o painel nao tinha o
+     que mostrar alem de um resumo e um SEGUNDO botao. Esse clique
+     extra acontece dentro do navegador embutido do Instagram, que
+     e onde mais se perde gente — e ninguem media quantos passavam
+     dele: entre o begin_checkout e a compra nao havia evento
+     nenhum. Em 6 dias, 10 pessoas clicaram num plano e zero
+     compraram, sem nenhum dado para dizer onde o funil quebrava.
+
+     Agora o clique no plano leva direto para a Stripe e dispara
+     `ida_pagamento` antes de sair. O proximo numero responde a
+     pergunta que a gente nao conseguia responder: das pessoas que
+     escolhem um plano, quantas chegam a ver a tela de pagamento.
+
+     O painel continua existindo para o caminho do Embedded
+     Checkout, que precisa de um lugar para montar.
+     ----------------------------------------------------------- */
+  function irDiretoAoPagamento(chave) {
+    var s = CONFIG.stripe;
+    if (s.criarSessaoURL || !s.paymentLinks[chave]) return false;
+
+    rastrearInicio(chave);
+
+    if (typeof window.gtag === 'function' && window.BSP_GA4_ID) {
+      window.gtag('event', 'ida_pagamento', {
+        send_to: window.BSP_GA4_ID,
+        plano: chave,
+        contexto_navegador: (window.bsp && window.bsp.contexto) ? window.bsp.contexto() : 'desconhecido'
+      });
+    }
+
+    var destino = comAtribuicao(s.paymentLinks[chave]);
+
+    // Os eventos saem por beacon, mas o pixel nem sempre. Uma pausa
+    // curta garante que a requisicao parta antes da navegacao matar
+    // a pagina; 300ms nao e percebido como espera.
+    setTimeout(function () { window.location.href = destino; }, 300);
+    return true;
+  }
+
   function abrir(chave) {
     var plano = CONFIG.planos[chave];
-    if (!plano || !painel) return;
+    if (!plano) return;
+
+    if (irDiretoAoPagamento(chave)) return;
+    if (!painel) return;
 
     var valor = mensal ? plano.mensal : plano.unico;
 
