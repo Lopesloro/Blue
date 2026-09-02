@@ -24,7 +24,14 @@
   'use strict';
 
   var CHAVE = 'bsp_portas_2026_09';
-  var ATRASO = 700;   // deixa a pagina pintar antes de interromper
+  var ATRASO = 700;      // deixa a pagina pintar antes de interromper
+  var VALIDADE = 7 * 24 * 60 * 60 * 1000;   // 7 dias
+
+  /* `?portas=1` na URL forca a exibicao, ignorando a marca. Existe
+     porque quem construiu a pagina precisa ver de novo sem limpar
+     dados do navegador, e porque "sumiu" e indistinguivel de
+     "quebrou" quando nao ha como forcar. */
+  var FORCAR = /[?&]portas=1\b/.test(location.search);
 
   var caixa = d.querySelector('[data-portas]');
   var precos = d.getElementById('precos');
@@ -33,11 +40,24 @@
   /* localStorage lanca excecao em janela anonima de alguns
      navegadores. Falhar aqui nao pode derrubar a pagina de venda:
      no pior caso a pessoa ve o jogo de novo, o que e inofensivo. */
+  /* Antes a marca era permanente: quem escolhesse uma porta nunca mais
+     via o jogo. Isso deixa de fora justamente quem volta — a pessoa que
+     viu, nao comprou e voltou dias depois e a que mais precisa ser
+     lembrada da oferta. Sete dias e curto o bastante para nao irritar
+     quem volta na mesma semana e longo o bastante para nao repetir na
+     mesma visita. */
   function jaViu() {
-    try { return w.localStorage.getItem(CHAVE) === '1'; } catch (e) { return false; }
+    if (FORCAR) return false;
+    try {
+      var marca = w.localStorage.getItem(CHAVE);
+      if (!marca) return false;
+      var quando = parseInt(marca, 10);
+      if (!quando) return true;                    // marca antiga, formato '1'
+      return (Date.now() - quando) < VALIDADE;
+    } catch (e) { return false; }
   }
   function marcarVisto() {
-    try { w.localStorage.setItem(CHAVE, '1'); } catch (e) {}
+    try { w.localStorage.setItem(CHAVE, String(Date.now())); } catch (e) {}
   }
 
   function medir(nome, params) {

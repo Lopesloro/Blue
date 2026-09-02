@@ -207,11 +207,69 @@
      caminho degrada para navegacao na propria aba — nunca para
      "nao aconteceu nada".
      ----------------------------------------------------------- */
+  /* ---------- Checkout preparado antes do clique ------------
+     O backend responde em 0,3 a 0,6 segundo. Nao e lento, mas e tempo
+     morto que acontece DEPOIS do clique, com a aba ja aberta em
+     branco — e meio segundo de tela vazia logo apos decidir comprar
+     e onde a duvida volta.
+
+     Entao a preferencia e criada quando a pessoa CHEGA nos precos,
+     nao quando ela clica. Quando o clique vem, a URL ja esta pronta
+     e a aba abre direto no destino, sem passar por branco.
+
+     Uma preferencia por plano, criada uma vez por visita. Preferencia
+     que ninguem usa simplesmente expira do lado da Mercado Pago —
+     nao cobra nada e nao suja relatorio. */
+  var checkoutPronto = {};
+  var checkoutPedido = {};
+
+  function prepararCheckout(chave) {
+    var mp = CONFIG.mercadoPago;
+    if (!mp || !mp.criarURL) return;
+    if (checkoutPronto[chave] || checkoutPedido[chave]) return;
+    checkoutPedido[chave] = true;
+
+    var ref = (window.bsp && window.bsp.refAtribuicao) ? window.bsp.refAtribuicao() : '';
+    fetch(mp.criarURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plano: chave, ref: ref })
+    })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http ' + r.status)); })
+      .then(function (dados) { if (dados && dados.url) checkoutPronto[chave] = dados.url; })
+      .catch(function () { checkoutPedido[chave] = false; });   // deixa tentar de novo no clique
+  }
+
+  /* Dispara quando os precos entram na tela: e o momento em que a
+     pessoa passa a considerar comprar, e sobra tempo de rede ate ela
+     escolher um plano. */
+  (function observarPrecos() {
+    var alvo = document.getElementById('precos');
+    if (!alvo || !window.IntersectionObserver) return;
+    var obs = new IntersectionObserver(function (entradas) {
+      if (!entradas.some(function (e) { return e.isIntersecting; })) return;
+      obs.disconnect();
+      Object.keys(CONFIG.planos).forEach(prepararCheckout);
+    }, { threshold: 0.2 });
+    obs.observe(alvo);
+  })();
+
   function pagarComMercadoPago(chave) {
     var mp = CONFIG.mercadoPago;
     if (!mp || !mp.criarURL) return false;
 
     rastrearInicio(chave);
+
+    /* Caminho rapido: o checkout ja estava pronto, entao a aba abre
+       direto no destino. Zero espera, zero tela em branco. */
+    var jaPronto = checkoutPronto[chave];
+    if (jaPronto) {
+      medirIda(chave, 'mercadopago-pronto');
+      var direta = window.open(jaPronto, '_blank');
+      if (!direta) window.location.href = jaPronto;   // pop-up bloqueado
+      return true;
+    }
+
     medirIda(chave, 'mercadopago');
 
     // Precisa ser sincrono, dentro do gesto do clique.
