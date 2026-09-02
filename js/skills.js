@@ -357,8 +357,10 @@
       document.body.style.overflow = 'hidden';
       fechar.focus();
     });
-
-    iniciarStripe(chave);
+    /* Nada de iniciarStripe aqui. O Embedded Checkout da Stripe montava
+       num #checkout-mount que deixou de existir quando o painel virou o
+       lugar do pagamento — chamar isso agora so lanca excecao em cima do
+       painel que acabou de abrir. Quem paga aqui e o pagamento.js. */
   }
 
   function fecharPainel() {
