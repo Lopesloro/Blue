@@ -166,6 +166,91 @@
     if (d.visibilityState === 'hidden') resumo();
   }
 
+  /* ---------- Para onde a pessoa vai quando não compra --------
+     Em 02/09 a conta era esta: 89 cliques no anúncio, 73 visitas,
+     10 idas ao pagamento, zero venda. A rolagem dizia que só 27%
+     das sessões rolavam alguma coisa — e os cartões de preço estão
+     na terceira tela e meia de uma página de quatro telas e meia.
+
+     Só que "não rolou" não explica o que a pessoa fez. Ela pode ter
+     saído pelo topo: o cabeçalho desta página tem 21 links, cada um
+     deles uma porta para fora do funil de venda. Nenhum evento
+     media isso.
+
+     Os três eventos abaixo respondem, sem depender de ferramenta de
+     terceiro e sem cadastro em lugar nenhum:
+
+       saida_menu     — clicou num link do cabeçalho ou rodapé e
+                        deixou a página de venda. Diz o tamanho do
+                        vazamento e por qual porta ele sai.
+       marco_pagina   — passou pelo herói, pelo conteúdo ou chegou
+                        nos preços. Diz onde a leitura morre.
+       clique_morto   — clicou em algo que não é clicável. Sinal de
+                        frustração: a pessoa achou que era botão.
+     ----------------------------------------------------------- */
+  var marcosVistos = {};
+
+  function observarMarcos() {
+    var alvos = [
+      { chave: 'heroi', el: d.querySelector('h1') },
+      { chave: 'conteudo', el: d.querySelector('h2') },
+      { chave: 'precos', el: d.getElementById('precos') }
+    ].filter(function (a) { return a.el; });
+
+    if (!w.IntersectionObserver) return;
+
+    var obs = new w.IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var chave = e.target.getAttribute('data-marco');
+        if (!chave || marcosVistos[chave]) return;
+        marcosVistos[chave] = true;
+        enviar('marco_pagina', { marco: chave, segundos_ate: segundosVisiveis });
+        obs.unobserve(e.target);
+      });
+    }, { threshold: 0.35 });
+
+    alvos.forEach(function (a) {
+      a.el.setAttribute('data-marco', a.chave);
+      obs.observe(a.el);
+    });
+  }
+
+  function aoClicar(e) {
+    var link = e.target.closest ? e.target.closest('a[href]') : null;
+
+    if (link) {
+      var href = link.getAttribute('href') || '';
+      var dentroDoCabecalho = !!(link.closest('header') || link.closest('nav') || link.closest('.footer'));
+      // Âncora na própria página não é saída — é navegação interna.
+      var saiDaPagina = href && href.charAt(0) !== '#'
+        && !/^(javascript:|mailto:|tel:)/i.test(href)
+        && link.pathname !== w.location.pathname;
+
+      if (dentroDoCabecalho && saiDaPagina) {
+        enviar('saida_menu', {
+          destino: (link.pathname || href).slice(0, 100),
+          rotulo: (link.textContent || '').trim().slice(0, 40),
+          onde: link.closest('.footer') ? 'rodape' : 'cabecalho',
+          profundidade: profundidadeMaxima,
+          segundos_ate: segundosVisiveis
+        });
+      }
+      return;
+    }
+
+    // Clique que não acertou nada clicável.
+    var interativo = e.target.closest
+      ? e.target.closest('a,button,input,select,textarea,summary,[role="button"],[data-buy],[data-cta]')
+      : null;
+    if (!interativo) {
+      enviar('clique_morto', {
+        alvo: (e.target.tagName || '').toLowerCase() + (e.target.className ? '.' + String(e.target.className).split(' ')[0] : ''),
+        profundidade: profundidadeMaxima
+      });
+    }
+  }
+
   function iniciar() {
     medirRolagem();
     relogio = w.setInterval(tique, 1000);
@@ -173,6 +258,8 @@
     w.addEventListener('resize', aoRolar, { passive: true });
     d.addEventListener('visibilitychange', aoMudarVisibilidade);
     w.addEventListener('pagehide', resumo);
+    d.addEventListener('click', aoClicar, true);
+    observarMarcos();
   }
 
   if (d.readyState === 'loading') {
