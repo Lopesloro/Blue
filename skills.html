@@ -199,6 +199,43 @@
     }
     .cupom-cod.copiado::after { content: 'copiado'; color: var(--text-1); }
 
+    /* Painel de pagamento. */
+    .pg-desc { font-size: 13.5px; line-height: 1.55; color: var(--text-2); margin: 18px 0 10px; }
+    .pg-itens { list-style: none; padding: 0; margin: 0 0 18px; }
+    .pg-itens li { position: relative; padding: 5px 0 5px 20px; font-size: 13px; color: var(--text-2); }
+    .pg-itens li::before { content: ''; position: absolute; left: 2px; top: 12px; width: 7px; height: 7px;
+                           border-radius: 50%; background: var(--text-3); }
+    .pg-nota { font-size: 12px; line-height: 1.5; color: var(--text-3); margin: 14px 0 0; }
+    .pg-meios { display: grid; gap: 10px; margin-top: 20px; }
+    .pg-meios .btn { width: 100%; justify-content: center; }
+    .pg-campo { display: block; margin-bottom: 14px; }
+    .pg-campo span { display: block; font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+                     color: var(--text-3); margin-bottom: 6px; }
+    .pg-campo input {
+      width: 100%; padding: 12px 14px; font: inherit; font-size: 15px;
+      color: var(--text-1); background: rgba(255,255,255,.03);
+      border: 1px solid var(--line); border-radius: var(--radius);
+    }
+    .pg-campo input:focus { outline: none; border-color: var(--line-strong); background: rgba(255,255,255,.05); }
+    .pg-erro { font-size: 13px; color: #E8962C; margin: 0 0 12px; }
+    .pg-erro[hidden] { display: none; }
+    [data-etapa="dados"] .btn { width: 100%; justify-content: center; margin-top: 8px; }
+    .pg-qr { display: block; width: 210px; max-width: 70%; margin: 4px auto 16px; border-radius: 10px; background: #fff; }
+    .pg-copiar {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 12px 14px; cursor: pointer; text-align: left;
+      background: rgba(255,255,255,.03); border: 1px dashed var(--line-strong);
+      border-radius: var(--radius); color: var(--text-1); font: inherit;
+    }
+    .pg-copiar code { flex: 1; font-size: 11px; line-height: 1.4; word-break: break-all;
+                      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text-2); }
+    .pg-copiar span { flex-shrink: 0; font-size: 11px; text-transform: uppercase;
+                      letter-spacing: .06em; color: var(--text-3); }
+    .pg-copiar.copiado span { color: var(--text-1); }
+    .pg-copiar.copiado span::after { content: 'do'; }
+    .pg-espera { font-size: 13px; color: var(--text-3); margin: 16px 0 0; text-align: center; }
+    .pg-espera.ok { color: var(--text-1); font-weight: 600; }
+
     .selos {
       list-style: none; padding: 0; margin: 0 auto 30px; max-width: 900px;
       display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
@@ -637,6 +674,21 @@
   <!-- ============ Painel lateral de checkout ============ -->
   <div class="checkout-backdrop" data-checkout-backdrop hidden></div>
 
+  <!-- ============ Pagamento dentro da propria pagina ============
+       Refeito depois de duas descobertas no celular. Primeira: o
+       Checkout Pro abre dentro do APLICATIVO do Mercado Livre — quem
+       veio de um anuncio do Instagram para comprar um PDF de R$ 39,90
+       nao instala aplicativo para pagar, e quem ja tem sai do nosso
+       funil para dentro de um marketplace cheio de outras coisas para
+       olhar. Segunda: a tela "Revise o seu pagamento" deles mostra so
+       titulo e total, entao a pessoa decide pagar sem nunca ler o que
+       esta levando.
+
+       Aqui as duas coisas se resolvem no mesmo lugar: a descricao do
+       que entra no pacote fica visivel ao lado do valor, e o Pix nasce
+       nesta pagina, com QR e copia-e-cola desenhados aqui. Ninguem sai
+       do site. Cartao e boleto seguem para o Checkout Pro, que para
+       cartao continua sendo o caminho mais seguro e ja funciona. -->
   <div class="checkout-panel" data-checkout-panel role="dialog" aria-modal="true"
          aria-labelledby="checkout-title" hidden>
     <div class="checkout-head">
@@ -647,24 +699,76 @@
     </div>
 
     <div class="checkout-body">
-      <div class="checkout-summary">
-        <div class="row">
-          <span>Plano</span>
-          <span data-sum-plan style="color:var(--text-1);font-weight:600;">—</span>
+
+      <!-- ETAPA 1 — o que esta comprando -->
+      <div data-etapa="resumo">
+        <div class="checkout-summary">
+          <div class="row">
+            <span>Plano</span>
+            <span data-sum-plan style="color:var(--text-1);font-weight:600;">—</span>
+          </div>
+          <div class="row">
+            <span>Total</span>
+            <b data-sum-total>—</b>
+          </div>
         </div>
-        <div class="row">
-          <span>Total</span>
-          <b data-sum-total>—</b>
+
+        <p class="pg-desc" data-sum-desc></p>
+        <ul class="pg-itens" data-sum-itens></ul>
+
+        <p class="pg-nota">
+          Entrega automática por e-mail assim que o pagamento for confirmado.
+          7 dias para desistir, conforme o Código de Defesa do Consumidor.
+        </p>
+
+        <div class="pg-meios">
+          <button class="btn btn-primary btn-lg btn-arrow" type="button" data-pagar-pix>
+            Pagar com Pix
+          </button>
+          <button class="btn btn-ghost btn-lg" type="button" data-pagar-cartao>
+            Cartão, boleto ou saldo
+          </button>
         </div>
       </div>
 
-      <!-- O Stripe Embedded Checkout monta aqui. -->
-      <div id="checkout-mount"></div>
+      <!-- ETAPA 2 — dados minimos que o Banco Central exige para Pix -->
+      <form data-etapa="dados" hidden autocomplete="on">
+        <p class="pg-desc">
+          O Banco Central exige identificação de quem paga por Pix. Estes dados vão
+          direto para o Mercado Pago — não ficam guardados aqui.
+        </p>
+        <label class="pg-campo">
+          <span>Nome completo</span>
+          <input type="text" name="nome" required autocomplete="name" placeholder="Como está no seu documento">
+        </label>
+        <label class="pg-campo">
+          <span>E-mail</span>
+          <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="onde o acesso vai chegar">
+        </label>
+        <label class="pg-campo">
+          <span>CPF</span>
+          <input type="text" name="cpf" required inputmode="numeric" maxlength="14" placeholder="000.000.000-00">
+        </label>
+        <p class="pg-erro" data-pg-erro hidden></p>
+        <button class="btn btn-primary btn-lg btn-arrow" type="submit" data-pg-gerar>Gerar o código Pix</button>
+        <button class="btn btn-ghost" type="button" data-pg-voltar>Voltar</button>
+      </form>
 
-      <p class="checkout-pending" data-checkout-pending>
-        Pagamento ainda não conectado. Assim que as chaves da Stripe forem configuradas,
-        o formulário aparece aqui dentro, sem sair da página.
-      </p>
+      <!-- ETAPA 3 — o codigo, nesta pagina -->
+      <div data-etapa="pix" hidden>
+        <p class="pg-desc">
+          Abra o aplicativo do seu banco, escolha <b>Pix &middot; Pagar com QR Code</b> ou
+          <b>Pix Copia e Cola</b>, e finalize. O acesso chega no seu e-mail em segundos.
+        </p>
+        <img class="pg-qr" data-pg-qr alt="QR Code do Pix" hidden>
+        <button class="pg-copiar" type="button" data-pg-copiar>
+          <code data-pg-codigo></code>
+          <span>copiar</span>
+        </button>
+        <p class="pg-espera" data-pg-espera>Aguardando o pagamento…</p>
+        <p class="pg-nota" data-pg-expira></p>
+      </div>
+
     </div>
   </div>
 
@@ -703,5 +807,6 @@
   <script src="js/skills.js" defer></script>
   <script src="js/medicao.js" defer></script>
   <script src="js/cupom.js" defer></script>
+  <script src="js/pagamento.js" defer></script>
 </body>
 </html>

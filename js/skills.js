@@ -327,12 +327,20 @@
     return true;
   }
 
+  var w2 = window;
+
+  /* O painel voltou, e a razao mudou. Antes ele era um resumo com um
+     SEGUNDO botao para sair do site — clique extra sem funcao, e foi
+     por isso que saiu. Agora ele e onde o pagamento acontece: mostra o
+     que entra no pacote (a tela do Mercado Pago mostra so titulo e
+     total) e gera o Pix aqui dentro, sem mandar ninguem para o
+     aplicativo do Mercado Livre. */
   function abrir(chave) {
     var plano = CONFIG.planos[chave];
-    if (!plano) return;
+    if (!plano || !painel) return;
 
-    if (irDiretoAoPagamento(chave)) return;
-    if (!painel) return;
+    rastrearInicio(chave);
+    if (w2.bsp && typeof w2.bsp.descreverPlano === 'function') w2.bsp.descreverPlano(chave);
 
     var valor = mensal ? plano.mensal : plano.unico;
 
@@ -366,6 +374,14 @@
       if (focoAnterior) focoAnterior.focus();
     }, 420);
   }
+
+  /* Cartao e boleto continuam no Checkout Pro. O pagamento.js chama
+     isto quando a pessoa escolhe esse caminho. */
+  w2.bsp = w2.bsp || {};
+  w2.bsp.abrirCheckoutPro = function (chave) {
+    if (!chave) return;
+    pagarComMercadoPago(chave);
+  };
 
   document.querySelectorAll('[data-buy]').forEach(function (b) {
     b.addEventListener('click', function () { abrir(b.dataset.buy); });
