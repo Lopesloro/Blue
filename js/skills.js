@@ -35,11 +35,23 @@
       // Alternativa sem backend: um Payment Link por plano.
       // Se preenchido e criarSessaoURL estiver vazio, o botao
       // redireciona para o link.
+      // Reserva silenciosa. NAO e mais o caminho principal: o
+      // Mercado Pago passou na frente porque a Stripe nao libera
+      // Pix para esta conta. Estes links so entram se a criacao do
+      // checkout falhar — servico dormindo, rede caindo. Ficam
+      // porque "nao consegui pagar" custa uma venda, e manter uma
+      // reserva que ja funciona custa tres linhas.
       paymentLinks: {
         basico:  'https://buy.stripe.com/aFa8wOfGGgcK2Dp6C46wE00',
         medium:  'https://buy.stripe.com/eVq6oGdyyaSq7XJbWo6wE01',
         premium: 'https://buy.stripe.com/cNi4gy8eed0y4Lxf8A6wE02'
       }
+    },
+
+    /* Caminho principal de pagamento. O backend monta o checkout e
+       devolve a URL; o site nunca vê token nenhum. */
+    mercadoPago: {
+      criarURL: 'https://blue-skills-api.onrender.com/mercadopago/preferencia'
     }
   };
 
@@ -162,19 +174,91 @@
      O painel continua existindo para o caminho do Embedded
      Checkout, que precisa de um lugar para montar.
      ----------------------------------------------------------- */
+  function medirIda(chave, provedor) {
+    if (typeof window.gtag !== 'function' || !window.BSP_GA4_ID) return;
+    window.gtag('event', 'ida_pagamento', {
+      send_to: window.BSP_GA4_ID,
+      plano: chave,
+      provedor: provedor,
+      contexto_navegador: (window.bsp && window.bsp.contexto) ? window.bsp.contexto() : 'desconhecido'
+    });
+  }
+
+  /* ---------- Mercado Pago, numa aba nova -------------------
+     A Stripe nao libera Pix para esta conta — `pix` e `boleto`
+     voltam com "available": false na configuracao de meios de
+     pagamento, que e elegibilidade negada e nao opcao desmarcada.
+     E em 02/09 a medicao isolou a perda exatamente ali: o funil
+     ate o checkout ficou 1:1, todo mundo que escolhia um plano
+     chegava a tela de pagamento, e ninguem pagava. Cobrar so
+     cartao de um publico brasileiro vindo do Instagram e escolher
+     perder metade.
+
+     ABA NOVA, e nao navegacao: a pagina de venda continua viva
+     atras. Se a pessoa desistir do pagamento, ela fecha a aba e
+     esta de volta onde parou, com o plano ainda escolhido — em
+     vez de ter sido levada embora do site e precisar voltar.
+
+     A armadilha aqui e o bloqueador de pop-up: `window.open`
+     chamado depois de um `await` perde o vinculo com o clique e o
+     navegador bloqueia. Por isso a aba e aberta VAZIA no mesmo
+     instante do clique, ainda dentro do gesto do usuario, e so
+     depois recebe o endereco. Se mesmo assim vier bloqueada, o
+     caminho degrada para navegacao na propria aba — nunca para
+     "nao aconteceu nada".
+     ----------------------------------------------------------- */
+  function pagarComMercadoPago(chave) {
+    var mp = CONFIG.mercadoPago;
+    if (!mp || !mp.criarURL) return false;
+
+    rastrearInicio(chave);
+    medirIda(chave, 'mercadopago');
+
+    // Precisa ser sincrono, dentro do gesto do clique.
+    var aba = window.open('', '_blank');
+    if (aba && aba.document) {
+      aba.document.write('<!doctype html><meta charset="utf-8">'
+        + '<title>Abrindo o pagamento…</title>'
+        + '<body style="margin:0;display:grid;place-items:center;height:100vh;'
+        + 'background:#0B0B0B;color:#C7C7C7;font:15px/1.5 system-ui,sans-serif">'
+        + 'Abrindo o pagamento seguro…</body>');
+    }
+
+    var ref = (window.bsp && window.bsp.refAtribuicao) ? window.bsp.refAtribuicao() : '';
+
+    fetch(mp.criarURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plano: chave, ref: ref })
+    })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('http ' + r.status)); })
+      .then(function (dados) {
+        if (!dados || !dados.url) return Promise.reject(new Error('sem url'));
+        if (aba) aba.location.href = dados.url;
+        else window.location.href = dados.url;   // pop-up bloqueado
+      })
+      .catch(function () {
+        if (aba) aba.close();
+        // Rede caiu ou o servico esta dormindo. A venda nao pode
+        // depender disso: cai para o caminho que ja funcionava.
+        var reserva = CONFIG.stripe.paymentLinks[chave];
+        if (reserva) {
+          medirIda(chave, 'stripe-reserva');
+          window.location.href = comAtribuicao(reserva);
+        }
+      });
+
+    return true;
+  }
+
   function irDiretoAoPagamento(chave) {
+    if (pagarComMercadoPago(chave)) return true;
+
     var s = CONFIG.stripe;
     if (s.criarSessaoURL || !s.paymentLinks[chave]) return false;
 
     rastrearInicio(chave);
-
-    if (typeof window.gtag === 'function' && window.BSP_GA4_ID) {
-      window.gtag('event', 'ida_pagamento', {
-        send_to: window.BSP_GA4_ID,
-        plano: chave,
-        contexto_navegador: (window.bsp && window.bsp.contexto) ? window.bsp.contexto() : 'desconhecido'
-      });
-    }
+    medirIda(chave, 'stripe');
 
     var destino = comAtribuicao(s.paymentLinks[chave]);
 
