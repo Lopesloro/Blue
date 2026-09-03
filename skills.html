@@ -733,21 +733,25 @@
 
       <!-- ETAPA 2 — dados minimos que o Banco Central exige para Pix -->
       <form data-etapa="dados" hidden autocomplete="on">
+        <!-- Um campo so.
+
+             Em 03/09 oito pessoas abriram este painel, cinco escolheram o
+             meio de pagamento e nenhuma enviou o formulario. Ele pedia
+             nome, e-mail e CPF antes de mostrar o QR. Tres campos, um
+             deles um documento, para levar um PDF de R$ 39,90 — e a
+             frase que abria a tela falava em Banco Central e
+             identificacao, que e exatamente o tom que faz alguem parar.
+
+             O CPF nao era exigencia da Mercado Pago: na tabela de
+             obrigatoriedade do Pix deles so consta payer.email. Testado
+             contra a producao, o Pix nasce com o e-mail sozinho. -->
         <p class="pg-desc">
-          O Banco Central exige identificação de quem paga por Pix. Estes dados vão
-          direto para o Mercado Pago — não ficam guardados aqui.
+          O código Pix aparece na próxima tela, aqui mesmo. O acesso chega neste
+          e-mail assim que o pagamento for confirmado.
         </p>
         <label class="pg-campo">
-          <span>Nome completo</span>
-          <input type="text" name="nome" required autocomplete="name" placeholder="Como está no seu documento">
-        </label>
-        <label class="pg-campo">
-          <span>E-mail</span>
+          <span>Seu e-mail</span>
           <input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="onde o acesso vai chegar">
-        </label>
-        <label class="pg-campo">
-          <span>CPF</span>
-          <input type="text" name="cpf" required inputmode="numeric" maxlength="14" placeholder="000.000.000-00">
         </label>
         <p class="pg-erro" data-pg-erro hidden></p>
         <button class="btn btn-primary btn-lg btn-arrow" type="submit" data-pg-gerar>Gerar o código Pix</button>

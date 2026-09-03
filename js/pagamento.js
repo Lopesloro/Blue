@@ -122,24 +122,11 @@
     pararRelogio();
   }
 
-  // Mascara de CPF enquanto digita. Campo numerico com pontuacao
-  // errada e recusado pela Mercado Pago sem dizer o porque.
-  var campoCpf = painel.querySelector('input[name="cpf"]');
-  if (campoCpf) {
-    campoCpf.addEventListener('input', function () {
-      var n = campoCpf.value.replace(/\D/g, '').slice(0, 11);
-      campoCpf.value = n
-        .replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
-    });
-  }
-
   var btnPix = painel.querySelector('[data-pagar-pix]');
   if (btnPix) btnPix.addEventListener('click', function () {
     medir('pagamento_escolheu_meio', { meio: 'pix', plano: planoAtual });
     mostrar('dados');
-    var primeiro = painel.querySelector('input[name="nome"]');
+    var primeiro = painel.querySelector('input[name="email"]');
     if (primeiro) primeiro.focus();
   });
 
@@ -167,15 +154,16 @@
     e.preventDefault();
     if (elErro) elErro.hidden = true;
 
+    /* So o e-mail. Nome e CPF sairam daqui depois da medicao de 03/09:
+       oito paineis abertos, cinco escolhas de meio de pagamento, zero
+       formularios enviados. O CPF nunca foi exigencia da Mercado Pago —
+       a tabela de obrigatoriedade do Pix deles lista apenas payer.email,
+       e o Pix foi gerado contra a producao sem documento nenhum. */
     var dados = {
       plano: planoAtual,
-      nome: form.querySelector('[name="nome"]').value.trim(),
       email: form.querySelector('[name="email"]').value.trim(),
-      cpf: form.querySelector('[name="cpf"]').value.replace(/\D/g, ''),
       ref: (w.bsp && w.bsp.refAtribuicao) ? w.bsp.refAtribuicao() : ''
     };
-
-    if (dados.cpf.length !== 11) return erro('O CPF precisa ter 11 dígitos.');
 
     btnGerar.disabled = true;
     btnGerar.textContent = 'Gerando…';
