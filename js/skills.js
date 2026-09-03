@@ -388,6 +388,30 @@
   document.querySelectorAll('[data-buy]').forEach(function (b) {
     b.addEventListener('click', function () { abrir(b.dataset.buy); });
   });
+
+  /* O cartao inteiro do plano abre o painel, nao so o botao.
+
+     Em 03/09 o `clique_morto` disparou 24 vezes em 52 visitas — quase um
+     clique perdido a cada duas pessoas. Os maiores blocos nao clicaveis
+     da pagina sao justamente as listas de itens dentro dos tres cartoes
+     de plano, com 63 a 82 mil pixels cada. Cartao de preco tem forma de
+     coisa clicavel: a pessoa clica no plano, nao no botao, nao acontece
+     nada, e ela conclui que a pagina esta quebrada.
+
+     Duas guardas: clique em link ou botao dentro do cartao segue o seu
+     proprio caminho, e clique que termina com texto selecionado nao
+     conta — quem estava lendo e marcou uma frase nao pediu para abrir
+     pagamento nenhum. */
+  document.querySelectorAll('.plan').forEach(function (cartao) {
+    var botao = cartao.querySelector('[data-buy]');
+    if (!botao) return;
+    cartao.addEventListener('click', function (e) {
+      if (e.target.closest('a,button,input,select,textarea,[role="button"],[data-buy]')) return;
+      var sel = window.getSelection && window.getSelection();
+      if (sel && String(sel).length > 2) return;
+      abrir(botao.dataset.buy);
+    });
+  });
   if (fechar) fechar.addEventListener('click', fecharPainel);
   if (fundo)  fundo.addEventListener('click', fecharPainel);
   document.addEventListener('keydown', function (e) {
