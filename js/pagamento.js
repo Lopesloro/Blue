@@ -31,35 +31,36 @@
      na proxima mudanca de oferta. */
   var PACOTES = {
     basico: {
-      resumo: 'O essencial para tirar da equipe o trabalho que se repete toda semana.',
+      resumo: 'Para quem executa. Tira da sua semana o trabalho que se repete toda semana.',
       itens: [
-        '40 Skills prontas para instalar',
-        'Relatório de cliente e de campanha',
-        'Pesquisa de mercado e de concorrente',
-        'Revisão de texto no padrão da sua agência',
-        'Guia de instalação, passo a passo'
+        '40 Skills de execução, prontas para instalar',
+        'Relatório de cliente e de campanha no seu formato',
+        'Pesquisa de mercado, de concorrente e de público',
+        'Revisão de texto, de contrato e de entrega',
+        'Planilha lida e resumida sem escrever fórmula',
+        'Suporte de uso por e-mail enquanto você aprende'
       ]
     },
     medium: {
-      resumo: 'Tudo do Básico, mais os fluxos que atravessam várias etapas de um projeto.',
+      resumo: 'Para quem coordena. O padrão da sua área escrito uma vez e obedecido por todo o time.',
       itens: [
-        'Tudo o que vem no Básico',
-        'Skills encadeadas, de várias etapas',
-        'Análise de dados e leitura de planilha',
-        'Geração de proposta e de briefing',
-        'Suporte por e-mail em até 24h',
-        'Atualizações por 12 meses'
+        'Tudo o que vem no Analista',
+        'Skills encadeadas: briefing, pesquisa, texto e revisão numa passada',
+        'Proposta comercial e briefing de projeto gerados do zero',
+        'Contrato conferido contra a sua lista de cláusulas',
+        'Resumo de reunião, ata e acompanhamento de status',
+        'Suporte de uso em até 24h e atualizações por 12 meses'
       ]
     },
     premium: {
-      resumo: 'Tudo do Medium, mais Skills que constroem as próprias automações.',
+      resumo: 'Para quem decide e não tem tempo. A gente monta, você aprova.',
       itens: [
-        'Tudo o que vem no Medium',
-        'Skills que criam outras Skills',
-        'Rotinas agendadas e automações próprias',
-        'Skills sob medida para o seu processo',
-        'Prioridade no suporte',
-        'Acompanhamento na implantação'
+        'Tudo o que vem no Gestor',
+        'Implantação assistida: montamos o conjunto na sua conta',
+        'Skills sob medida, escritas junto com você',
+        'Skills que criam outras Skills e rotinas que rodam sozinhas',
+        'Licença para usar com os seus clientes',
+        'Suporte prioritário, resposta em até 4h'
       ]
     }
   };

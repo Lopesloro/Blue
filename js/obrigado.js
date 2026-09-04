@@ -7,9 +7,9 @@
   'use strict';
 
   var PLANOS = {
-    basico:  { nome: 'Básico',  valor: 39.90 },
-    medium:  { nome: 'Medium',  valor: 69.90 },
-    premium: { nome: 'Premium', valor: 99.90 }
+    basico:  { nome: 'Analista',   valor: 69.90 },
+    medium:  { nome: 'Gestor',     valor: 149.90 },
+    premium: { nome: 'Empresário', valor: 299.90 }
   };
 
   var params = new URLSearchParams(window.location.search);

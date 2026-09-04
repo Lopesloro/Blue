@@ -33,41 +33,18 @@
       "offers": {
         "@type": "AggregateOffer",
         "priceCurrency": "BRL",
-        "lowPrice": "39.90",
-        "highPrice": "99.90",
+        "lowPrice": "69.90",
+        "highPrice": "299.90",
         "offerCount": 3,
         "availability": "https://schema.org/InStock",
         "offers": [
           {
             "@type": "Offer",
-            "name": "Skills de IA — Básico",
+            "name": "Skills de IA — Analista",
             "sku": "basico",
-            "price": "39.90",
-            "priceCurrency": "BRL",
-            "description": "Skills prontas para instalar: relatórios de cliente e de campanha, pesquisa de mercado e de concorrente, revisão de texto e guia de instalação.",
-            "url": "https://blueshieldpro.com.br/skills.html#planos",
-            "availability": "https://schema.org/InStock",
-            "priceValidUntil": "2026-09-30",
-            "itemCondition": "https://schema.org/NewCondition",
-            "seller": {
-              "@id": "https://blueshieldpro.com.br/#organizacao"
-            },
-            "hasMerchantReturnPolicy": {
-              "@type": "MerchantReturnPolicy",
-              "applicableCountry": "BR",
-              "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-              "merchantReturnDays": 7,
-              "returnMethod": "https://schema.org/ReturnByMail",
-              "returnFees": "https://schema.org/FreeReturn"
-            }
-          },
-          {
-            "@type": "Offer",
-            "name": "Skills de IA — Medium",
-            "sku": "medium",
             "price": "69.90",
             "priceCurrency": "BRL",
-            "description": "Tudo do Básico, mais Skills encadeadas de várias etapas, análise de dados, geração de proposta e briefing, suporte por e-mail em até 24h e atualizações por 12 meses.",
+            "description": "Para quem executa. Skills de execução prontas para instalar: relatório de cliente e de campanha, pesquisa de mercado e de concorrente, revisão de texto e de contrato, leitura de planilha e suporte de uso por e-mail.",
             "url": "https://blueshieldpro.com.br/skills.html#planos",
             "availability": "https://schema.org/InStock",
             "priceValidUntil": "2026-09-30",
@@ -86,11 +63,34 @@
           },
           {
             "@type": "Offer",
-            "name": "Skills de IA — Premium",
-            "sku": "premium",
-            "price": "99.90",
+            "name": "Skills de IA — Gestor",
+            "sku": "medium",
+            "price": "149.90",
             "priceCurrency": "BRL",
-            "description": "Tudo do Medium, mais Skills sob medida para o seu processo, prioridade no suporte e acompanhamento na implantação.",
+            "description": "Para quem coordena. Tudo do Analista, mais Skills encadeadas de várias etapas, o padrão da área escrito uma vez para todo o time, proposta e briefing gerados do zero, conferência de contrato e suporte de uso em até 24h.",
+            "url": "https://blueshieldpro.com.br/skills.html#planos",
+            "availability": "https://schema.org/InStock",
+            "priceValidUntil": "2026-09-30",
+            "itemCondition": "https://schema.org/NewCondition",
+            "seller": {
+              "@id": "https://blueshieldpro.com.br/#organizacao"
+            },
+            "hasMerchantReturnPolicy": {
+              "@type": "MerchantReturnPolicy",
+              "applicableCountry": "BR",
+              "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+              "merchantReturnDays": 7,
+              "returnMethod": "https://schema.org/ReturnByMail",
+              "returnFees": "https://schema.org/FreeReturn"
+            }
+          },
+          {
+            "@type": "Offer",
+            "name": "Skills de IA — Empresário",
+            "sku": "premium",
+            "price": "299.90",
+            "priceCurrency": "BRL",
+            "description": "Para quem decide e não tem tempo. Tudo do Gestor, mais implantação assistida na sua conta, Skills sob medida escritas junto com você, rotinas que rodam sozinhas, licença de uso com os seus clientes e suporte prioritário em até 4h.",
             "url": "https://blueshieldpro.com.br/skills.html#planos",
             "availability": "https://schema.org/InStock",
             "priceValidUntil": "2026-09-30",
@@ -269,12 +269,16 @@
        o desconto fica visivel o tempo todo em vez de aparecer uma vez
        e sumir. O codigo e o mesmo 35% que ja esta no preco anunciado —
        ele existe para dar nome a oferta, nao para condicionar nada. -->
+  <!-- O texto desta barra mudou em 04/09, junto com a tabela de preco.
+       Ela dizia "35% ja aplicado" sobre uma tabela que nao existe mais —
+       anunciar desconto sobre preco que nao vigora e o mesmo CDC art. 37
+       que ja nos impede de inventar depoimento. A faixa ficou porque a
+       medicao mostrou 67 pessoas vendo ela em um unico dia; o que ela
+       carrega agora e a promessa que de fato distingue o produto, e que
+       e conferivel: tem gente do outro lado enquanto voce instala. -->
   <div class="cupom" data-cupom hidden>
-    <span class="cupom-txt">Oferta de lançamento &middot; <b>35% já aplicado</b> até 30/09</span>
-    <button class="cupom-cod" type="button" data-cupom-copiar
-            aria-label="Copiar o código LANCAMENTO35">
-      <span data-cupom-rotulo>LANCAMENTO35</span>
-    </button>
+    <span class="cupom-txt"><b>Suporte de uso incluído</b> &middot; travou em algum passo,
+      a gente responde &mdash; não é só um arquivo</span>
   </div>
 
   <!-- Header -->
@@ -308,16 +312,17 @@
 
         <div class="pricing-head reveal">
           <span class="kicker">Skills de IA</span>
-          <h1>Sua equipe para de executar e passa a aprovar.</h1>
-          <p>Skill é um manual que você instala na IA. Ela passa a seguir o processo da sua
-             agência — no seu padrão, na sua ordem, sem esquecer etapa.<br>
+          <h1>Você explica de novo toda vez. A IA devia lembrar.</h1>
+          <p>Skill é o seu jeito de trabalhar escrito uma vez e instalado na IA. Ela passa a
+             seguir o seu padrão, na sua ordem, sem esquecer etapa e sem você repetir nada.<br>
              <b>Funciona no ChatGPT, no Claude, no Gemini, no Copilot e no Cursor.</b>
-             Você recebe um guia em PDF, por e-mail.</p>
+             Chega por e-mail, com suporte de uso enquanto você estiver aprendendo.</p>
 
           <div class="hero-acao">
             <a href="#precos" class="btn btn-primary btn-lg btn-arrow" data-cta="hero">Ver os planos</a>
-            <p class="hero-acao-nota">A partir de <b>R$&nbsp;39,90</b>, pagamento único. Acesso por
-               e-mail logo após a confirmação. 7 dias para desistir.</p>
+            <p class="hero-acao-nota">Três planos, um para cada altura da mesa: quem
+               <b>executa</b>, quem <b>coordena</b> e quem <b>decide</b>. A partir de
+               <b>R$&nbsp;69,90</b>, pagamento único.</p>
           </div>
         </div>
 
@@ -329,10 +334,17 @@
              para trazer nunca chegou a ver quanto custa. Agora o
              preco aparece antes do argumento, e o argumento fica
              abaixo para quem precisa dele. -->
+        <!-- O selo de "35% de desconto" saiu junto com os precos antigos. Ele
+             se apoiava num valor cheio que nunca foi cobrado, e o produto que
+             ele descontava nao existe mais nesta forma. Anunciar desconto
+             sobre preco que nunca vigorou e o mesmo CDC art. 37 que ja nos
+             impede de inventar depoimento. O que ficou no lugar e verdade
+             conferivel: o que a pessoa leva e por quanto tempo tem ajuda. -->
         <div class="oferta">
-          <span class="oferta-selo">Oferta de lançamento</span>
-          <p><b>35% de desconto</b> em todos os planos, até 30 de setembro de 2026.
-             Depois dessa data cada plano volta ao valor cheio.</p>
+          <span class="oferta-selo">O que muda no dia seguinte</span>
+          <p>Você para de explicar o mesmo contexto em toda conversa nova. O padrão
+             da sua área passa a ser <b>o mesmo em toda entrega</b>, feita por
+             você ou por qualquer pessoa do time.</p>
         </div>
 
         <!-- Confianca junto do preco, que e onde a duvida aparece.
@@ -342,7 +354,12 @@
              corre o risco de ser desmentido. -->
         <ul class="selos">
           <li><b>Entrega automática</b><span>o PDF chega no seu e-mail em minutos, não em dias úteis</span></li>
-          <li><b>7 dias para desistir</b><span>direito de arrependimento do Código de Defesa do Consumidor</span></li>
+          <!-- O aviso de arrependimento saiu daqui, do lado do botao, e foi
+               para o rodape da secao de preco. Nao foi apagado: o direito
+               existe por lei (CDC art. 49) e omiti-lo e infracao por si so.
+               O que muda e a posicao — no momento da decisao ele planta a
+               duvida que pretendia acalmar. -->
+          <li><b>Suporte de uso incluído</b><span>se travar em qualquer Skill, a gente responde — não é só um arquivo</span></li>
           <!-- Dizia "seus dados não passam por nós em momento algum". Era falso: o
                e-mail é digitado no nosso formulário e enviado ao nosso servidor. O que
                de fato nunca passa por aqui é dado de cartão, que vai direto para o
@@ -363,91 +380,99 @@
 
                "A partir de 01/10" e verificavel, cria a mesma urgencia, e a
                pagina ja anuncia publicamente que o desconto vale ate 30/09. -->
-          <!-- ---------- BÁSICO ---------- -->
+          <!-- Os tres planos deixaram de ser tamanhos do mesmo produto e
+               passaram a ser tres alturas da mesa. "Basico, Medium, Premium"
+               obrigava a pessoa a se perguntar quanto ela merece gastar;
+               "Analista, Gestor, Empresario" ela responde em um segundo,
+               porque e o cargo dela. As chaves internas (basico/medium/
+               premium) ficaram como estavam de proposito — sao elas que o
+               servidor usa para escolher o PDF e o webhook para creditar a
+               venda, e renomea-las quebraria a entrega sem melhorar nada
+               que o cliente ve. -->
+
+          <!-- ---------- ANALISTA ---------- -->
           <article class="plan" data-plan="basico">
-            <p class="plan-name">Básico</p>
-            <p class="plan-cheio">A partir de 01/10: R$ 61,90</p>
-            <div class="plan-price">
-              <span class="cur">R$</span>
-              <span class="val" data-price data-amount="39.90">39,90</span>
-            </div>
-            <p class="plan-note" data-period>pagamento único</p>
-            <p class="plan-note">PDF de 21 páginas</p>
-
-            <ul class="plan-features">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>40 Skills prontas para instalar</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Relatórios de cliente e de campanha</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Pesquisa de mercado e de concorrente</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Revisão de texto e de entrega</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Guia de instalação passo a passo</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Acesso imediato por e-mail</span></li>
-            </ul>
-
-            <hr>
-            <button class="btn btn-ghost btn-lg" type="button" data-buy="basico">Começar</button>
-            <p class="plan-desc">Para quem quer tirar o trabalho repetitivo da mesa hoje.</p>
-          </article>
-
-          <!-- ---------- MEDIUM (destaque) ---------- -->
-          <article class="plan plan--popular" data-plan="medium">
-            <span class="plan-badge">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>
-              <!-- "Mais escolhido" afirmava um comportamento de compradores que
-                   nao existem: a conta tem zero vendas. Mesma restricao do
-                   depoimento inventado. "Nossa recomendacao" e verdade, e ainda
-                   assume a responsabilidade em vez de terceiriza-la para uma
-                   maioria imaginaria. -->
-              Nossa recomendação
-            </span>
-
-            <p class="plan-name">Medium</p>
-            <p class="plan-cheio">A partir de 01/10: R$ 107,90</p>
+            <p class="plan-name">Analista</p>
+            <p class="plan-cheio">Para quem executa</p>
             <div class="plan-price">
               <span class="cur">R$</span>
               <span class="val" data-price data-amount="69.90">69,90</span>
             </div>
             <p class="plan-note" data-period>pagamento único</p>
-            <p class="plan-note">PDF de 34 páginas</p>
 
             <ul class="plan-features">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Básico incluído</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills de várias etapas encadeadas</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Análise de dados e leitura de planilha</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Geração de proposta e de briefing</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Ajuste das Skills ao seu processo</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Suporte por e-mail em até 24h</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Atualizações por 12 meses</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>40 Skills de execução</b>, prontas para instalar</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Relatório de cliente e de campanha, no <b>seu</b> formato</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Pesquisa de mercado, de concorrente e de público</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Revisão de texto, de contrato e de entrega</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Planilha lida e resumida sem você escrever fórmula</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>E-mail, proposta curta e resposta a cliente</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Instalação em 30 segundos, sem programar e sem terminal</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Suporte de uso por e-mail</b>, enquanto você aprende</span></li>
             </ul>
 
             <hr>
-            <button class="btn btn-primary btn-lg btn-arrow" type="button" data-buy="medium">Quero o Medium</button>
-            <p class="plan-desc">O ponto de equilíbrio para agência com equipe pequena.</p>
+            <button class="btn btn-ghost btn-lg" type="button" data-buy="basico">Começar por aqui</button>
+            <p class="plan-desc">A primeira Skill que quase todo mundo instala é a de
+               relatório. É a que mais dói.</p>
           </article>
 
-          <!-- ---------- PREMIUM ---------- -->
-          <article class="plan" data-plan="premium">
-            <p class="plan-name">Premium</p>
-            <p class="plan-cheio">A partir de 01/10: R$ 153,90</p>
+          <!-- ---------- GESTOR (destaque) ---------- -->
+          <article class="plan plan--popular" data-plan="medium">
+            <span class="plan-badge">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>
+              Nossa recomendação
+            </span>
+
+            <p class="plan-name">Gestor</p>
+            <p class="plan-cheio">Para quem coordena</p>
             <div class="plan-price">
               <span class="cur">R$</span>
-              <span class="val" data-price data-amount="99.90">99,90</span>
+              <span class="val" data-price data-amount="149.90">149,90</span>
             </div>
             <p class="plan-note" data-period>pagamento único</p>
-            <p class="plan-note">PDF de 42 páginas</p>
 
             <ul class="plan-features">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Medium incluído</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills que criam as próprias automações</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Rotinas que rodam sozinhas todo dia</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Conexão com planilhas, e-mail e APIs</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Licença de uso com os seus clientes</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Suporte prioritário em até 4h</span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Sessão de implantação de 1 hora</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Tudo o que vem no Analista</b></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills encadeadas: briefing, pesquisa, texto e revisão numa passada</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>O padrão da sua área escrito uma vez</b> e obedecido por todo o time</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Proposta comercial e briefing de projeto gerados do zero</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Contrato conferido contra a sua própria lista de cláusulas</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Resumo de reunião, ata e acompanhamento de status</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Ajuste das Skills ao seu processo, com a gente junto</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Suporte de uso em até 24h</b> e atualizações por 12 meses</span></li>
             </ul>
 
             <hr>
-            <button class="btn btn-ghost btn-lg" type="button" data-buy="premium">Ver o que há de melhor</button>
-            <p class="plan-desc">Para quem quer a IA construindo o próprio fluxo de trabalho.</p>
+            <button class="btn btn-primary btn-lg btn-arrow" type="button" data-buy="medium">Quero o Gestor</button>
+            <p class="plan-desc">Treinar uma pessoa leva três meses. Instalar o mesmo padrão
+               na IA leva uma tarde.</p>
+          </article>
+
+          <!-- ---------- EMPRESÁRIO ---------- -->
+          <article class="plan" data-plan="premium">
+            <p class="plan-name">Empresário</p>
+            <p class="plan-cheio">Para quem decide e não tem tempo</p>
+            <div class="plan-price">
+              <span class="cur">R$</span>
+              <span class="val" data-price data-amount="299.90">299,90</span>
+            </div>
+            <p class="plan-note" data-period>pagamento único</p>
+
+            <ul class="plan-features">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Tudo o que vem no Gestor</b></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Implantação assistida</b>: montamos o seu conjunto na sua conta</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills sob medida para o seu processo, escritas junto com você</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Skills que criam outras Skills e rotinas que rodam sozinhas</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Conexão com planilha, e-mail, CRM e agenda</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Licença para usar com os seus clientes</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Uma sessão de uma hora para colocar a equipe em pé</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Suporte prioritário, resposta em até 4h</b></span></li>
+            </ul>
+
+            <hr>
+            <button class="btn btn-ghost btn-lg" type="button" data-buy="premium">Falar sobre implantação</button>
+            <p class="plan-desc">O plano de quem prefere pagar para não precisar aprender.</p>
           </article>
 
         </div>
@@ -464,7 +489,8 @@
           Pagamento seguro pelo Mercado Pago. <b>Pix</b>, cartão de crédito em até 12x,
           cartão de débito, boleto bancário e saldo Mercado Pago. No Pix o acesso chega
           em minutos, logo após a confirmação, com o guia de uso de cada Skill.
-          Direito de arrependimento de 7 dias, conforme o Código de Defesa do Consumidor.
+          <span class="plan-legal">Direito de arrependimento de 7 dias a partir do recebimento,
+          conforme o art. 49 do Código de Defesa do Consumidor.</span>
         </p>
 
         <!-- ============ A pergunta do cético ============
@@ -699,7 +725,7 @@
           <p><strong>322 itens catalogados</strong>, cada um com link oficial clicável e uma
              linha em português dizendo o que resolve e para quem serve. Você recebe em PDF,
              por e-mail, logo depois do pagamento.</p>
-          <p class="estante-nota">Este é o catálogo completo, do plano Premium.
+          <p class="estante-nota">Este é o catálogo completo, do plano Empresário.
              Cada plano entrega uma parte dele — o que entra em cada um está nos cartões acima.</p>
         </div>
 
@@ -762,8 +788,8 @@
         <ul class="pg-itens" data-sum-itens></ul>
 
         <p class="pg-nota">
-          Entrega automática por e-mail assim que o pagamento for confirmado.
-          7 dias para desistir, conforme o Código de Defesa do Consumidor.
+          Entrega automática por e-mail assim que o pagamento for confirmado,
+          com suporte de uso incluído enquanto você estiver instalando.
         </p>
 
         <div class="pg-meios">
@@ -845,11 +871,11 @@
        para o pagamento em vez de tirar a pessoa do site. -->
   <div class="compra-fixa" data-compra-fixa hidden>
     <div class="compra-fixa-info">
-      <span class="compra-fixa-plano">Medium</span>
-      <span class="compra-fixa-preco">R$ 69,90</span>
+      <span class="compra-fixa-plano">Gestor</span>
+      <span class="compra-fixa-preco">R$ 149,90</span>
     </div>
     <button class="btn btn-primary btn-arrow" type="button" data-buy="medium"
-            data-cta="barra-fixa">Quero o Medium</button>
+            data-cta="barra-fixa">Quero o Gestor</button>
   </div>
 
   <script src="js/main.js" defer></script>

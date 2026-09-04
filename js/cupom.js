@@ -24,9 +24,14 @@
   var barra = d.querySelector('[data-cupom]');
   if (!barra) return;
 
+  /* O codigo de cupom saiu em 04/09 junto com a tabela de preco antiga.
+     A barra virou faixa de promessa: nao ha nada para copiar, entao o
+     botao e o rotulo podem simplesmente nao existir. O codigo abaixo
+     segue tolerando os dois casos para nao quebrar se a faixa voltar a
+     ter cupom um dia. */
   var botao = barra.querySelector('[data-cupom-copiar]');
   var rotulo = barra.querySelector('[data-cupom-rotulo]');
-  var CODIGO = rotulo ? rotulo.textContent.trim() : 'LANCAMENTO35';
+  var CODIGO = rotulo ? rotulo.textContent.trim() : '';
 
   // Aparece no primeiro quadro, sem transicao e sem atraso.
   barra.hidden = false;
@@ -87,5 +92,5 @@
     });
   }
 
-  medir('cupom_visto', { codigo: CODIGO });
+  medir('cupom_visto', { codigo: CODIGO || 'faixa-suporte' });
 })(window, document);

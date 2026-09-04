@@ -17,9 +17,12 @@
     assinatura: false,
 
     planos: {
-      basico:  { nome: 'Básico',  unico: 39.90, mensal: 19.90 },
-      medium:  { nome: 'Medium',  unico: 69.90, mensal: 34.90 },
-      premium: { nome: 'Premium', unico: 99.90, mensal: 49.90 }
+      // Os nomes viraram cargos em 04/09. As chaves nao mudaram de
+      // proposito: sao elas que o servidor usa para escolher o PDF e o
+      // webhook para creditar a venda.
+      basico:  { nome: 'Analista',   unico: 69.90,  mensal: 29.90 },
+      medium:  { nome: 'Gestor',     unico: 149.90, mensal: 59.90 },
+      premium: { nome: 'Empresário', unico: 299.90, mensal: 119.90 }
     },
 
     stripe: {
@@ -41,11 +44,17 @@
       // checkout falhar — servico dormindo, rede caindo. Ficam
       // porque "nao consegui pagar" custa uma venda, e manter uma
       // reserva que ja funciona custa tres linhas.
-      paymentLinks: {
-        basico:  'https://buy.stripe.com/aFa8wOfGGgcK2Dp6C46wE00',
-        medium:  'https://buy.stripe.com/eVq6oGdyyaSq7XJbWo6wE01',
-        premium: 'https://buy.stripe.com/cNi4gy8eed0y4Lxf8A6wE02'
-      }
+      // DESLIGADA em 04/09, junto com a mudanca de preco. Estes tres
+      // links cobram os valores antigos (39,90 / 69,90 / 99,90) porque o
+      // valor de um Payment Link vive no price cadastrado na Stripe, nao
+      // aqui. Com a tabela nova, cair na reserva faria alguem que
+      // escolheu o Empresario de R$ 299,90 pagar R$ 99,90 — a reserva
+      // deixaria de proteger a venda e passaria a vaza-la.
+      //
+      // Para religar: criar tres Payment Links novos na Stripe com os
+      // valores atuais e trocar as URLs abaixo. Ate la, falha de
+      // checkout mostra o erro em vez de cobrar o preco errado.
+      paymentLinks: {}
     },
 
     /* Caminho principal de pagamento. O backend monta o checkout e
@@ -91,18 +100,54 @@
      Substitui o NumberFlow: conta ate o valor com easing e
      mantem duas casas, entao a virgula nao "pula".
      --------------------------------------------------------- */
+  /* A contagem sobe de zero ate o preco. Isso e enfeite, e enfeite nunca
+     pode deixar na tela um numero MENOR do que o que vamos cobrar.
+
+     Em 04/09, medindo numa aba em segundo plano, os tres cartoes ficaram
+     parados em 10,73 / 23,01 / 46,03 — a animacao roda por
+     requestAnimationFrame, e o navegador suspende o quadro quando a aba
+     nao esta a vista. E exatamente o que acontece no navegador embutido do
+     Instagram quando a pessoa volta para o feed e retorna. Um cartao
+     anunciando R$ 10,73 para um plano de R$ 69,90 nao e so venda perdida
+     no checkout: preco anunciado vincula o vendedor.
+
+     Tres travas, nesta ordem:
+     - pagina oculta na hora de comecar: nem anima, ja escreve o valor
+     - um temporizador independente do quadro fecha no valor final
+     - voltar a aba fecha no valor final na hora
+
+     O texto do preco ja nasce correto no HTML, entao qualquer falha
+     anterior a este codigo tambem deixa o numero certo. */
   function animarPreco(el, de, para) {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.textContent = brl.format(para);
+    var fechar = function () { el.textContent = brl.format(para); };
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        document.hidden || typeof requestAnimationFrame !== 'function') {
+      fechar();
       return;
     }
-    var inicio = null, duracao = 620;
+
+    var inicio = null, duracao = 620, pronto = false;
+    function terminar() {
+      if (pronto) return;
+      pronto = true;
+      fechar();
+      document.removeEventListener('visibilitychange', aoVoltar);
+    }
+    function aoVoltar() { if (!document.hidden) terminar(); }
+
+    document.addEventListener('visibilitychange', aoVoltar);
+    // setTimeout continua contando com a aba em segundo plano; rAF nao.
+    window.setTimeout(terminar, duracao + 260);
+
     function passo(agora) {
+      if (pronto) return;
       if (inicio === null) inicio = agora;
       var t = Math.min((agora - inicio) / duracao, 1);
       var e = 1 - Math.pow(1 - t, 3); // ease-out cubic
       el.textContent = brl.format(de + (para - de) * e);
       if (t < 1) requestAnimationFrame(passo);
+      else terminar();
     }
     requestAnimationFrame(passo);
   }
@@ -297,13 +342,21 @@
       })
       .catch(function () {
         if (aba) aba.close();
-        // Rede caiu ou o servico esta dormindo. A venda nao pode
-        // depender disso: cai para o caminho que ja funcionava.
+        // Rede caiu ou o servico esta dormindo. A reserva da Stripe
+        // esta desligada enquanto os precos de la nao forem
+        // atualizados: cobrar menos do que a pagina anuncia e pior do
+        // que pedir para tentar de novo.
         var reserva = CONFIG.stripe.paymentLinks[chave];
         if (reserva) {
           medirIda(chave, 'stripe-reserva');
           window.location.href = comAtribuicao(reserva);
+          return;
         }
+        medirIda(chave, 'checkout-falhou');
+        window.alert('Não consegui abrir o pagamento agora. '
+          + 'Tente de novo em alguns segundos — se insistir, '
+          + 'escreva para blueshieldpro01@gmail.com que a gente '
+          + 'manda o link na mão.');
       });
 
     return true;
