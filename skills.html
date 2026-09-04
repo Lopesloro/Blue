@@ -343,8 +343,12 @@
         <ul class="selos">
           <li><b>Entrega automática</b><span>o PDF chega no seu e-mail em minutos, não em dias úteis</span></li>
           <li><b>7 dias para desistir</b><span>direito de arrependimento do Código de Defesa do Consumidor</span></li>
-          <li><b>Pix, cartão ou boleto</b><span>pagamento pelo Mercado Pago; seus dados não passam por nós em momento algum</span></li>
-          <li><b>CNPJ 68.117.082/0001-92</b><span>empresa registrada, com nota e endereço verificáveis</span></li>
+          <!-- Dizia "seus dados não passam por nós em momento algum". Era falso: o
+               e-mail é digitado no nosso formulário e enviado ao nosso servidor. O que
+               de fato nunca passa por aqui é dado de cartão, que vai direto para o
+               Checkout Pro. A frase agora afirma só isso. -->
+          <li><b>Pix, cartão ou boleto</b><span>pagamento pelo Mercado Pago; dados de cartão nunca passam por nós</span></li>
+          <li><b>CNPJ 68.117.082/0001-92</b><span>empresa registrada; o CNPJ pode ser conferido na Receita Federal</span></li>
         </ul>
 
         <div class="plans" id="precos" data-plans>
@@ -368,6 +372,7 @@
               <span class="val" data-price data-amount="39.90">39,90</span>
             </div>
             <p class="plan-note" data-period>pagamento único</p>
+            <p class="plan-note">PDF de 21 páginas</p>
 
             <ul class="plan-features">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>40 Skills prontas para instalar</span></li>
@@ -402,6 +407,7 @@
               <span class="val" data-price data-amount="69.90">69,90</span>
             </div>
             <p class="plan-note" data-period>pagamento único</p>
+            <p class="plan-note">PDF de 34 páginas</p>
 
             <ul class="plan-features">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Básico incluído</span></li>
@@ -427,6 +433,7 @@
               <span class="val" data-price data-amount="99.90">99,90</span>
             </div>
             <p class="plan-note" data-period>pagamento único</p>
+            <p class="plan-note">PDF de 42 páginas</p>
 
             <ul class="plan-features">
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Tudo do Medium incluído</span></li>
@@ -459,6 +466,29 @@
           em minutos, logo após a confirmação, com o guia de uso de cada Skill.
           Direito de arrependimento de 7 dias, conforme o Código de Defesa do Consumidor.
         </p>
+
+        <!-- ============ A pergunta do cético ============
+
+             A página dizia "40 Skills prontas para instalar" no cartão do plano e,
+             quatro telas abaixo, "um diretório curado, por categoria, com o
+             endereço oficial de cada item". As duas coisas não são a mesma, e a
+             segunda é a verdadeira.
+
+             Uma auditoria de 04/09 conferiu os nomes citados na estante contra as
+             Skills públicas da Anthropic e achou dez em comum. Quem desconfia
+             descobre isso em trinta segundos de busca e fecha a aba — e sai com
+             razão, porque a página deixou ele descobrir sozinho.
+
+             Dizer na cara custa alguns cliques e compra a credibilidade do resto.
+             Se a leitura de conversão piorar, este bloco sai em uma edição. -->
+        <div class="oferta" style="margin-top:38px">
+          <span class="oferta-selo">Antes de comprar</span>
+          <p><b>Boa parte destas Skills é pública e gratuita.</b> O que você compra não é
+             o acesso — é o mapa. As 322 entradas estão traduzidas, classificadas por
+             função, com o endereço oficial de cada uma e uma linha dizendo o que ela
+             resolve e para quem serve. Montar isso sozinho é garimpar repositório em
+             inglês por semanas. Aqui você abre o índice e escolhe.</p>
+        </div>
 
         <!-- ============ Prova concreta ============ -->
         <div class="prova">
@@ -542,7 +572,7 @@
         <div class="estante">
 
           <article class="prateleira" data-categoria="marketing-vendas" role="button" tabindex="0"
-                   aria-label="Ver os planos">
+                   aria-label="Ver os planos, acima">
             <div class="prateleira-topo">
               <span class="prateleira-num">16</span>
               <span class="prateleira-tipo">Skills</span>
@@ -557,13 +587,13 @@
               <li><b>Domain Name Brainstormer</b> — gera nomes de domínio e checa quais
                   estão livres</li>
             </ul>
-            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8593;</span></span>
             <p class="prateleira-rodape">Mais Semrush, Ahrefs, Similarweb, HubSpot, Apollo,
                Clay e Mailchimp ligados por conector.</p>
           </article>
 
           <article class="prateleira" data-categoria="documentos-escritorio" role="button" tabindex="0"
-                   aria-label="Ver os planos">
+                   aria-label="Ver os planos, acima">
             <div class="prateleira-topo">
               <span class="prateleira-num">30</span>
               <span class="prateleira-tipo">Skills</span>
@@ -578,12 +608,12 @@
                   PowerPoint</li>
               <li><b>File Organizer</b> — arruma pasta bagunçada, renomeia e classifica</li>
             </ul>
-            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8593;</span></span>
             <p class="prateleira-rodape">É a categoria que devolve tempo no primeiro dia.</p>
           </article>
 
           <article class="prateleira" data-categoria="financeiro-rh-gestao" role="button" tabindex="0"
-                   aria-label="Ver os planos">
+                   aria-label="Ver os planos, acima">
             <div class="prateleira-topo">
               <span class="prateleira-num">36</span>
               <span class="prateleira-tipo">Skills</span>
@@ -598,13 +628,13 @@
               <li><b>Tailored Resume Generator</b> — adapta currículo para uma vaga
                   específica</li>
             </ul>
-            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8593;</span></span>
             <p class="prateleira-rodape">Mais QuickBooks, Xero, Gusto, Workable e
                PagerDuty por conector.</p>
           </article>
 
           <article class="prateleira" data-categoria="desenvolvimento-design" role="button" tabindex="0"
-                   aria-label="Ver os planos">
+                   aria-label="Ver os planos, acima">
             <div class="prateleira-topo">
               <span class="prateleira-num">51</span>
               <span class="prateleira-tipo">Skills</span>
@@ -619,13 +649,13 @@
               <li><b>Skill Creator</b> — cria Skills novas do zero, guiando você passo
                   a passo</li>
             </ul>
-            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8593;</span></span>
             <p class="prateleira-rodape">É aqui que a IA para de ser genérica e passa a
                ter a cara da sua empresa.</p>
           </article>
 
           <article class="prateleira" data-categoria="conectores" role="button" tabindex="0"
-                   aria-label="Ver os planos">
+                   aria-label="Ver os planos, acima">
             <div class="prateleira-topo">
               <span class="prateleira-num">135</span>
               <span class="prateleira-tipo">Conectores</span>
@@ -638,13 +668,13 @@
               <li><b>Jurídico</b> — Harvey, Ironclad, iManage, CourtListener</li>
               <li><b>Financeiro e RH</b> — QuickBooks, Gusto, Indeed, Metaview</li>
             </ul>
-            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8593;</span></span>
             <p class="prateleira-rodape">Cada um com o endereço oficial de instalação e
                para quem serve.</p>
           </article>
 
           <article class="prateleira" data-categoria="mcps-fontes" role="button" tabindex="0"
-                   aria-label="Ver os planos">
+                   aria-label="Ver os planos, acima">
             <div class="prateleira-topo">
               <span class="prateleira-num">54</span>
               <span class="prateleira-tipo">MCPs e fontes</span>
@@ -658,7 +688,7 @@
                   as suas</li>
               <li><b>Guia de instalação</b> — passo a passo, sem terminal obrigatório</li>
             </ul>
-            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8595;</span></span>
+            <span class="prateleira-cta">Ver os planos <span aria-hidden="true">&#8593;</span></span>
             <p class="prateleira-rodape">Você sai sabendo onde procurar quando precisar de
                algo que não está aqui.</p>
           </article>
@@ -670,7 +700,7 @@
              linha em português dizendo o que resolve e para quem serve. Você recebe em PDF,
              por e-mail, logo depois do pagamento.</p>
           <p class="estante-nota">Este é o catálogo completo, do plano Premium.
-             Cada plano entrega uma parte dele — o que entra em cada um está abaixo.</p>
+             Cada plano entrega uma parte dele — o que entra em cada um está nos cartões acima.</p>
         </div>
 
         <!-- Seletor. Some enquanto PLANOS.assinatura estiver false em js/main.js. -->
