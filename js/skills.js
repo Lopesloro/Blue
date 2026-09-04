@@ -335,11 +335,32 @@
      que entra no pacote (a tela do Mercado Pago mostra so titulo e
      total) e gera o Pix aqui dentro, sem mandar ninguem para o
      aplicativo do Mercado Livre. */
-  function abrir(chave) {
+  function abrir(chave, origem) {
     var plano = CONFIG.planos[chave];
     if (!plano || !painel) return;
 
-    rastrearInicio(chave);
+    /* Clique no corpo do cartao nao vale como inicio de checkout.
+
+       O cartao virou clicavel em 03/09 para recuperar clique morto — 30%
+       dos visitantes clicavam nele e nada acontecia. So que `abrir()`
+       dispara o InitiateCheckout, entao da noite para o dia o mesmo
+       clique que era registrado como frustracao passou a ser registrado
+       como intencao de compra, e a serie deixou de ser comparavel com o
+       que veio antes.
+
+       Ele continua abrindo o painel, mas com evento proprio. Quem
+       declara intencao e quem aperta o botao. */
+    if (origem === 'cartao') {
+      if (typeof w2.gtag === 'function' && w2.BSP_GA4_ID) {
+        w2.gtag('event', 'abriu_painel_cartao', {
+          send_to: w2.BSP_GA4_ID,
+          plano: chave,
+          transport_type: 'beacon'
+        });
+      }
+    } else {
+      rastrearInicio(chave);
+    }
     if (w2.bsp && typeof w2.bsp.descreverPlano === 'function') w2.bsp.descreverPlano(chave);
 
     var valor = mensal ? plano.mensal : plano.unico;
@@ -409,7 +430,7 @@
       if (e.target.closest('a,button,input,select,textarea,[role="button"],[data-buy]')) return;
       var sel = window.getSelection && window.getSelection();
       if (sel && String(sel).length > 2) return;
-      abrir(botao.dataset.buy);
+      abrir(botao.dataset.buy, 'cartao');
     });
   });
   if (fechar) fechar.addEventListener('click', fecharPainel);
@@ -439,9 +460,24 @@
     return url + (url.indexOf('?') === -1 ? '?' : '&') + 'client_reference_id=' + ref;
   }
 
+  /* Um InitiateCheckout por plano, por visita.
+
+     A funcao e chamada de tres lugares — abrir o painel, sair para o
+     Checkout Pro e o caminho antigo da Stripe — e o caminho do cartao
+     passava por dois deles em sequencia, contando a mesma pessoa duas
+     vezes. Deu para ver no GA4 de 03/09: 16 begin_checkout para 9
+     pessoas, 1,8 evento por pessoa.
+
+     Evento inflado nao e so relatorio errado. A Meta otimiza pelo
+     InitiateCheckout: contar duas vezes ensina ela a perseguir quem
+     abre painel, e o custo por evento aparece pela metade do que e. */
+  var inicioContado = {};
+
   function rastrearInicio(chave) {
     var plano = CONFIG.planos[chave];
     if (!plano) return;
+    if (inicioContado[chave]) return;
+    inicioContado[chave] = true;
     var valor = mensal ? plano.mensal : plano.unico;
 
     // Google Analytics 4: mesma intencao, vocabulario da casa.
