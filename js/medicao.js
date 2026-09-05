@@ -241,7 +241,11 @@
 
     // Clique que não acertou nada clicável.
     var interativo = e.target.closest
-      ? e.target.closest('a,button,input,select,textarea,summary,[role="button"],[data-buy],[data-cta]')
+      // [data-plan] entra aqui porque skills.js torna o cartao INTEIRO clicavel:
+      // sem ele, todo clique no corpo do cartao abre o painel E era contado como
+      // clique morto. Em 05/09 isso dava 114 elementos falsamente mortos por
+      // pagina, inflando a metrica que existe justamente para achar frustracao.
+      ? e.target.closest('a,button,input,select,textarea,summary,[role="button"],[data-buy],[data-cta],[data-plan]')
       : null;
     if (!interativo) {
       enviar('clique_morto', {
