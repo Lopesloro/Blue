@@ -62,6 +62,34 @@
         'Licença para usar com os seus clientes',
         'Suporte prioritário, resposta em até 4h'
       ]
+    },
+
+    /* Pacotes por oficio. A base de gestao inteira e a mesma nos dois — e a
+       "skill do meio", o que o Gestor entrega — e o que muda e a estante em
+       cima dela. Por isso o primeiro item de cada um diz isso na cara: quem
+       chega aqui precisa saber que nao esta trocando gestao por oficio, esta
+       somando. */
+    marketing: {
+      resumo: 'Para quem produz campanha e conteúdo sem parar. A base de gestão inteira, mais a estante de marketing e vendas.',
+      itens: [
+        'Toda a base de gestão do plano Gestor',
+        'Pesquisa de concorrente e leitura dos anúncios que ele roda',
+        'Conteúdo pesquisado e escrito já no formato final',
+        'SEO, palavra-chave e monitoramento de marca nas IAs',
+        'E-mail marketing, CRM e prospecção conectados',
+        'Suporte de uso em até 24h e atualizações por 12 meses'
+      ]
+    },
+    design: {
+      resumo: 'Para quem responde pela cara do que sai. A base de gestão inteira, mais a estante de design e produto.',
+      itens: [
+        'Toda a base de gestão do plano Gestor',
+        'O padrão visual da marca obedecido pela IA em tudo que ela gera',
+        'Arte pronta em PNG e PDF sem abrir editor',
+        'Tema completo: cor, tipografia e componente, coerentes',
+        'Figma lido e virado em código ou briefing',
+        'Suporte de uso em até 24h e atualizações por 12 meses'
+      ]
     }
   };
 

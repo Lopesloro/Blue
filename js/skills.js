@@ -22,7 +22,14 @@
       // webhook para creditar a venda.
       basico:  { nome: 'Analista',   unico: 69.90,  mensal: 29.90 },
       medium:  { nome: 'Gestor',     unico: 149.90, mensal: 59.90 },
-      premium: { nome: 'Empresário', unico: 299.90, mensal: 119.90 }
+      premium: { nome: 'Empresário', unico: 299.90, mensal: 119.90 },
+
+      // Pacotes por oficio, 05/09. Trazem a base de gestao inteira — a
+      // mesma do Gestor — e por cima dela a estante do oficio. Ficam
+      // entre o Analista e o Empresario de proposito: acrescentam
+      // profundidade num oficio, nao implantacao assistida.
+      marketing: { nome: 'Marketing e Vendas', unico: 139.90, mensal: 55.90 },
+      design:    { nome: 'Design e Produto',   unico: 159.90, mensal: 63.90 }
     },
 
     stripe: {

@@ -703,7 +703,18 @@ body[data-pagina="venda"] .plan:not(.in) {
   display: grid; grid-template-columns: 1fr; gap: 20px;
   align-items: start; perspective: 1400px;
 }
-@media (min-width: 900px) { .plans { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+/* Cinco cartoes em 3 / 2, com a segunda fileira centrada.
+
+   Grade de seis colunas em vez de tres: cada cartao ocupa duas. Os tres de
+   cima caem em 1-2, 3-4 e 5-6; os dois de baixo comecam em 2 e em 4, o que
+   os deixa centrados sob os de cima. Com grade de tres colunas os dois
+   ultimos encostariam na esquerda e a fileira sairia torta. */
+@media (min-width: 900px) {
+  .plans { grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .plan { grid-column: span 2; }
+  .plan:nth-child(4) { grid-column: 2 / span 2; }
+  .plan:nth-child(5) { grid-column: 4 / span 2; }
+}
 
 .plan {
   position: relative; display: flex; flex-direction: column;
@@ -918,8 +929,9 @@ body[data-pagina="venda"] .plan:not(.in) {
 .oferta p b { color: var(--text-1); }
 
 .plan-cheio {
-  margin: 0 0 2px; font-size: .8rem; color: var(--text-3);
-  letter-spacing: .01em;
+  margin: 0 0 6px; font-size: .92rem; color: var(--text-2);
+  letter-spacing: .01em; font-style: italic; line-height: 1.35;
+  min-height: 2.5em;
 }
 .plan-cheio s { text-decoration-thickness: 1px; text-underline-offset: 2px; }
 
