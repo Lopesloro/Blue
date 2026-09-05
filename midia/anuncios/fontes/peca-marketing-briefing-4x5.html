@@ -1,0 +1,131 @@
+<!doctype html>
+<meta charset="utf-8">
+<!--
+  Peça 4:5 · ângulo "12 funções" · monocromática
+
+  Refaz a peça que mais converteu em 02/09 (R$ 4,93 por checkout iniciado,
+  contra R$ 14 e R$ 18 das outras duas que converteram). A versão que está
+  no ar ganhou com dois defeitos impressos: os rótulos do prompt
+  ("L1 HEADLINE", "L2 EXPLAINER", "L3 BUTTON") desenhados dentro da arte,
+  e a paleta âmbar, que não é da marca. O ângulo carregou; a execução
+  atrapalhou. Esta versão mantém o ângulo e tira o defeito.
+
+  Renderizar:
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+      --headless=new --disable-gpu --hide-scrollbars \
+      --user-data-dir="$(mktemp -d)" --no-first-run --no-default-browser-check \
+      --virtual-time-budget=7000 --force-device-scale-factor=1 \
+      --screenshot=saida.png --window-size=1080,1350 \
+      "file://$PWD/12-funcoes-mono-4x5.html"
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Paleta da marca. Nenhuma cor fora desta lista entra na peça. */
+  :root{
+    --obsidian:#0B0B0B;
+    --carbon:#1D1D1D;
+    --graphite:#4A4A4A;
+    --silver-mist:#C7C7C7;
+    --soft-silver:#E8E8E8;
+    --ghost:#F7F7FF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1080px;height:1350px}
+  body{
+    background:var(--obsidian);
+    font-family:Inter,system-ui,sans-serif;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* Grade quase invisível. Dá textura sem virar elemento — no feed ela é
+     percebida como profundidade, não como desenho. */
+  .grade{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+    background-size:90px 90px;
+  }
+  /* Luz fria vinda de cima, à esquerda: separa o título do fundo sem
+     precisar de caixa nem de sombra. */
+  .luz{
+    position:absolute; left:-260px; top:-320px;
+    width:1100px; height:1100px;
+    background:radial-gradient(circle, rgba(247,247,255,.055) 0%, rgba(247,247,255,0) 62%);
+  }
+
+  .peca{position:relative; height:100%; padding:150px 96px 96px}
+
+  h1{
+    font-family:Fraunces,Georgia,serif;
+    font-optical-sizing:auto;
+    font-weight:700;
+    font-size:104px;
+    line-height:.98;
+    letter-spacing:-.018em;
+    color:var(--ghost);
+  }
+
+  .fio{
+    width:132px; height:1px;
+    background:linear-gradient(90deg,var(--graphite),rgba(74,74,74,0));
+    margin:52px 0 40px;
+  }
+
+  p{
+    font-size:35px;
+    line-height:1.42;
+    color:var(--silver-mist);
+    max-width:790px;
+    font-weight:400;
+  }
+
+  /* Tres barras de alturas diferentes: o mesmo trabalho saindo em tres
+     formatos. Substitui o diagrama de cargos, que so servia ao angulo das
+     doze funcoes. Discreto de proposito — quem tem que ganhar a tela e a
+     manchete. */
+  .diagrama{position:absolute; left:96px; bottom:190px}
+  .pilhas{display:flex; align-items:flex-end; gap:26px}
+  .pilha{
+    display:block; width:96px; height:150px;
+    border:1px solid var(--graphite); border-radius:10px;
+    background:var(--carbon);
+  }
+  .pilha.alta{height:232px; background:var(--soft-silver); border-color:var(--soft-silver)}
+  .pilha.baixa{height:96px}
+
+  .marca{
+    position:absolute; left:96px; bottom:88px;
+    display:flex; align-items:center; gap:15px;
+    font-size:20px; font-weight:600;
+    letter-spacing:.30em;
+    color:var(--graphite);
+  }
+  .escudo{
+    width:26px; height:29px;
+    background:var(--graphite);
+    clip-path:polygon(50% 0,100% 22%,100% 62%,50% 100%,0 62%,0 22%);
+  }
+</style>
+
+<div class="grade"></div>
+<div class="luz"></div>
+
+<div class="peca">
+  <h1>Um briefing entra.<br>Dez peças saem.</h1>
+  <div class="fio"></div>
+  <p>Pesquisa, texto, e-mail e relatório na mesma passada. Sem refazer nada.</p>
+
+  <div class="diagrama">
+    <div class="pilhas">
+      <span class="pilha alta"></span>
+      <span class="pilha"></span>
+      <span class="pilha baixa"></span>
+    </div>
+  </div>
+
+  <div class="marca"><span class="escudo"></span>BLUESHIELDPRO</div>
+</div>
