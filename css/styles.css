@@ -1018,3 +1018,38 @@ body[data-pagina="venda"] .plan:not(.in) {
 
 /* O painel de checkout já é a camada da vez — a barra sai de baixo dele. */
 body.checkout-open .compra-fixa { transform: translateY(110%); }
+
+/* ============ Depois de comprar ============
+   A objecao que sobra depois do preco nao e "vale a pena", e "e se eu travar
+   depois de pagar". Quem nunca comprou de um desconhecido pergunta isso ANTES
+   de digitar o Pix — e a pagina so respondia no /obrigado, que por definicao
+   so aparece para quem ja pagou.
+
+   Usa a moldura do bloco "Antes de comprar" para os dois lerem como par; muda
+   so o miolo, que aqui e lista de passos em vez de paragrafo. Por isso .oferta
+   ganha o modificador em vez de um componente novo. */
+.oferta--passos { display: block; text-align: left; padding: 20px 24px 6px; }
+.oferta--passos > .oferta-selo { display: inline-block; margin-bottom: 12px; }
+.oferta--passos > p { text-align: left; margin-bottom: 4px; }
+
+.pos-compra { margin: 10px 0 0; }
+.pos-compra div {
+  display: flex; gap: 16px; padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: .88rem; line-height: 1.55; color: var(--text-2);
+}
+.pos-compra b { flex: 0 0 176px; color: var(--text-1); font-weight: 600; }
+@media (max-width: 620px) {
+  .pos-compra div { flex-direction: column; gap: 4px; }
+  .pos-compra b { flex: none; }
+}
+
+/* Link que nao parece link e clique morto — ja medimos isso nesta pagina em
+   03/09, quando 11 de 44 pessoas clicaram em coisa nao clicavel 2,2 vezes cada.
+   O endereco de suporte e o unico link dentro do bloco, entao sublinha. */
+.oferta--passos a {
+  color: var(--text-1); text-decoration: underline;
+  text-decoration-thickness: 1px; text-underline-offset: 3px;
+  text-decoration-color: var(--line-strong);
+}
+.oferta--passos a:hover { text-decoration-color: currentColor; }
