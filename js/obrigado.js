@@ -48,7 +48,7 @@
   if (typeof window.gtag === 'function' && sessionId) {
     var itens = [{
       item_id: chave || 'skills',
-      item_name: plano ? 'Skills de IA — ' + plano.nome : 'Skills de IA',
+      item_name: plano ? 'Skills de IA para ' + plano.nome : 'Skills de IA',
       price: plano ? plano.valor : undefined,
       quantity: 1
     }];
@@ -81,7 +81,7 @@
   if (!sessionId) return;
 
   var evento = {
-    content_name: plano ? 'Skills de IA — ' + plano.nome : 'Skills de IA',
+    content_name: plano ? 'Skills de IA para ' + plano.nome : 'Skills de IA',
     content_type: 'product',
     currency: 'BRL'
   };
@@ -125,7 +125,7 @@
   if (rotulo) rotulo.textContent = 'Aguardando o pagamento';
   if (titulo) titulo.textContent = 'Falta só o pagamento cair.';
   if (texto) {
-    texto.innerHTML = 'Assim que o Pix for confirmado — normalmente em segundos — '
+    texto.innerHTML = 'Assim que o Pix for confirmado, normalmente em segundos, '
       + 'enviamos o acesso para o e-mail informado no pagamento. '
       + '<b style="color:var(--text-1);">Não é preciso fazer mais nada nesta página.</b> '
       + 'Se você fechou o código antes de pagar, é só voltar aos planos e gerar outro.';

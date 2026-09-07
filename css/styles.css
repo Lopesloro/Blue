@@ -1053,3 +1053,126 @@ body.checkout-open .compra-fixa { transform: translateY(110%); }
   text-decoration-color: var(--line-strong);
 }
 .oferta--passos a:hover { text-decoration-color: currentColor; }
+
+/* ============================================================
+   SINTOMAS (skills.html)
+
+   Acrescentado em 07/09/2026. Em 05/09 entraram 119 pessoas na
+   pagina e 15 rolaram alem de 25%. O tempo de atencao subiu para
+   39 segundos: elas leem a primeira tela inteira e vao embora.
+   Ler por 40 segundos e nao rolar nao e falta de paciencia, e
+   falta de reconhecimento. O texto explicava o que o produto e,
+   nao o que a pessoa esta sentindo.
+
+   Cada cartao abre a resposta no lugar, sem sair da pagina. E um
+   <details>, entao funciona sem JavaScript: se o script falhar no
+   navegador do Instagram, o conteudo continua acessivel.
+   ============================================================ */
+
+.sintomas-head { max-width: 760px; margin: 0 auto 26px; text-align: center; }
+.sintomas-head h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); line-height: 1.15; }
+.sintomas-head p { margin-top: 12px; color: var(--text-2); font-size: .98rem; line-height: 1.6; }
+
+.sintomas {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 860px) { .sintomas { grid-template-columns: 1fr; } }
+
+.sintoma {
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition: border-color .25s ease, background .25s ease;
+}
+.sintoma[open] { border-color: var(--line-strong); background: var(--bg); }
+.sintoma:hover { border-color: var(--line-strong); }
+
+.sintoma > summary {
+  list-style: none; cursor: pointer;
+  padding: 20px 22px;
+  display: flex; align-items: flex-start; gap: 14px;
+  font-size: 1rem; line-height: 1.45; color: var(--text-1);
+}
+.sintoma > summary::-webkit-details-marker { display: none; }
+
+.sintoma-aspas {
+  flex: 0 0 auto; font-family: var(--font-head); font-size: 1.5rem;
+  line-height: 1; color: var(--text-3); margin-top: -2px;
+}
+.sintoma-frase { flex: 1; font-weight: 500; }
+.sintoma-mais {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--line-strong); color: var(--text-2);
+  display: grid; place-items: center; font-size: .82rem; line-height: 1;
+  transition: transform .25s ease, color .25s ease, border-color .25s ease;
+}
+.sintoma[open] .sintoma-mais { transform: rotate(45deg); color: var(--text-1); border-color: var(--text-2); }
+
+.sintoma-corpo { padding: 0 22px 22px 58px; }
+.sintoma-corpo p { color: var(--text-2); font-size: .93rem; line-height: 1.65; }
+.sintoma-corpo p + p { margin-top: 10px; }
+.sintoma-corpo b { color: var(--text-1); font-weight: 600; }
+.sintoma-nome {
+  display: inline-block; margin-top: 14px; padding: 6px 12px;
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  font-size: .74rem; letter-spacing: .04em; color: var(--text-1);
+  text-decoration: none; transition: background .25s ease, color .25s ease;
+}
+.sintoma-nome:hover { background: var(--ghost); color: var(--obsidian); }
+
+@media (max-width: 520px) {
+  .sintoma > summary { padding: 17px 16px; font-size: .95rem; gap: 11px; }
+  .sintoma-corpo { padding: 0 16px 18px 41px; }
+}
+
+/* ---------- WhatsApp tardio (skills.html) ----------
+   O botao volta em 07/09 por decisao do Gabriel, com tres mudancas em
+   relacao a versao que em 31/08 levou 37% do trafego pago embora: entra
+   so depois dos cartoes de preco, fica do lado esquerdo (a barra fixa
+   de compra ocupa a direita, que e onde o polegar cai primeiro) e perde
+   o pulso animado que puxava o olho na chegada. */
+.whats-float--tardio {
+  left: 22px; right: auto; bottom: 92px;
+  width: 46px; height: 46px;
+  display: none;
+}
+.whats-float--tardio[data-visivel] { display: flex; }
+
+/* Sem transicao de opacidade aqui, de proposito. Transicao precisa de
+   quadro, e quadro e exatamente o que o navegador suspende quando a aba
+   sai de vista. Testado: com o atributo aplicado numa aba em segundo
+   plano, a regra casava e a opacidade computada continuava 0. Este
+   projeto ja perdeu uma campanha inteira para essa classe de defeito no
+   `reveal`, e um preco errado na tela por causa dela. Aparecer sem
+   elegancia e melhor que nao aparecer. */
+.whats-float--tardio svg { width: 23px; height: 23px; }
+.whats-float--tardio::before { content: none; }
+
+@media (max-width: 860px) { .whats-float--tardio { bottom: 96px; } }
+@media (min-width: 861px) { .whats-float--tardio { bottom: 26px; } }
+
+/* ---------- Faixa de suporte dentro do header ----------
+   Ela era um bloco estatico logo acima de um header `position: fixed`.
+   Os dois comecavam em y=0: medido no celular, 60,6px de faixa por
+   baixo de 75px de header, e o texto passava atras do logotipo. Dentro
+   do header eles empilham sozinhos, sem altura calculada a mao. */
+.header .cupom {
+  background: var(--carbon);
+  border-bottom: 1px solid var(--line);
+}
+.header.scrolled .cupom { background: rgba(29,29,29,.92); }
+
+/* No celular a faixa quebra em duas linhas e come a primeira tela.
+   Ela some ali: quem chega pelo anuncio precisa da manchete no
+   primeiro quadro, e a promessa de suporte se repete nos selos. */
+@media (max-width: 700px) { .header .cupom { display: none; } }
+
+/* ---------- Ancora que nao para debaixo do cabecalho ----------
+   O header e `position: fixed` com 74px, entao todo link para #precos
+   ou #planos parava com o titulo escondido atras do logotipo. Isso
+   valia inclusive para o CTA do topo, que e o caminho mais usado da
+   pagina. `scroll-padding-top` resolve no elemento que rola, e vale
+   para link, foco de teclado e scrollIntoView de uma vez. */
+html { scroll-padding-top: 96px; }
+@media (max-width: 700px) { html { scroll-padding-top: 88px; } }

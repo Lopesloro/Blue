@@ -361,7 +361,7 @@
         }
         medirIda(chave, 'checkout-falhou');
         window.alert('Não consegui abrir o pagamento agora. '
-          + 'Tente de novo em alguns segundos — se insistir, '
+          + 'Tente de novo em alguns segundos. Se insistir, '
           + 'escreva para blueshieldpro01@gmail.com que a gente '
           + 'manda o link na mão.');
       });
@@ -546,13 +546,13 @@
         send_to: window.BSP_GA4_ID,
         value: valor,
         currency: 'BRL',
-        items: [{ item_id: chave, item_name: 'Skills de IA — ' + plano.nome, price: valor, quantity: 1 }]
+        items: [{ item_id: chave, item_name: 'Skills de IA para ' + plano.nome, price: valor, quantity: 1 }]
       });
     }
 
     if (typeof window.fbq !== 'function') return;
     window.fbq('track', 'InitiateCheckout', {
-      content_name: 'Skills de IA — ' + plano.nome,
+      content_name: 'Skills de IA para ' + plano.nome,
       content_ids: [chave],
       content_type: 'product',
       value: valor,
@@ -585,6 +585,37 @@
         if (entradas[0].isIntersecting) barra.removeAttribute('data-visivel');
         else barra.setAttribute('data-visivel', '');
       }, { threshold: 0 }).observe(precos);
+    }
+  }
+
+  /* ---------- WhatsApp tardio -------------------------------
+     Ele nao existe na chegada. Aparece quando a pessoa passa dos
+     cartoes de preco, ou seja, depois de ja ter visto a oferta.
+     Duvida que aparece depois do preco e duvida real, e duvida sem
+     resposta tambem e venda perdida. Duvida ANTES do preco e so uma
+     porta mais facil que a de comprar, e foi essa que em 31/08
+     levou 37% do trafego pago para a conversa.
+
+     Ao contrario da barra de compra, aqui o estado seguro e o
+     escondido: se o observador nunca disparar, a pessoa fica sem o
+     atalho para o WhatsApp, o que custa uma duvida. O inverso
+     custaria a venda inteira. -->
+     ----------------------------------------------------------- */
+  var whats = document.querySelector('[data-whats-tardio]');
+  if (whats) {
+    whats.hidden = false;
+    var precosParaWhats = document.getElementById('precos');
+    if (precosParaWhats && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entradas) {
+        var e = entradas[0];
+        // boundingClientRect.top < 0 significa que os precos ja
+        // subiram para fora da tela: a pessoa passou por eles.
+        if (!e.isIntersecting && e.boundingClientRect.top < 0) {
+          whats.setAttribute('data-visivel', '');
+        } else if (e.isIntersecting) {
+          whats.removeAttribute('data-visivel');
+        }
+      }, { threshold: 0 }).observe(precosParaWhats);
     }
   }
 
