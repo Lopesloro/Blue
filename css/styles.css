@@ -573,13 +573,42 @@ h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-heigh
 .seo-areas p { font-size: .74rem; color: #5a5a5a; line-height: 2; }
 
 /* ============ REVEAL ============ */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity .35s cubic-bezier(.2,.7,.3,1), transform .35s cubic-bezier(.2,.7,.3,1); }
-.reveal.in { opacity: 1; transform: translateY(0); }
-.reveal-left { opacity: 0; transform: translateX(-36px); transition: opacity .35s ease, transform .35s ease; }
-.reveal-right { opacity: 0; transform: translateX(36px); transition: opacity .35s ease, transform .35s ease; }
-.reveal-left.in, .reveal-right.in { opacity: 1; transform: translateX(0); }
-.reveal-zoom { opacity: 0; transform: scale(.96); transition: opacity .3s ease, transform .3s ease; }
-.reveal-zoom.in { opacity: 1; transform: scale(1); }
+/* Revelacao forcada, sem transicao.
+
+   Medido em 08/09: o piso de 2s do main.js adicionava `.in` nos 31
+   elementos da servicos.html e a opacidade computada continuava 0.
+   Adicionar a classe nao basta, porque a TRANSICAO tambem precisa de
+   quadro, e quadro e exatamente o que o navegador suspende. Esta classe
+   corta a transicao e escreve o valor final direto, entao o resgate
+   funciona no unico cenario em que ele e necessario. */
+.reveal.revelado, .reveal-left.revelado,
+.reveal-right.revelado, .reveal-zoom.revelado,
+.js-anima .reveal.revelado, .js-anima .reveal-left.revelado,
+.js-anima .reveal-right.revelado, .js-anima .reveal-zoom.revelado {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Esconder exige que o script tenha ligado.
+
+   `.reveal { opacity: 0 }` sem condicao aposta que o IntersectionObserver
+   vai disparar. Quando ele nao dispara — navegador embutido do Instagram,
+   aba em segundo plano, quadro suspenso — a pagina fica preta e vazia. Ja
+   custou uma campanha inteira aqui.
+
+   Com o seletor preso a `html.js-anima`, que o main.js adiciona na
+   primeira linha, o pior caso vira "a animacao nao acontece" em vez de
+   "o conteudo nao existe". E o main.js ainda revela tudo por
+   temporizador depois de 2s, que e o unico relogio que o navegador nao
+   suspende em segundo plano. */
+.js-anima .reveal { opacity: 0; transform: translateY(28px); transition: opacity .35s cubic-bezier(.2,.7,.3,1), transform .35s cubic-bezier(.2,.7,.3,1); }
+.js-anima .reveal.in { opacity: 1; transform: translateY(0); }
+.js-anima .reveal-left { opacity: 0; transform: translateX(-36px); transition: opacity .35s ease, transform .35s ease; }
+.js-anima .reveal-right { opacity: 0; transform: translateX(36px); transition: opacity .35s ease, transform .35s ease; }
+.js-anima .reveal-left.in, .js-anima .reveal-right.in { opacity: 1; transform: translateX(0); }
+.js-anima .reveal-zoom { opacity: 0; transform: scale(.96); transition: opacity .3s ease, transform .3s ease; }
+.js-anima .reveal-zoom.in { opacity: 1; transform: scale(1); }
 .d1 { transition-delay: .08s; } .d2 { transition-delay: .16s; } .d3 { transition-delay: .24s; }
 .d4 { transition-delay: .32s; } .d5 { transition-delay: .40s; } .d6 { transition-delay: .48s; }
 

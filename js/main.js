@@ -41,6 +41,14 @@ function bspConversao(sendTo, valor, origem) {
   }
 }
 
+/* Autoriza o CSS a esconder os elementos de animacao.
+
+   Enquanto esta classe nao existe, `.reveal` fica visivel: e o que
+   garante que uma pagina sem JavaScript, ou com o script quebrado,
+   nunca apareca preta e vazia. Fica FORA do DOMContentLoaded de
+   proposito, para valer no primeiro quadro em vez de depois do parse. */
+document.documentElement.classList.add('js-anima');
+
 document.addEventListener('DOMContentLoaded', () => {
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -118,6 +126,23 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     revealEls.forEach(el => el.classList.add('in'));
   }
+
+  /* Piso de tempo, independente do observador.
+
+     O `else` acima so cobre navegador SEM IntersectionObserver. O caso
+     que de fato acontece e outro: o navegador TEM o observador e nao o
+     dispara, porque suspendeu o quadro. setTimeout continua contando
+     nessa situacao; rAF e o proprio observador, nao. Dois segundos e
+     tempo de sobra para a animacao normal ter acontecido, e curto o
+     bastante para ninguem encarar tela vazia. */
+  setTimeout(() => {
+    /* `revelado` e nao `in`: a classe `.in` muda a opacidade por
+       TRANSICAO, e transicao tambem precisa de quadro. Medido hoje na
+       servicos.html com a aba em segundo plano, os 31 elementos ficaram
+       com `.in` e opacidade computada 0. `revelado` corta a transicao e
+       escreve o valor final direto. */
+    revealEls.forEach(el => { el.classList.add('in'); el.classList.add('revelado'); });
+  }, 2000);
 
   // ---------- Contadores animados ----------
   const counters = document.querySelectorAll('[data-count]');
