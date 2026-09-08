@@ -317,12 +317,14 @@
     var jaPronto = checkoutPronto[chave];
     if (jaPronto) {
       medirIda(chave, 'mercadopago-pronto');
+      w2.bsp.marcarInicioReal(chave, 'cartao');
       var direta = window.open(jaPronto, '_blank');
       if (!direta) window.location.href = jaPronto;   // pop-up bloqueado
       return true;
     }
 
     medirIda(chave, 'mercadopago');
+    w2.bsp.marcarInicioReal(chave, 'cartao');
 
     // Precisa ser sincrono, dentro do gesto do clique.
     var aba = window.open('', '_blank');
@@ -387,7 +389,6 @@
     return true;
   }
 
-  var w2 = window;
 
   /* O painel voltou, e a razao mudou. Antes ele era um resumo com um
      SEGUNDO botao para sair do site — clique extra sem funcao, e foi
@@ -487,7 +488,11 @@
     var botao = cartao.querySelector('[data-buy]');
     if (!botao) return;
     cartao.addEventListener('click', function (e) {
-      if (e.target.closest('a,button,input,select,textarea,[role="button"],[data-buy]')) return;
+      /* `summary` entrou nesta lista em 07/09, quando as listas dos
+         cartoes passaram a abrir em <details> para encurtar a pagina.
+         Sem ele, tocar em "ver o que inclui" abriria o pagamento junto:
+         o mesmo toque significaria conferir e comprar. */
+      if (e.target.closest('a,button,input,select,textarea,[role="button"],[data-buy],summary,details')) return;
       var sel = window.getSelection && window.getSelection();
       if (sel && String(sel).length > 2) return;
       abrir(botao.dataset.buy, 'cartao');
@@ -531,6 +536,7 @@
      Evento inflado nao e so relatorio errado. A Meta otimiza pelo
      InitiateCheckout: contar duas vezes ensina ela a perseguir quem
      abre painel, e o custo por evento aparece pela metade do que e. */
+  var w2 = window;
   var inicioContado = {};
 
   function rastrearInicio(chave) {
@@ -550,6 +556,63 @@
       });
     }
 
+    /* Para a Meta este momento e AddToCart, nao InitiateCheckout.
+
+       Ate 07/09 o clique no plano disparava InitiateCheckout, e era
+       por ele que a campanha otimizava. Em sete dias isso deu 29
+       eventos e 1 venda: a Meta estava sendo ensinada a caçar quem
+       abre painel, que e barato e abundante, em vez de quem paga.
+
+       InitiateCheckout passou a sair no momento em que o link de
+       pagamento existe de verdade — o QR do Pix gerado, ou a aba do
+       Checkout Pro aberta. Ver bsp.marcarInicioReal(). */
+    if (typeof window.fbq !== 'function') return;
+    window.fbq('track', 'AddToCart', {
+      content_name: 'Skills de IA para ' + plano.nome,
+      content_ids: [chave],
+      content_type: 'product',
+      value: valor,
+      currency: 'BRL'
+    });
+  }
+
+  /* ---------- Inicio de checkout de verdade -------------------
+     Chamado quando o meio de pagamento ja produziu um link: o Pix
+     com QR na tela, ou a aba do Checkout Pro aberta. Antes disso
+     nao existe cobranca nenhuma, so intencao de olhar preco.
+
+     Uma vez por plano por sessao, mesma trava do AddToCart: o
+     caminho do cartao passa por dois pontos em sequencia e ja
+     inflou evento uma vez, em 03/09, contando 16 begin_checkout
+     para 9 pessoas.
+
+     O contrapeso desta mudanca precisa ficar escrito: o evento fica
+     muito mais raro. Na medicao de 05/09 foram 10 aberturas de
+     painel para 2 idas ao pagamento. Sinal melhor, volume menor, e
+     volume e o que tira o conjunto da fase de aprendizado. Se a
+     entrega travar, o caminho e otimizar por AddToCart e manter o
+     InitiateCheckout so como leitura.
+     ----------------------------------------------------------- */
+  var inicioRealContado = {};
+
+  w2.bsp = w2.bsp || {};
+  w2.bsp.marcarInicioReal = function (chave, meio) {
+    var plano = CONFIG.planos[chave];
+    if (!plano) return;
+    if (inicioRealContado[chave]) return;
+    inicioRealContado[chave] = true;
+    var valor = mensal ? plano.mensal : plano.unico;
+
+    if (typeof window.gtag === 'function' && window.BSP_GA4_ID) {
+      window.gtag('event', 'checkout_real', {
+        send_to: window.BSP_GA4_ID,
+        meio: meio || 'desconhecido',
+        value: valor,
+        currency: 'BRL',
+        transport_type: 'beacon'
+      });
+    }
+
     if (typeof window.fbq !== 'function') return;
     window.fbq('track', 'InitiateCheckout', {
       content_name: 'Skills de IA para ' + plano.nome,
@@ -558,7 +621,7 @@
       value: valor,
       currency: 'BRL'
     });
-  }
+  };
 
   /* ---------- Barra fixa de compra ---------------------------
      Reusa o mesmo [data-buy] dos cartoes, entao o painel de

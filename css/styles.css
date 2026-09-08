@@ -1176,3 +1176,67 @@ body.checkout-open .compra-fixa { transform: translateY(110%); }
    para link, foco de teclado e scrollIntoView de uma vez. */
 html { scroll-padding-top: 96px; }
 @media (max-width: 700px) { html { scroll-padding-top: 88px; } }
+
+/* ---------- Listas que abrem, para a pagina caber ----------
+   Medido em 07/09 no celular: a pagina tinha 16,7 telas. Os cartoes de
+   preco ocupavam 6,3 delas (cinco planos empilhados, oito itens cada) e
+   a estante mais 3,3. Juntos, 57% da altura, quase toda abaixo do ponto
+   onde a maioria para de rolar.
+
+   A lista nao saiu, so deixou de comecar aberta. E <details>, entao
+   abre sem JavaScript, como os sintomas. O cartao recomendado nasce
+   aberto de proposito: com todos fechados, a pagina fica sem nenhum
+   argumento visivel entre o preco e o botao. */
+
+.plan-itens, .prateleira-itens { margin-top: 4px; }
+.plan-itens > summary,
+.prateleira-itens > summary {
+  list-style: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 0; font-size: .84rem; color: var(--text-2);
+  transition: color .2s ease;
+}
+.plan-itens > summary::-webkit-details-marker,
+.prateleira-itens > summary::-webkit-details-marker { display: none; }
+.plan-itens > summary::after,
+.prateleira-itens > summary::after {
+  content: '+'; display: grid; place-items: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid var(--line-strong); font-size: .72rem; line-height: 1;
+  transition: transform .2s ease;
+}
+.plan-itens[open] > summary::after,
+.prateleira-itens[open] > summary::after { transform: rotate(45deg); }
+.plan-itens > summary:hover,
+.prateleira-itens > summary:hover { color: var(--text-1); }
+.plan-itens .plan-features { margin-top: 6px; }
+
+/* O cartao inteiro e clicavel e abre o pagamento. O resumo precisa
+   engolir o proprio clique, senao abrir a lista compra o plano. */
+.plan-itens > summary, .prateleira-itens > summary { position: relative; z-index: 2; }
+
+/* ---------- Pacotes por oficio, atras de uma linha ----------
+   Cinco cartoes empilhados no celular eram 3,8 telas e cinco decisoes.
+   Os tres de cargo formam uma escada (executa, coordena, decide) em que
+   a pessoa se acha em um segundo. Marketing e Design sao recorte por
+   oficio: no meio da escada, trocavam "qual e o meu?" por "qual destes
+   cinco?". Continuam na pagina, so nao competem mais com a escada. */
+.planos-oficio { max-width: 1080px; margin: 26px auto 0; }
+.planos-oficio > summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 15px 20px; text-align: center;
+  border: 1px dashed var(--line-strong); border-radius: var(--radius-lg);
+  font-size: .92rem; color: var(--text-2);
+  transition: color .2s ease, border-color .2s ease;
+}
+.planos-oficio > summary::-webkit-details-marker { display: none; }
+.planos-oficio > summary::after {
+  content: '+'; display: grid; place-items: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1px solid var(--line-strong); font-size: .78rem; line-height: 1;
+  transition: transform .2s ease;
+}
+.planos-oficio[open] > summary::after { transform: rotate(45deg); }
+.planos-oficio > summary:hover { color: var(--text-1); border-color: var(--text-2); }
+.plans--oficio { margin-top: 18px; }

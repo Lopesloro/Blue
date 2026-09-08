@@ -27,8 +27,19 @@
   // Marcos de tempo visivel, em segundos.
   var MARCOS_TEMPO = [3, 10, 30, 60, 120];
 
-  // Marcos de profundidade de rolagem, em porcentagem.
-  var MARCOS_ROLAGEM = [25, 50, 75, 90];
+  /* Marcos de profundidade de rolagem, em porcentagem.
+
+     O 10 entrou em 07/09. Com a pagina em 16,7 telas, o primeiro marco
+     era 25%, que caia na tela 3,9 — abaixo dos cartoes de preco, que
+     ficam na 2,6. Dava para ler heroi, sintomas e a tabela inteira e
+     ainda contar como "nao rolou", e foi assim que eu li o dado de
+     05/09 e conclui errado. A pagina encurtou para 11,5 telas e o preco
+     caiu para 24% da rolagem, entao continua colado no marco de 25%:
+     sem o de 10% nao ha nenhuma leitura ANTES do preco.
+
+     Quem responde a pergunta com precisao e o `marco_precos`, que nao
+     depende de altura nenhuma. Este aqui e a leitura grossa. */
+  var MARCOS_ROLAGEM = [10, 25, 50, 75, 90];
 
   // A partir de quantos segundos de atencao real a visita vira um
   // ViewContent para a Meta. Ver a nota no fim do arquivo.
@@ -76,12 +87,24 @@
     w.gtag('event', nome, parametros);
   }
 
+  /* O valor vai no NOME do evento, nao so no parametro.
+
+     Parametro personalizado do GA4 nao aparece na API enquanto nao for
+     registrado como dimensao no painel, e o registro nao e retroativo.
+     Isso deixou a operacao cega por cinco dias sobre onde a leitura
+     morria: `marco_pagina` disparava 152 vezes e nao dava para saber se
+     era heroi, conteudo ou preco.
+
+     Nome de evento aparece sempre, sem registro nenhum. O parametro
+     continua indo junto, entao no dia em que a dimensao for registrada
+     as duas leituras funcionam. Nomes distintos por propriedade tem
+     limite de 500 no GA4; estes sao sete. */
   function marcarTempo() {
     for (var i = 0; i < MARCOS_TEMPO.length; i++) {
       var s = MARCOS_TEMPO[i];
       if (segundosVisiveis >= s && !tempoJaDisparado[s]) {
         tempoJaDisparado[s] = true;
-        enviar('tempo_na_pagina', {
+        enviar('tempo_' + s + 's', {
           segundos: s,
           profundidade_ate_aqui: profundidadeMaxima
         });
@@ -130,7 +153,7 @@
       var m = MARCOS_ROLAGEM[i];
       if (profundidadeMaxima >= m && !rolagemJaDisparada[m]) {
         rolagemJaDisparada[m] = true;
-        enviar('rolagem', {
+        enviar('rolagem_' + m, {
           profundidade: m,
           segundos_ate_aqui: segundosVisiveis
         });
@@ -205,7 +228,7 @@
         var chave = e.target.getAttribute('data-marco');
         if (!chave || marcosVistos[chave]) return;
         marcosVistos[chave] = true;
-        enviar('marco_pagina', { marco: chave, segundos_ate: segundosVisiveis });
+        enviar('marco_' + chave, { marco: chave, segundos_ate: segundosVisiveis });
         obs.unobserve(e.target);
       });
     }, { threshold: 0.35 });

@@ -219,6 +219,14 @@
     mostrar('pix');
     medir('pix_gerado', { plano: planoAtual });
 
+    /* Aqui existe cobranca de verdade: a Mercado Pago devolveu QR e
+       copia-e-cola. E este o momento que a Meta passa a contar como
+       InitiateCheckout desde 07/09, no lugar do clique no cartao de
+       plano. Ver bsp.marcarInicioReal em js/skills.js. */
+    if (w.bsp && typeof w.bsp.marcarInicioReal === 'function') {
+      w.bsp.marcarInicioReal(planoAtual, 'pix');
+    }
+
     if (elQr && pix.qrBase64) {
       elQr.src = 'data:image/png;base64,' + pix.qrBase64;
       elQr.hidden = false;
