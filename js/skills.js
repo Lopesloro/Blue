@@ -7,6 +7,12 @@
 (function () {
   'use strict';
 
+  /* Declarado aqui em cima porque e usado ja no caminho do Checkout
+     Pro, bem antes do painel. `var` iça a declaracao mas nao a
+     atribuicao: com ele no meio do arquivo, `w2.bsp` lia de
+     undefined e o skills.js inteiro parava de carregar. */
+  var w2 = window;
+
   /* ---------- Configuracao ----------------------------------
      Unico lugar para mexer em preco, texto e Stripe.
      ---------------------------------------------------------- */
@@ -536,7 +542,6 @@
      Evento inflado nao e so relatorio errado. A Meta otimiza pelo
      InitiateCheckout: contar duas vezes ensina ela a perseguir quem
      abre painel, e o custo por evento aparece pela metade do que e. */
-  var w2 = window;
   var inicioContado = {};
 
   function rastrearInicio(chave) {
