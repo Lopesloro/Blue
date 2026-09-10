@@ -25,6 +25,48 @@ const BSP = {
 // Dispara a conversão no Google Ads e o evento de lead no Google Analytics 4.
 // Silencioso se o gtag ainda não carregou — nunca quebra a página.
 function bspConversao(sendTo, valor, origem) {
+  /* Meta vem PRIMEIRO, de proposito.
+
+     O `return` do gtag logo abaixo aborta a funcao inteira quando o Google
+     esta bloqueado — e bloqueador de anuncio derruba o gtag com muito mais
+     frequencia que o fbevents. Com a chamada do Meta depois do guard, todo
+     lead de quem usa bloqueador sumiria dos dois lados em vez de um.
+
+     Antes desta linha o site avisava o Google a cada lead e nunca o Meta:
+     campanha de lead no Meta rodava cega, sem evento para otimizar e sem
+     custo por lead no Gerenciador. */
+  var idEvento = 'Lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+
+  if (typeof fbq === 'function') {
+    fbq('track', 'Lead', {
+      value: valor,
+      currency: 'BRL',
+      content_name: origem || 'site'
+    }, { eventID: idEvento });
+  }
+
+  /* O mesmo Lead tambem pelo servidor, com o MESMO event_id — a Meta funde os
+     dois e conta uma vez. Isso atravessa bloqueador de anuncio e ITP, e cobre
+     o caso ja medido em 09/09/2026 na Anchorline, onde o fbevents carregava,
+     inicializava e nao mandava nada. */
+  try {
+    fetch('https://blue-skills-api.onrender.com/meta/evento', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        evento: 'Lead',
+        event_id: idEvento,
+        url: location.href,
+        valor: valor,
+        moeda: 'BRL',
+        conteudo: origem || 'site',
+        fbp: (document.cookie.match(/(?:^|; )_fbp=([^;]+)/) || [])[1] || null,
+        fbc: (document.cookie.match(/(?:^|; )_fbc=([^;]+)/) || [])[1] || null
+      })
+    }).catch(function () {});
+  } catch (e) {}
+
   if (typeof gtag !== 'function') return;
 
   // Google Ads: conversão da campanha.
