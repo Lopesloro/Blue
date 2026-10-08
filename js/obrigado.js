@@ -6,10 +6,16 @@
 (function () {
   'use strict';
 
+  /* Mesmas chaves e precos de js/skills.js (valor unico). Os pacotes por
+     oficio — marketing e design — faltavam aqui, e a compra deles chegava
+     ao GA4 e a Meta sem valor nem nome. Ao mudar preco ou plano em
+     skills.js, mude aqui tambem. */
   var PLANOS = {
-    basico:  { nome: 'Analista',   valor: 69.90 },
-    medium:  { nome: 'Gestor',     valor: 149.90 },
-    premium: { nome: 'Empresário', valor: 299.90 }
+    basico:    { nome: 'Analista',           valor: 69.90 },
+    medium:    { nome: 'Gestor',             valor: 149.90 },
+    premium:   { nome: 'Empresário',         valor: 299.90 },
+    marketing: { nome: 'Marketing e Vendas', valor: 139.90 },
+    design:    { nome: 'Design e Produto',   valor: 159.90 }
   };
 
   var params = new URLSearchParams(window.location.search);

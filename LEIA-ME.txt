@@ -1,163 +1,318 @@
 =====================================================
-  BLUESHIELDPRO — SITE INSTITUCIONAL
-  Guia rápido de configuração
+  BLUESHIELDPRO: SITE INSTITUCIONAL
+  Guia rápido de configuração e manutenção
+  (revisado em 07/10/2026, junto com o site novo)
 =====================================================
 
-O site é 100% estático (HTML + CSS + JS). Não precisa de
-servidor, banco de dados nem instalação. É só hospedar.
+O site é 100% estático (HTML + CSS + JS). Não tem etapa de
+build nem banco de dados. Está hospedado no Render.
+
+ATENÇÃO: tudo o que está na pasta do repositório é publicado
+junto com o site, inclusive este arquivo. Não escreva aqui
+senhas, chaves secretas nem dados pessoais.
 
 -----------------------------------------------------
-1. FORMULÁRIO DE ORÇAMENTO (Web3Forms)
+1. DOMÍNIO
 -----------------------------------------------------
-O envio usa o Web3Forms (https://web3forms.com) com a chave
-de acesso já configurada em orcamento.html:
+O endereço oficial (canônico) é, sem "www":
+
+    https://blueshieldpro.com.br/
+
+É o que aparece no <link rel="canonical"> de cada página, no
+sitemap.xml, no robots.txt, no llms.txt e no JSON-LD. Se um
+dia o domínio mudar, faça um "localizar e substituir" em todos
+os .html, no sitemap.xml, no robots.txt, no llms.txt e em
+scripts/indexnow.sh.
+
+-----------------------------------------------------
+2. FORMULÁRIO DE ORÇAMENTO (Web3Forms)
+-----------------------------------------------------
+O pedido de orçamento (orcamento.html) é um formulário em 3
+etapas: "Seu negócio", "O que você precisa" e "Como falamos
+com você". O envio usa o Web3Forms (https://web3forms.com), com
+a chave de acesso já configurada em orcamento.html:
 
     <input type="hidden" name="access_key" value="6c39a839-...">
 
-Essa chave está vinculada ao e-mail cadastrado no Web3Forms.
-Para trocar o e-mail de destino, acesse web3forms.com, entre
-com a conta usada para gerar essa chave (ou gere uma nova
-chave lá) e atualize o value do campo access_key nesse arquivo.
+Essa chave está ligada ao e-mail cadastrado no Web3Forms. Para
+trocar o e-mail de destino, entre no web3forms.com com a conta
+que gerou a chave (ou gere uma nova) e atualize o value do
+campo access_key nesse arquivo.
 
-O envio acontece via JavaScript (fetch), sem sair da página:
-ao confirmar, o botão mostra "Enviando..." e, se der certo,
-o formulário é substituído pela mensagem de sucesso. Se falhar
-(sem internet, chave inválida etc.), aparece um aviso pedindo
-para tentar de novo ou chamar no WhatsApp — nenhum lead trava
-sem explicação.
+O envio acontece por JavaScript (js/main.js), sem sair da
+página. Os nomes dos campos viram os rótulos do e-mail que
+chega, por isso estão em português. Se o envio falhar, aparece
+um aviso pedindo para tentar de novo ou chamar no WhatsApp.
 
 -----------------------------------------------------
-2. WHATSAPP
+3. WHATSAPP E E-MAIL
 -----------------------------------------------------
-O número (19) 99833-4896 NÃO aparece em nenhum texto do site.
-Ele é usado apenas nos botões "Falar com um atendente" e no
-botão flutuante verde. Para trocar o número ou a mensagem
-inicial, edite no topo de js/main.js:
+O número de WhatsApp NÃO aparece em nenhum texto do site. Ele
+é usado só pelos botões com o atributo data-whats (faixa do
+topo, rodapé e botão flutuante). Para trocar o número ou a
+mensagem inicial, edite no topo de js/main.js:
 
-    whatsapp: '5519998334896',
+    whatsapp: '55DDDNUMERO',
     whatsappMsg: '...'
 
------------------------------------------------------
-3. DOMÍNIO
------------------------------------------------------
-As meta tags de SEO usam https://www.blueshieldpro.com.br
-Quando você registrar o domínio definitivo, se for OUTRO,
-faça um "localizar e substituir" em todos os .html, no
-sitemap.xml e no robots.txt.
+E-mail de contato publicado no site: blueshieldpro01@gmail.com
 
 -----------------------------------------------------
-4. COMO HOSPEDAR (opções gratuitas ou baratas)
+4. SKILLS DE IA: PREÇOS E PAGAMENTO (Mercado Pago)
 -----------------------------------------------------
-- Netlify / Vercel / Cloudflare Pages: arraste a pasta
-  inteira no painel e o site entra no ar em minutos (grátis).
-- Hostinger / HostGator etc.: envie os arquivos para a
-  pasta public_html via gerenciador de arquivos ou FTP.
+A página skills.html vende cinco planos, com pagamento único:
 
------------------------------------------------------
-5. IMAGEM DE COMPARTILHAMENTO (og-image.png)
------------------------------------------------------
-As meta tags apontam para og-image.png (imagem exibida ao
-compartilhar o link no WhatsApp/redes). Crie uma imagem
-1200x630 px com a logo e o slogan e salve na raiz do site
-com esse nome.
+    Analista             R$ 69,90
+    Gestor               R$ 149,90
+    Empresário           R$ 299,90
+    Marketing e Vendas   R$ 139,90
+    Design e Produto     R$ 159,90
 
------------------------------------------------------
-6. GOOGLE ANALYTICS 4
------------------------------------------------------
-O site carrega UM unico gtag.js e envia para DOIS destinos:
+O pagamento é pelo MERCADO PAGO. O Pix é gerado na própria
+página (QR e copia-e-cola); cartão, boleto e saldo Mercado
+Pago abrem o Checkout Pro do Mercado Pago. Quem cria o
+pagamento é o servidor blue-skills-api.onrender.com; o site
+nunca vê token nem dado de cartão. A Stripe não é mais usada
+(a reserva por Payment Link está desligada em js/skills.js).
 
-    Google Ads       AW-17972527330
-    Google Analytics G-RH3Y7G97J5   (ID do fluxo: 15467399592)
-
-IMPORTANTE: nao cole o snippet pronto que o Google oferece
-no painel. Ele traz um segundo <script src=".../gtag/js">,
-e dois carregadores na mesma pagina geram dados duplicados.
-O padrao correto, ja aplicado aqui, e um carregador so com
-uma linha gtag('config', ...) para cada destino.
-
-Para trocar o ID do GA4, edite esta linha no <head> das 13
-paginas .html (se ficar vazia, nada e enviado e nenhum erro
-e gerado):
-
-    window.BSP_GA4_ID = 'G-RH3Y7G97J5';
-
-Alem dos acessos normais, o site registra no GA4 o evento
-"generate_lead" em dois pontos:
-
-  - method: whatsapp             -> clique em qualquer CTA
-                                    de WhatsApp
-  - method: formulario_orcamento -> envio do formulario
-
-Esses dois eventos continuam disparando a conversao do
-Google Ads em paralelo, como antes.
+SE MUDAR UM PREÇO, mude nos QUATRO lugares, no mesmo deploy:
+  1. js/skills.js       (CONFIG.planos, o valor cobrado)
+  2. skills.html        (texto dos cartões)
+  3. skills.html        (JSON-LD: price/offers no <head>)
+  4. llms.txt           (seção "Skills de IA")
+O preço que o cliente paga vem do servidor do checkout: confira
+também lá.
 
 -----------------------------------------------------
-7. GOOGLE SEARCH CONSOLE
+5. VISUAL (cores e fontes)
 -----------------------------------------------------
-A verificação já está no ar pelo arquivo
-google7187f39ab48a0e46.html (não apague esse arquivo).
+Fundo branco, detalhes em preto, sem cor de destaque.
 
-Depois de cada publicação importante, envie o sitemap em
-Search Console -> Sitemaps -> "sitemap.xml".
+    Fundo da página      #FFFFFF
+    Texto e botões       #141414   (nunca #000)
+    Cinza de cards       #EFEFEF
+    Filetes              #D8D8D8
+    Texto secundário     #3A3A3A e #666666
 
------------------------------------------------------
-8. IA: llms.txt (como o ChatGPT/Claude/Perplexity
-   passam a indicar o site)
------------------------------------------------------
-O arquivo llms.txt na raiz descreve, em texto simples, o
-que a empresa faz, para quem atende e quais páginas
-existem. É o formato que assistentes de IA leem para
-entender e citar um site.
+Fontes (Google Fonts):
+    Playfair Display   títulos
+    Lora               texto corrido
+    Inter              botões, rótulos e textos pequenos
 
-Três peças trabalham juntas:
+Todo o visual está em css/styles.css. Para criar uma página
+nova, copie a estrutura de uma página parecida que já existe
+(por exemplo, site-para-dentista.html para um segmento novo):
+cabeçalho, rodapé e componentes já estão no padrão.
 
-  - llms.txt          o resumo lido pela IA
-  - robots.txt        libera explicitamente os robôs de IA
-                      (OAI-SearchBot, ChatGPT-User, GPTBot,
-                      Claude-SearchBot, PerplexityBot,
-                      Google-Extended e outros)
-  - JSON-LD no index  dados estruturados da empresa e do
-                      catálogo de serviços
-
-Sempre que mudar serviços, segmentos ou páginas, atualize
-o llms.txt junto — ele não é gerado automaticamente.
+A imagem de compartilhamento (og-image.png, 1200x630) já está
+no preto e branco, com Playfair, Lora e Inter. É a que aparece
+quando alguém cola o link no WhatsApp ou nas redes.
 
 -----------------------------------------------------
-9. RENDER (publicação e headers)
+6. GOOGLE ADS, GOOGLE ANALYTICS 4 E META PIXEL
 -----------------------------------------------------
-O arquivo render.yaml traz headers de cache e segurança.
+Cada medição está em UM arquivo só, carregado no <head> de
+todas as páginas. Não cole snippets prontos nas páginas: dois
+carregadores na mesma página duplicam os dados.
 
-ATENÇÃO: se o serviço no Render já existe e foi criado à
-mão pelo painel, NÃO o converta em Blueprint (o Render
-pode criar um serviço novo em vez de atualizar o atual).
-Nesse caso copie os headers em:
+    js/google.js   Google Ads (AW-17972527330) e
+                   Google Analytics 4 (G-RH3Y7G97J5)
+    js/pixel.js    Meta Pixel
+
+Para trocar um ID, edite só o arquivo correspondente.
+
+O site registra no GA4 o evento "generate_lead" em dois
+pontos, que também disparam a conversão do Google Ads:
+  - method: whatsapp             clique em botão de WhatsApp
+  - method: formulario_orcamento envio do formulário
+
+-----------------------------------------------------
+7. SEO E IA: COMO O SITE É ENCONTRADO
+-----------------------------------------------------
+Assistentes como ChatGPT, Copilot, Perplexity, Gemini e Claude
+buscam nos índices de busca (Google, Bing e Brave). O que mais
+pesa é a página estar indexada e responder a pergunta logo no
+começo, com informação verdadeira. Arquivos da raiz:
+
+  sitemap.xml   lista as páginas que devem aparecer na busca.
+                Fora dele de propósito: obrigado.html (noindex),
+                contato.html, blog.html e tecnologias.html
+                (redirecionamentos).
+  robots.txt    libera todos os robôs de busca e de IA. Não
+                bloqueia nada de conteúdo.
+  llms.txt      resumo do site em texto simples. Nenhum
+                buscador grande documenta usar esse arquivo;
+                ele não faz ninguém citar o site. Serve só se
+                estiver CERTO: tem que dizer exatamente o que
+                o site diz (mesmos serviços, preços, e-mail e
+                CNPJ). Não é gerado sozinho.
+  9cm3vmldp53zebubgoh78msf51rgv5wm.txt
+                chave do IndexNow (ver item 8). Não apague e
+                não mude o conteúdo.
+  scripts/indexnow.sh
+                avisa o Bing que páginas mudaram.
+
+REGRAS PARA AS PRÓXIMAS ALTERAÇÕES
+  - Página nova: entra no sitemap.xml e no llms.txt.
+  - <lastmod> do sitemap: só muda quando o CONTEÚDO da página
+    muda de verdade, no formato 2026-10-07T00:00:00-03:00.
+    Mudar só o rodapé ou o menu não conta. Data falsa faz o
+    Google ignorar o campo no site inteiro.
+  - A data "Atualizado em" visível e o "dateModified" do
+    JSON-LD da página precisam ser a mesma data.
+  - Uma página só para Campinas e região. Não criar uma página
+    por cidade (o Google trata como spam).
+  - Nada de número sem fonte, depoimento inventado ou texto
+    escondido para robô.
+
+-----------------------------------------------------
+8. DEPOIS DE CADA DEPLOY IMPORTANTE (fora do código)
+-----------------------------------------------------
+Faça na ordem, só depois que o Render terminar o deploy e o
+site novo estiver no ar.
+
+a) GOOGLE SEARCH CONSOLE
+   A propriedade já está verificada pelo arquivo
+   google7187f39ab48a0e46.html (não apague, nem o
+   google68c58f49dfc8d98c.html).
+   - Sitemaps -> enviar de novo "sitemap.xml".
+   - Inspecionar URL -> "Solicitar indexação" para cada página
+     nova ou reescrita. No lançamento de 07/10/2026:
+       https://blueshieldpro.com.br/
+       https://blueshieldpro.com.br/site-para-dentista.html
+       https://blueshieldpro.com.br/site-para-clinica-medica.html
+       https://blueshieldpro.com.br/site-para-contabilidade.html
+       https://blueshieldpro.com.br/site-para-advogado.html
+       https://blueshieldpro.com.br/sistema-para-industria.html
+       https://blueshieldpro.com.br/campinas.html
+       https://blueshieldpro.com.br/servicos.html
+       https://blueshieldpro.com.br/solucoes.html
+       https://blueshieldpro.com.br/portfolio.html
+     (há limite diário de pedidos; se acabar, continue no dia
+     seguinte. As demais o Google pega pelo sitemap.)
+   - Configurações -> controle de IA generativa na Busca
+     ("Search generative AI"): deixar em "Incluir" (é o
+     padrão; só confira).
+
+b) BING WEBMASTER TOOLS (alimenta o Copilot e, em parte, o
+   ChatGPT)
+   - Em bing.com/webmasters, "Importar do Google Search
+     Console" (a verificação é automática).
+   - Sitemaps -> enviar https://blueshieldpro.com.br/sitemap.xml
+   - Acompanhar o relatório "AI Performance" (citações no
+     Copilot).
+
+c) INDEXNOW (Bing, Yandex, Naver, Seznam, Yep; o Google não
+   participa)
+   No terminal, na pasta do site:
+       bash scripts/indexnow.sh --teste    (só mostra)
+       bash scripts/indexnow.sh            (envia o sitemap todo)
+   Nos deploys seguintes, envie só o que mudou:
+       bash scripts/indexnow.sh https://blueshieldpro.com.br/faq.html
+
+d) BRAVE SEARCH (usado pelo Claude nas buscas)
+   Pedir o rastreamento em https://search.brave.com/submit-url
+   para a home e as páginas novas. (O endereço vem da
+   comunidade do Brave, não da documentação oficial.)
+
+e) PERFIL DA EMPRESA NO GOOGLE (Google Maps)
+   O site diz que há atendimento presencial em Campinas e
+   região. Isso torna a empresa elegível como "empresa de área
+   de atendimento":
+   - em business.google.com, cadastrar como empresa que atende
+     os clientes no local deles;
+   - NÃO informar endereço (deixar oculto) e NÃO usar
+     endereço de coworking ou escritório virtual;
+   - áreas atendidas: Campinas e as cidades da região que
+     você realmente visita;
+   - mesmo nome (BlueShieldPro), mesmo e-mail e mesmo site do
+     rodapé;
+   - avaliações só de clientes reais.
+   Só crie se o atendimento presencial for real: a regra do
+   Google exige contato pessoal com o cliente, no local dele,
+   nos horários informados no perfil. Empresa só online não é
+   elegível.
+
+f) REDIRECIONAMENTOS (uma vez só)
+   contato.html -> /orcamento.html
+   blog.html -> /
+   tecnologias.html -> /servicos.html
+   Hoje esses três arquivos são páginas-ponte (meta refresh).
+   Para virar 301 de verdade: Render -> Dashboard -> serviço
+   -> Redirects/Rewrites, cadastre as três regras como
+   "Redirect" e depois APAGUE os três arquivos do repositório.
+   O Render ignora a regra enquanto o arquivo existir.
+
+g) MEDIR TRÁFEGO DE IA (opcional)
+   No GA4, criar um segmento com origem chatgpt.com,
+   perplexity.ai, copilot.microsoft.com, gemini.google.com e
+   claude.ai.
+
+-----------------------------------------------------
+9. RENDER (publicação, headers e redirecionamentos)
+-----------------------------------------------------
+O arquivo render.yaml traz headers de cache e segurança e as
+três regras de redirecionamento.
+
+ATENÇÃO: o serviço no Render foi criado pelo painel. NÃO o
+converta em Blueprint (o Render pode criar um serviço novo em
+vez de atualizar o atual). Copie os headers em
     Dashboard -> serviço -> Settings -> Headers
+e os redirecionamentos em
+    Dashboard -> serviço -> Redirects/Rewrites
 
-Para publicar uma alteração: o Render reconstrói sozinho a
-cada push na branch configurada no serviço. Se o push foi
-para outra branch, faça o merge nela ou use
+Para publicar uma alteração: o Render reconstrói sozinho a cada
+push na branch configurada no serviço. Se o push foi para outra
+branch, faça o merge nela ou use
     Dashboard -> serviço -> Manual Deploy
 
 -----------------------------------------------------
-ESTRUTURA
+10. ESTRUTURA
 -----------------------------------------------------
-index.html                 Home
-sobre.html                 Sobre a empresa
-servicos.html              Todos os serviços
-solucoes.html              Soluções por segmento
-portfolio.html             Portfólio de projetos
-processo.html              Como funciona (8 etapas)
-tecnologias.html           Stack de tecnologias
-faq.html                   43 perguntas frequentes
-blog.html                  Estrutura do blog
-contato.html               Canais de contato
-orcamento.html             Formulário de orçamento
-politica-privacidade.html  LGPD
-termos-de-uso.html         Termos
-css/styles.css             Todo o visual
-js/main.js                 Animações + configurações
-favicon.svg                Ícone do site
-robots.txt                 Regras dos robôs (busca + IA)
-sitemap.xml                Mapa do site para o Google
-llms.txt                   Resumo do site para IA
-render.yaml                Headers de cache/segurança (Render)
+Páginas (todas no sitemap, menos as marcadas):
+
+index.html                     Início
+servicos.html                  Serviços
+solucoes.html                  Segmentos (leva às páginas abaixo)
+site-para-dentista.html        Site para dentista
+site-para-clinica-medica.html  Site para clínica médica
+site-para-contabilidade.html   Site para contabilidade
+site-para-advogado.html        Site para advogado
+sistema-para-industria.html    Sistema para pequena indústria
+campinas.html                  Atendimento em Campinas e região
+portfolio.html                 Trabalhos (clientes reais)
+processo.html                  Como funciona
+sobre.html                     Sobre (MEI, CNPJ, como trabalha)
+faq.html                       Dúvidas
+orcamento.html                 Pedir orçamento (formulário)
+skills.html                    Venda das Skills de IA
+politica-privacidade.html      Política de Privacidade
+termos-de-uso.html             Termos de Uso
+obrigado.html                  Pós-compra das Skills (fora do
+                               sitemap, noindex)
+contato.html                   Ponte para orcamento.html (fora)
+blog.html                      Ponte para a home (fora)
+tecnologias.html               Ponte para servicos.html (fora)
+
+Arquivos de apoio:
+
+css/styles.css                 Todo o visual
+js/main.js                     Menu, formulário, WhatsApp e
+                               configurações
+js/google.js                   Google Ads + GA4
+js/pixel.js                    Meta Pixel
+js/skills.js                   Planos e preços das Skills
+js/pagamento.js                Pagamento (Pix e Mercado Pago)
+js/cupom.js, js/medicao.js,
+js/obrigado.js                 Apoio da venda das Skills
+robots.txt                     Regras dos robôs (busca + IA)
+sitemap.xml                    Mapa do site
+llms.txt                       Resumo do site em texto simples
+9cm3vmldp53zebubgoh78msf51rgv5wm.txt
+                               Chave do IndexNow
+scripts/indexnow.sh            Aviso de páginas novas ao Bing
+render.yaml                    Headers e redirecionamentos
+google*.html                   Verificação do Search Console
+favicon.*, apple-touch-icon.png, og-image.png
+                               Ícones e imagem de
+                               compartilhamento

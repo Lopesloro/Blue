@@ -1,6 +1,10 @@
 # =====================================================
-#  BlueShieldPro — robots.txt
-#  Regra geral: tudo liberado para indexação.
+#  BlueShieldPro: robots.txt
+#  Regra geral: tudo liberado para rastreamento.
+#  Nada de conteúdo é bloqueado. Páginas que não devem
+#  aparecer na busca (obrigado.html) usam <meta robots
+#  noindex> no próprio HTML; bloquear aqui impediria o
+#  robô de ler esse noindex.
 # =====================================================
 
 User-agent: *
@@ -8,6 +12,7 @@ Allow: /
 
 # -----------------------------------------------------
 #  Buscadores tradicionais
+#  (o Brave Search segue as regras dadas ao Googlebot)
 # -----------------------------------------------------
 User-agent: Googlebot
 Allow: /
@@ -22,18 +27,14 @@ User-agent: DuckDuckBot
 Allow: /
 
 # -----------------------------------------------------
-#  IA — buscadores/assistentes que citam fontes.
-#  Estes são os que fazem o ChatGPT, o Claude, o
-#  Perplexity e o Gemini indicarem o site quando alguém
-#  pergunta por um serviço que a BlueShieldPro presta.
+#  IA: robôs de BUSCA e de consulta do usuário.
+#  São os que permitem que o ChatGPT, o Claude e o
+#  Perplexity encontrem e citem as páginas do site.
 # -----------------------------------------------------
 User-agent: OAI-SearchBot
 Allow: /
 
 User-agent: ChatGPT-User
-Allow: /
-
-User-agent: GPTBot
 Allow: /
 
 User-agent: Claude-SearchBot
@@ -42,16 +43,26 @@ Allow: /
 User-agent: Claude-User
 Allow: /
 
-User-agent: ClaudeBot
-Allow: /
-
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Perplexity-User
 Allow: /
 
+# Google-Extended não afeta o AI Overviews, mas afeta o
+# uso do conteúdo pelo app Gemini. Fica liberado.
 User-agent: Google-Extended
+Allow: /
+
+# -----------------------------------------------------
+#  IA: robôs de TREINO e outros. Liberados por decisão
+#  do dono. Bloquear estes não tira o site das buscas
+#  com IA (são controles independentes).
+# -----------------------------------------------------
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
 Allow: /
 
 User-agent: Applebot
@@ -76,6 +87,6 @@ User-agent: CCBot
 Allow: /
 
 # -----------------------------------------------------
-#  Mapas do site
+#  Mapa do site
 # -----------------------------------------------------
 Sitemap: https://blueshieldpro.com.br/sitemap.xml

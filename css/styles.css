@@ -1,624 +1,771 @@
 /* ============================================================
-   BLUESHIELDPRO — Design System "Mono" (ref: vesper code)
-   Monocromático · Gabarito · minimalista · hairlines · crop-marks
+   BLUESHIELDPRO — Sistema visual "Autoridade" (Dialeto A, P&B)
+
+   Decisão do dono: fundo BRANCO, detalhes em PRETO. Nenhuma cor de
+   destaque. Tipografia: Playfair Display (display), Lora (corpo),
+   Inter (micro: eyebrow e botões). Assinatura: a régua cinza de
+   140x6px entre título e corpo. Separação por filete de 1px, nunca
+   por sombra.
+
+   Este arquivo atende dois públicos ao mesmo tempo:
+   1. As páginas novas, que usam os componentes documentados em
+      /_guia-componentes.html (classes em português: .secao, .regua,
+      .card, .hero, .form-etapas...).
+   2. A página de venda (skills.html) e a obrigado.html, que têm ~110
+      classes próprias e <style> embutido lendo tokens daqui. Por isso
+      os NOMES dos tokens antigos continuam existindo; só os valores
+      mudaram para o tema claro.
    ============================================================ */
 
 :root {
-  /* Paleta monocromática (extraída da referência) */
-  --obsidian:    #0B0B0B;   /* fundo principal (dark) */
-  --carbon:      #1D1D1D;   /* superfícies/cards no dark */
-  --graphite:    #4A4A4A;   /* bordas / texto fraco */
-  --silver-mist: #C7C7C7;   /* texto secundário no dark */
-  --soft-silver: #E8E8E8;   /* fundo de seções CLARAS */
-  --ghost:       #F7F7FF;   /* texto claro / off-white */
+  /* ---------- Dialeto A, versão preto e branco ---------- */
+  --ink:       #141414;   /* texto e fundos escuros (quase preto, nunca #000) */
+  --ink-deep:  #0A0A0A;   /* overlays de foto */
+  --paper:     #FFFFFF;
+  --paper-alt: #EFEFEF;   /* cards e seções alternadas */
+  --rule:      #D8D8D8;   /* régua-assinatura e filetes */
+
+  --display: "Playfair Display", "Fraunces", Georgia, "Times New Roman", serif;
+  --body:    "Lora", Georgia, "Times New Roman", serif;
+  --micro:   "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --pad: 40px;            /* respiro lateral do container */
+  --gap: 128px;           /* entre seções */
+  --header-h: 119px;      /* faixa utilitária (44) + header (74) + filete (1) */
+
+  /* ---------- Paleta legada: nomes mantidos, valores do tema claro ----------
+     ATENÇÃO à inversão: no tema escuro --obsidian era o FUNDO e --ghost
+     era o TEXTO. Continua assim, semanticamente — só que agora o fundo é
+     branco e o texto é tinta. Toda regra antiga do tipo
+     "background: var(--ghost); color: var(--obsidian)" passa a dar
+     tinta sobre papel invertido (botão preto com texto branco), que é o
+     comportamento certo. */
+  --obsidian:    #FFFFFF;  /* fundo principal */
+  --carbon:      #EFEFEF;  /* superfícies e cards */
+  --graphite:    #666666;  /* bordas fortes e texto fraco */
+  --silver-mist: #3A3A3A;  /* texto secundário */
+  --soft-silver: #EFEFEF;  /* fundo de seção alternada */
+  --ghost:       #141414;  /* tinta: texto principal e preenchimentos */
   --white:       #FFFFFF;
 
-  /* Tokens semânticos — DARK (padrão) */
-  --bg:          var(--obsidian);
-  --surface:     var(--carbon);
-  --text-1:      var(--ghost);
-  --text-2:      var(--silver-mist);
-  --text-3:      #8A8A8A;
-  --line:        rgba(255,255,255,0.12);
-  --line-strong: rgba(255,255,255,0.28);
+  /* ---------- Tokens semânticos ---------- */
+  --bg:          var(--paper);
+  --surface:     var(--paper-alt);
+  --text-1:      var(--ink);   /* 18.42:1 sobre #FFF · 16.02:1 sobre #EFEFEF */
+  --text-2:      #3A3A3A;      /* 11.37:1 sobre #FFF ·  9.89:1 sobre #EFEFEF */
+  --text-3:      #666666;      /*  5.74:1 sobre #FFF ·  4.99:1 sobre #EFEFEF */
+  --line:        var(--rule);  /* filete decorativo */
+  --line-strong: #858585;      /* borda de controle: 3.69:1 sobre #FFF, 3.21:1 sobre #EFEFEF */
+  --erro:        var(--ink);   /* sem cor de destaque: erro se marca por peso, filete e texto */
+  --logo-recorte: var(--paper);/* cor do "check" vazado dentro do escudo */
 
-  --radius:  12px;
-  --radius-lg: 20px;
+  --radius:    0px;    /* controles, caixas pequenas */
+  --radius-lg: 18px;   /* cards */
   --container: 1240px;
-  --font: 'Inter', system-ui, -apple-system, sans-serif;             /* corpo/UI */
-  --font-head: 'Fraunces', Georgia, 'Times New Roman', serif;         /* títulos editoriais */
+  --font:      var(--body);
+  --font-head: var(--display);
 
-  /* WhatsApp mantém verde só no glyph/CTA dedicado */
-  --wa: #15803D;
+  /* WhatsApp: em preto, por decisão do dono. Glifo branco. */
+  --wa: var(--ink);
 
-  /* Declara o tema para o navegador. Sem isto o iOS e o Android divergem:
-     o Safari aplica o esquema claro em barras de rolagem, campos de
-     formulário e no fundo além do documento, e o Chrome do Android usa
-     outro padrão. Com color-scheme fixo os dois renderizam igual. */
-  color-scheme: dark;
+  color-scheme: light;
 }
 
-/* O Safari do iOS interpreta hex como Display P3 e satura os tons.
-   Ancorar em sRGB mantém o obsidian igual nos dois sistemas. */
-@supports (color: color(srgb 0 0 0)) {
-  :root {
-    --obsidian:    color(srgb 0.043 0.043 0.043);
-    --carbon:      color(srgb 0.114 0.114 0.114);
-    --graphite:    color(srgb 0.290 0.290 0.290);
-    --silver-mist: color(srgb 0.780 0.780 0.780);
-    --soft-silver: color(srgb 0.910 0.910 0.910);
-    --ghost:       color(srgb 0.969 0.969 1.000);
-  }
+/* ============ CONTEXTO ESCURO ============
+   Faixa utilitária, rodapé, hero com foto e cards com foto. Redefinir
+   os tokens aqui faz qualquer componente dentro deles (inclusive os
+   antigos) inverter sozinho, sem regra duplicada. */
+.footer, .faixa-topo, .tema-escuro, .hero--foto, .card--foto, .header .cupom {
+  --bg: var(--ink);
+  --surface: #1F1F1F;
+  --carbon: var(--ink);
+  --text-1: #FFFFFF;   /* 18.42:1 sobre --ink */
+  --text-2: #D0D0D0;   /* 11.94:1 sobre --ink */
+  --text-3: #A3A3A3;   /*  7.30:1 sobre --ink */
+  --line: rgba(255,255,255,.16);
+  --line-strong: rgba(255,255,255,.5);
+  --logo-recorte: var(--ink);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
 
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text-2);
-  line-height: 1.6;
-  font-size: 16px;
+  font-size: 17px;
+  line-height: 1.75;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-img, svg { max-width: 100%; display: block; }
+img, svg, video { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 button { font-family: inherit; cursor: pointer; color: inherit; }
 
-h1, h2, h3, h4 { font-family: var(--font-head); color: var(--text-1); line-height: 1.04; font-weight: 500; letter-spacing: -0.015em; }
+h1, h2, h3, h4 {
+  font-family: var(--font-head); color: var(--text-1);
+  font-weight: 400; line-height: 1.12; letter-spacing: -0.01em;
+}
 
-.container { max-width: var(--container); margin: 0 auto; padding: 0 32px; }
+::selection { background: var(--ink); color: var(--paper); }
 
-::selection { background: var(--ghost); color: var(--obsidian); }
+/* Foco sempre visível no teclado. Tinta sobre papel; branco nos
+   contextos escuros. */
+:focus-visible { outline: 2px solid var(--text-1); outline-offset: 3px; }
+:focus:not(:focus-visible) { outline: none; }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--obsidian); }
-::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: var(--graphite); }
+/* ============ DECORAÇÃO REMOVIDA ============
+   Loader, cursor personalizado, fundo animado, barra de progresso,
+   burst de nós do hero, indicador de rolagem e ícones decorativos de
+   card saíram do padrão. O CSS deles foi apagado; esta regra existe
+   só porque as páginas antigas ainda têm a marcação, e sem ela os
+   SVGs de 24px renderizariam do tamanho da coluna. Quando todas as
+   páginas forem refeitas, ela pode sair. */
+.loader, .scroll-progress, .bg-canvas, .bg-grid, .bg-glow,
+.cursor-dot, .cursor-ring, .hero-nodes, .hero-visual, .scroll-hint,
+.card-icon, .hero-badge .dot, .link-more svg { display: none !important; }
 
-/* Tipografia utilitária (escala da referência) */
-.display { font-family: var(--font-head); font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1; font-weight: 500; letter-spacing: -0.01em; }
-.h1 { font-size: clamp(2.2rem, 5.5vw, 3.6rem); }
-.h2 { font-size: clamp(1.9rem, 4.2vw, 3.1rem); }
-.h3 { font-size: clamp(1.3rem, 2.4vw, 2rem); }
-.lead { font-size: clamp(1rem, 1.5vw, 1.25rem); color: var(--text-2); }
-.muted { color: var(--text-3); }
-/* Titulo lido por leitores de tela, invisivel na tela. Serve para a
-   secao ter um h2 proprio e a hierarquia nao pular de h1 para h3. */
+/* ============ TIPOGRAFIA UTILITÁRIA ============ */
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
   white-space: nowrap; border: 0;
 }
+.pular-conteudo {
+  position: absolute; left: 16px; top: -100px; z-index: 2000;
+  background: var(--ink); color: var(--paper);
+  font-family: var(--micro); font-weight: 600; font-size: 13px; letter-spacing: .16em; text-transform: uppercase;
+  padding: 14px 20px;
+}
+.pular-conteudo:focus { top: 12px; }
 
-/* Label / kicker minimalista */
-.label {
-  font-size: .78rem; font-weight: 600; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--text-3);
-}
-
-/* ============ LOADER ============ */
-.loader {
-  position: fixed; inset: 0; z-index: 9999;
-  background: var(--obsidian);
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 22px;
-  transition: opacity .5s ease, visibility .5s ease;
-  animation: loaderFailsafe 0s linear 4s forwards;
-}
-.loader.hidden { opacity: 0; visibility: hidden; }
-@keyframes loaderFailsafe { to { opacity: 0; visibility: hidden; } }
-.loader-shield { width: 46px; height: 46px; color: var(--ghost); animation: loaderSpin 1.6s ease-in-out infinite; }
-.loader-bar { width: 150px; height: 2px; background: rgba(255,255,255,.12); overflow: hidden; }
-.loader-bar::after {
-  content: ''; display: block; height: 100%; width: 40%;
-  background: var(--ghost); animation: loaderSlide 1.1s ease-in-out infinite;
-}
-@keyframes loaderSpin { 0%,100% { transform: rotate(0); opacity: 1; } 50% { transform: rotate(180deg); opacity: .5; } }
-@keyframes loaderSlide { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }
-
-/* ============ CURSOR ============ */
-.cursor-dot, .cursor-ring {
-  position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998;
-  border-radius: 50%; transform: translate(-50%, -50%);
-}
-.cursor-dot { width: 5px; height: 5px; background: var(--ghost); }
-.cursor-ring {
-  width: 32px; height: 32px; border: 1px solid rgba(255,255,255,.4);
-  transition: width .25s, height .25s, border-color .25s, background .25s;
-}
-.cursor-ring.hovering { width: 50px; height: 50px; border-color: var(--white); background: rgba(255,255,255,.05); }
-@media (hover: none), (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
-
-/* ============ BACKGROUND ============ */
-.bg-canvas { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
-/* glows antigos desativados no tema mono (mantidos p/ não quebrar markup) */
-.bg-glow, .bg-glow-1, .bg-glow-2 { display: none; }
-.bg-grid {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 80px 80px;
-  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 100%);
+/* Eyebrow: a ÚNICA caixa alta fora dos botões. */
+.eyebrow, .kicker, .label {
+  display: inline-block;
+  font-family: var(--micro); font-size: 13px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; line-height: 1.4;
+  color: var(--text-1);
 }
 
-/* ============ SCROLL PROGRESS ============ */
-.scroll-progress {
-  position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-  background: var(--ghost); z-index: 1001;
+/* Régua-assinatura. Aparece em toda seção, entre eyebrow+título e o
+   corpo. A largura anima de 0 a 140px quando a seção entra (main.js
+   adiciona .in) — só depois que o script liga html.js-anima. */
+.regua {
+  width: 140px; height: 6px; border-radius: 99px;
+  background: var(--rule); margin: 28px 0 40px;
+}
+.footer .regua, .tema-escuro .regua, .hero--foto .regua { background: rgba(255,255,255,.32); }
+
+.titulo-secao, .secao h2 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(34px, 4.4vw + 6px, 72px);
+  line-height: 1.1; letter-spacing: -0.01em; color: var(--text-1);
+  margin-top: 14px; max-width: 22ch;
+}
+.eyebrow + .titulo-secao, .eyebrow + h2 { margin-top: 14px; }
+
+.corpo { max-width: 68ch; }
+.corpo p { font-family: var(--body); font-size: 18px; line-height: 1.75; color: var(--text-2); max-width: 68ch; }
+.corpo p + p { margin-top: 1.1em; }
+.corpo > * + :is(ul, ol, h3) { margin-top: 1.4em; }
+.corpo > :is(ul, ol) + p { margin-top: 1.1em; }
+.corpo h3 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 1.4vw + 10px, 32px); line-height: 1.2; color: var(--text-1); }
+.corpo h3 + p { margin-top: .6em; }
+.corpo ul { list-style: disc; padding-left: 1.2em; font-size: 18px; color: var(--text-2); }
+.corpo li + li { margin-top: .4em; }
+.corpo a, .resposta-direta a, .prose a {
+  color: var(--text-1); text-decoration: underline;
+  text-decoration-thickness: 1px; text-underline-offset: 3px;
 }
 
-/* ============ HEADER ============ */
+/* Utilitários antigos, mantidos para as páginas que ainda os usam. */
+.display { font-family: var(--display); font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1.05; font-weight: 400; }
+.h1 { font-size: clamp(2.2rem, 5.5vw, 3.6rem); }
+.h2 { font-size: clamp(1.9rem, 4.2vw, 3.1rem); }
+.h3 { font-size: clamp(1.3rem, 2.4vw, 2rem); }
+.lead { font-size: clamp(1rem, 1.5vw, 1.25rem); color: var(--text-2); }
+.muted { color: var(--text-3); }
+.grad-text { color: inherit; }
+
+/* ============ CONTAINER ============ */
+.container { max-width: var(--container); margin: 0 auto; padding: 0 var(--pad); }
+
+/* ============ FAIXA UTILITÁRIA ============ */
+.faixa-topo {
+  background: var(--ink); color: var(--paper);
+  height: 44px; display: flex; align-items: center;
+  font-family: var(--micro); font-size: 13px; font-weight: 500; letter-spacing: .06em;
+}
+.faixa-topo-inner { display: flex; align-items: center; justify-content: flex-end; gap: 28px; width: 100%; }
+.faixa-topo-item { white-space: nowrap; color: var(--text-1); }
+.faixa-topo-item--larga { margin-right: auto; color: var(--text-2); }
+a.faixa-topo-item { position: relative; }
+a.faixa-topo-item::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .32s ease;
+}
+a.faixa-topo-item:hover::after, a.faixa-topo-item:focus-visible::after { transform: scaleX(1); }
+.faixa-topo :focus-visible { outline-color: var(--paper); }
+
+/* ============ HEADER ============
+   Branco, fixo, com filete de 1px embaixo. Com a faixa utilitária
+   (modificador .header--faixa), a faixa sobe junto quando a página
+   rola 80px: sobra só a barra do logo, sem roubar altura do celular. */
 .header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  transition: background .3s ease, border-color .3s ease;
-  border-bottom: 1px solid transparent;
+  background: var(--paper); border-bottom: 1px solid var(--line);
+  transition: transform .35s ease;
 }
-.header.scrolled { background: rgba(11,11,11,0.9); border-bottom-color: var(--line); }
-.header-inner { display: flex; align-items: center; justify-content: space-between; height: 74px; gap: 24px; }
+.header--faixa.scrolled { transform: translateY(-44px); }
+.header--faixa.scrolled:focus-within { transform: none; }
 
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.1rem; color: var(--text-1); letter-spacing: -0.02em; }
-.logo svg { width: 26px; height: 26px; color: var(--ghost); }
-.logo span em { font-style: normal; font-weight: 400; color: var(--text-2); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; height: 74px; }
 
-/* Nav central minimalista */
-.nav { display: flex; align-items: center; gap: 6px; }
+.logo { display: inline-flex; align-items: center; gap: 10px; color: var(--text-1); flex-shrink: 0; }
+.logo svg { width: 26px; height: 26px; color: currentColor; }
+/* O "check" do escudo é um traço com cor fixa no SVG (#0B0B0B, do tema
+   escuro). CSS vence atributo de apresentação, então ele vira o vazado
+   da cor do fundo em qualquer contexto, sem mexer no HTML. */
+.logo svg [stroke] { stroke: var(--logo-recorte); }
+.logo span { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: .01em; line-height: 1; }
+.logo span em { font-style: normal; color: var(--text-2); }
+
+/* Menu: Lora, sublinhado que cresce da esquerda (320ms). */
+.nav { display: flex; align-items: center; gap: 26px; margin-left: auto; }
 .nav a {
-  padding: 8px 14px; border-radius: 8px; font-size: .9rem; font-weight: 500;
-  color: var(--text-2); transition: color .2s, background .2s; white-space: nowrap;
+  position: relative; font-family: var(--body); font-size: 16px; line-height: 1.4;
+  color: var(--text-1); white-space: nowrap; padding: 6px 0;
 }
-.nav a:hover { color: var(--text-1); }
-.nav a.active { color: var(--text-1); }
+.nav a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .32s ease;
+}
+.nav a:hover::after, .nav a.active::after, .nav a[aria-current="page"]::after { transform: scaleX(1); }
 
-/* ============ BOTÕES ============ */
+/* ============ BOTÕES ============
+   Raio 0. Inter 600 em caixa alta: a outra exceção à regra de caixa
+   alta. Um CTA por bloco. Sem seta grudada (.btn-arrow não desenha
+   mais nada). */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 12px 22px; border-radius: 10px; border: 1px solid transparent;
-  font-family: var(--font); font-weight: 600; font-size: .95rem;
-  transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
-  white-space: nowrap;
+  min-height: 48px; padding: 14px 28px;
+  border: 1px solid var(--text-1); border-radius: 0;
+  font-family: var(--micro); font-weight: 600; font-size: 13px; line-height: 1.3;
+  letter-spacing: .16em; text-transform: uppercase; text-align: center;
+  background: transparent; color: var(--text-1);
+  transition: background .3s ease, color .3s ease, border-color .3s ease;
+  /* Quebra linha só quando falta espaço (card estreito, celular): com
+     caixa alta e tracking, "nowrap" empurrava a coluna para fora da tela. */
+  white-space: normal; max-width: 100%;
 }
-.btn-primary { background: var(--ghost); color: var(--obsidian); border-color: var(--ghost); }
-.btn-primary:hover { background: #fff; transform: translateY(-1px); }
-.btn-ghost { background: transparent; color: var(--text-1); border-color: var(--line-strong); }
-.btn-ghost:hover { border-color: var(--ghost); transform: translateY(-1px); }
-.btn-whats { background: var(--wa); color: #fff; border-color: var(--wa); }
-.btn-whats:hover { filter: brightness(1.08); transform: translateY(-1px); }
-.btn-sm { padding: 9px 16px; font-size: .85rem; }
-.btn-lg { padding: 15px 28px; font-size: 1rem; }
-.header .btn-cta { margin-left: 6px; }
+.btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn-primary:hover { background: var(--paper); color: var(--ink); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn-ghost:hover { background: var(--ink); color: var(--paper); }
+.btn-whats { background: var(--wa); color: var(--paper); border-color: var(--wa); }
+.btn-whats:hover { background: var(--paper); color: var(--ink); border-color: var(--ink); }
+.btn-sm { min-height: 42px; padding: 11px 20px; font-size: 12px; }
+.btn-lg { min-height: 58px; padding: 18px 40px; font-size: 14px; letter-spacing: .14em; }
+.btn[disabled] { opacity: .55; cursor: progress; }
+.header .btn-cta { flex-shrink: 0; }
 
-/* Caixinha com seta ↗ (assinatura da referência) */
-.btn-arrow::before {
-  content: ''; width: 1.7em; height: 1.7em; flex-shrink: 0;
-  border: 1px solid currentColor; border-radius: 6px;
-  background: currentColor;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E") center/62% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E") center/62% no-repeat;
-  opacity: .92;
+/* Botões dentro de contexto escuro: papel sobre tinta. */
+:is(.footer, .tema-escuro, .hero--foto, .card--foto) .btn-primary,
+:is(.footer, .tema-escuro, .hero--foto, .card--foto) .btn-whats {
+  background: var(--paper); color: var(--ink); border-color: var(--paper);
 }
-/* no botão branco o "miolo" da seta deve ser vazado (aparece o fundo escuro do box) */
-.btn-primary.btn-arrow::before { background: var(--obsidian); }
+:is(.footer, .tema-escuro, .hero--foto, .card--foto) .btn-primary:hover,
+:is(.footer, .tema-escuro, .hero--foto, .card--foto) .btn-whats:hover {
+  background: transparent; color: var(--paper);
+}
+:is(.footer, .tema-escuro, .hero--foto, .card--foto) .btn-ghost {
+  color: var(--paper); border-color: rgba(255,255,255,.7);
+}
+:is(.footer, .tema-escuro, .hero--foto, .card--foto) .btn-ghost:hover {
+  background: var(--paper); color: var(--ink); border-color: var(--paper);
+}
+:is(.footer, .tema-escuro, .hero--foto, .card--foto) :focus-visible { outline-color: var(--paper); }
 
-/* Hamburger */
-.hamburger { display: none; background: none; border: none; width: 42px; height: 42px; position: relative; z-index: 1002; }
-.hamburger span { display: block; width: 24px; height: 2px; background: var(--text-1); margin: 5px auto; border-radius: 2px; transition: .3s; }
+/* ============ MENU MOBILE ============ */
+.hamburger {
+  display: none; background: none; border: none; width: 44px; height: 44px;
+  position: relative; flex-shrink: 0; margin-right: -10px;
+}
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--text-1); margin: 5px auto; transition: transform .3s ease, opacity .3s ease; }
 .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .hamburger.open span:nth-child(2) { opacity: 0; }
 .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Mobile nav */
-/* O menu era centrado verticalmente e nao rolava. Com 11 links a
-   1,5rem cada, o conteudo fica mais alto que a tela de um celular — e
-   conteudo centrado que nao cabe vaza pelos DOIS lados: some o primeiro
-   item em cima e o botao de acao embaixo, ao mesmo tempo, sem nenhuma
-   pista de que ha mais coisa. O item cortado embaixo era justamente o
-   unico que leva a algum lugar que vende.
-
-   Agora alinha no topo, rola quando precisa, e reserva espaco para as
-   barras do navegador do celular, que comem altura sem avisar. */
+/* Fica ABAIXO do header (z-index 999) para o botão de fechar continuar
+   visível. Alinha no topo e rola: com muitos links, conteúdo centrado
+   que não cabe vaza pelos dois lados e some o botão de ação. */
 .mobile-nav {
-  position: fixed; inset: 0; z-index: 1001; background: var(--obsidian);
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: flex-start; gap: 2px;
-  padding: max(84px, env(safe-area-inset-top) + 84px) 20px max(40px, env(safe-area-inset-bottom) + 40px);
+  position: fixed; inset: 0; z-index: 999; background: var(--paper);
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
+  padding: calc(var(--header-h) + 24px) var(--pad) max(40px, env(safe-area-inset-bottom) + 40px);
   overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-  opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s;
+  opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s ease;
 }
 .mobile-nav.open { opacity: 1; visibility: visible; }
-.mobile-nav a { font-size: 1.28rem; font-weight: 600; color: var(--text-2); padding: 11px 24px; transition: color .2s; }
-.mobile-nav a:hover, .mobile-nav a.active { color: var(--text-1); }
-.mobile-nav .btn { margin-top: 18px; flex-shrink: 0; }
-
-/* Telas baixas — celular pequeno ou com teclado aberto. */
+.mobile-nav a:not(.btn) {
+  font-family: var(--display); font-size: 28px; line-height: 1.25; color: var(--text-1);
+  padding: 16px 0; border-bottom: 1px solid var(--line);
+}
+.mobile-nav a:not(.btn).active, .mobile-nav a[aria-current="page"] { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.mobile-nav .btn { margin-top: 32px; flex-shrink: 0; align-self: flex-start; }
 @media (max-height: 700px) {
-  .mobile-nav { padding-top: 72px; }
-  .mobile-nav a { font-size: 1.12rem; padding: 8px 20px; }
+  .mobile-nav a:not(.btn) { font-size: 22px; padding: 11px 0; }
 }
 
-/* ============ CROP-MARKS / MOLDURAS (estilo print) ============ */
-.framed { position: relative; }
-.framed::before, .framed::after {
-  content: ''; position: absolute; width: 14px; height: 14px; pointer-events: none;
-  border-color: var(--line-strong); border-style: solid; border-width: 0;
+/* Deslocamento do conteúdo sob o header fixo (páginas novas). */
+.conteudo { padding-top: var(--header-h); }
+
+/* ============ HERO ============
+   Tipográfico, em branco. H1 em caixa alta (Playfair 400, tracking
+   .02em), subtítulo em itálico, UM CTA vazado preto. A abertura de
+   tracking do H1 é a única animação de entrada "cara" do site. */
+.hero {
+  position: relative; display: flex; align-items: center;
+  min-height: min(760px, calc(100svh - var(--header-h)));
+  padding: 96px 0; text-align: center; background: var(--bg); overflow: hidden;
 }
-.framed::before { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
-.framed::after { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
-
-/* Marcas "+" nos 4 cantos (como as molduras da referência) */
-.corners { position: relative; }
-.corners::after {
-  content: ''; position: absolute; inset: -6px; pointer-events: none; z-index: 1;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23888888' stroke-width='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23888888' stroke-width='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23888888' stroke-width='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23888888' stroke-width='1'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: left top, right top, left bottom, right bottom;
+.hero > .container { width: 100%; }
+.hero-conteudo { position: relative; z-index: 2; max-width: 1040px; margin: 0 auto; }
+.hero h1 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase;
+  letter-spacing: .02em; line-height: 1.05; color: var(--text-1);
+  font-size: clamp(34px, 6.2vw, 88px);
 }
-.section--light .corners::after {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23999999' stroke-width='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23999999' stroke-width='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23999999' stroke-width='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11'%3E%3Cpath d='M5.5 0v11M0 5.5h11' stroke='%23999999' stroke-width='1'/%3E%3C/svg%3E");
+.hero-sub {
+  font-family: var(--body); font-style: italic; color: var(--text-2);
+  font-size: clamp(19px, 1.9vw, 26px); line-height: 1.5;
+  max-width: 44ch; margin: 36px auto 0;
+}
+.hero-atribuicao { font-family: var(--micro); font-size: 14px; letter-spacing: .06em; color: var(--text-3); margin-top: 16px; }
+.hero-conteudo > .btn { margin-top: 48px; }
+
+.js-anima .hero h1 { animation: heroTracking 1.4s cubic-bezier(.22,.61,.36,1) .3s both; }
+@keyframes heroTracking {
+  from { letter-spacing: .14em; opacity: 0; }
+  to   { letter-spacing: .02em; opacity: 1; }
 }
 
-/* Bloco emoldurado com rótulo (como "Main Goal / Challenge" do print) */
-.panel { position: relative; border: 1px solid var(--line); padding: clamp(28px, 4vw, 52px); }
-.panel-label {
-  display: inline-block; font-size: .72rem; font-weight: 600; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--text-3); margin-bottom: 18px;
+/* Hero com foto (ou vídeo) em tela cheia. A mídia vai em .hero-midia;
+   ponto focal ajustável por style="--foco: 50% 30%". */
+.hero--foto {
+  min-height: calc(100svh - var(--header-h));
+  background: var(--ink-deep); color: var(--paper);
 }
-.section--light .panel { border-color: rgba(0,0,0,.14); }
-.section--light .panel-label { color: #6a6a6a; }
-
-/* ============ HERO ============ */
-.hero { min-height: 100vh; display: flex; align-items: center; position: relative; padding: 130px 0 70px; }
-.hero-inner { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: center; }
-
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
-  border: 1px solid var(--line); border-radius: 100px;
-  font-size: .78rem; font-weight: 500; color: var(--text-3);
-  letter-spacing: .04em; margin-bottom: 30px;
+.hero-midia { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.hero-midia img, .hero-midia video {
+  width: 100%; height: 100%; object-fit: cover; object-position: var(--foco, 50% 50%);
 }
-.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ghost); animation: dotPulse 2.2s infinite; }
-@keyframes dotPulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
-
-.hero h1 { font-size: clamp(2.6rem, 6.6vw, 5.1rem); font-weight: 500; letter-spacing: -0.012em; line-height: 1.02; margin-bottom: 26px; }
-.hero h1 em { font-style: normal; color: inherit; }
-/* Frase de cor ÚNICA: o destaque herda a mesma cor do texto (começa e termina igual) */
-.grad-text { color: inherit; }
-.hero p.sub { font-size: clamp(1rem, 1.4vw, 1.15rem); max-width: 520px; margin-bottom: 34px; color: var(--text-2); }
-.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-.hero-trust { display: flex; gap: 26px; margin-top: 46px; flex-wrap: wrap; }
-.hero-trust span { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--text-3); }
-.hero-trust svg { width: 15px; height: 15px; color: var(--text-2); flex-shrink: 0; }
-
-/* Lado direito do hero: palco do burst de nós */
-.hero-visual { position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; }
-.hero-nodes { position: absolute; inset: 0; width: 100%; height: 100%; }
-
-/* Mock dashboard antigo — escondido (o hero agora é o burst de nós) */
-.hero-card, .hero-chip { display: none; }
-
-/* Scroll indicator */
-.scroll-hint {
-  position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  color: var(--text-3); font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
+.hero-midia img { animation: kenBurns 24s ease-out both; }
+@keyframes kenBurns { from { transform: scale(1); } to { transform: scale(1.08); } }
+.hero--foto::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(10,10,10,.15), rgba(10,10,10,.72));
 }
-.scroll-hint .mouse { width: 22px; height: 34px; border: 1px solid var(--text-3); border-radius: 12px; display: flex; justify-content: center; padding-top: 6px; }
-.scroll-hint .mouse i { width: 2px; height: 7px; border-radius: 3px; background: var(--text-2); animation: wheel 1.6s infinite; }
-@keyframes wheel { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(9px); opacity: 0; } }
+.hero--foto h1, .hero--foto .hero-sub { color: var(--paper); }
+.hero--foto .hero-atribuicao { color: rgba(255,255,255,.85); }
 
-/* ============ SEÇÕES ============ */
-.section { padding: 120px 0; position: relative; border-top: 1px solid var(--line); }
-.section:first-of-type { border-top: none; }
-.section-head { max-width: 760px; margin: 0 auto 70px; }
-.section-head.center { text-align: center; margin-left: auto; margin-right: auto; }
-.kicker { display: inline-block; font-size: .76rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--text-3); margin-bottom: 20px; }
-.section-head h2 { font-size: clamp(1.9rem, 4.2vw, 3.1rem); font-weight: 500; letter-spacing: -0.01em; margin-bottom: 20px; }
-.section-head p { font-size: 1.05rem; color: var(--text-2); max-width: 620px; }
-.section-head.center p { margin-left: auto; margin-right: auto; }
-
-/* Seção CLARA (inversão) */
-.section--light {
-  background: var(--soft-silver); color: #2a2a2a; border-top-color: rgba(0,0,0,.1);
-  /* Redefine os tokens de texto: os valores do tema escuro nao tem
-     contraste suficiente sobre #E8E8E8 (--text-3 dava 2.82:1). */
-  --text-1: var(--obsidian);
-  --text-2: #3a3a3a;
-  --text-3: #5a5a5a;
-  --line: rgba(0,0,0,0.12);
-  --line-strong: rgba(0,0,0,0.28);
+/* Hero de página interna: alinhado à esquerda, sem altura de tela. */
+.hero--pagina {
+  min-height: 0; text-align: left; padding: 72px 0 64px;
+  border-bottom: 1px solid var(--line);
 }
-.section--light h1, .section--light h2, .section--light h3, .section--light h4 { color: var(--obsidian); }
-.section--light .kicker, .section--light .section-head p, .section--light .muted { color: #5a5a5a; }
-.section--light .card { background: var(--white); border-color: rgba(0,0,0,.1); color: #3a3a3a; }
-.section--light .card h3 { color: var(--obsidian); }
-.section--light .card p, .section--light .card-list li { color: #4a4a4a; }
-.section--light .btn-ghost { color: var(--obsidian); border-color: rgba(0,0,0,.25); }
-.section--light .btn-ghost:hover { border-color: var(--obsidian); }
-.section--light .framed::before, .section--light .framed::after { border-color: rgba(0,0,0,.28); }
+.hero--pagina .hero-conteudo { margin: 0; max-width: 980px; }
+.hero--pagina h1 { font-size: clamp(32px, 4.4vw, 60px); text-transform: none; letter-spacing: -.01em; line-height: 1.12; }
+/* Caixa alta e a abertura de tracking são exclusivas do hero da home (dialeto A + animacoes.md).
+   Nas internas o H1 é longo e em forma de pergunta: em caixa mista o leigo lê mais rápido. */
+.js-anima .hero--pagina h1 { animation: none; }
+.hero--pagina .hero-sub { margin-left: 0; margin-top: 28px; }
+.hero--pagina .trilha { margin-bottom: 32px; }
+.hero--pagina .atualizado { margin-top: 28px; }
+
+/* ============ SEÇÃO PADRÃO ============
+   128px entre seções (72px no celular). Duas seções brancas seguidas
+   não somam o respiro: a segunda perde o topo. */
+.secao { padding: var(--gap) 0; background: var(--bg); }
+.secao:not(.secao--alt) + .secao:not(.secao--alt) { padding-top: 0; }
+.secao--alt { background: var(--paper-alt); }
+.secao--alt .card, .secao--alt .card-exemplo, .secao--alt .card-servico:not(.card--foto) { background: var(--paper); }
+.secao-cabeca { max-width: 900px; }
+.secao-cabeca + .corpo, .secao-cabeca + .cards, .secao-cabeca + .faq-list,
+.secao-cabeca + .tabela-rolagem, .secao-cabeca + .form-etapas { margin-top: 0; }
+
+/* ============ RESPOSTA DIRETA ============
+   Primeiro parágrafo de uma página que responde a uma pergunta. Sem
+   caixa colorida: tipografia maior e filete à esquerda. */
+.resposta-direta {
+  max-width: 62ch; border-left: 2px solid var(--ink);
+  padding: 4px 0 4px 28px; margin: 0 0 56px;
+}
+.resposta-direta p {
+  font-family: var(--body); font-size: clamp(20px, 1.6vw + 4px, 24px);
+  line-height: 1.6; color: var(--text-1); max-width: none;
+}
+.resposta-direta p + p { margin-top: .8em; }
+
+/* ============ TRILHA (breadcrumb) e "ATUALIZADO EM" ============ */
+.trilha ol { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; list-style: none; }
+.trilha li { font-family: var(--micro); font-size: 13px; font-weight: 500; letter-spacing: .02em; color: var(--text-3); line-height: 1.5; }
+.trilha li + li::before { content: '/'; margin: 0 10px; color: var(--line-strong); }
+.trilha a { color: var(--text-1); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.trilha a:hover { text-decoration-color: currentColor; }
+.trilha [aria-current="page"] { color: var(--text-3); }
+
+.atualizado { font-family: var(--micro); font-size: 13px; font-weight: 500; letter-spacing: .02em; color: var(--text-3); line-height: 1.5; }
+.atualizado time { color: var(--text-1); }
 
 /* ============ CARDS ============ */
-.grid { display: grid; gap: 22px; }
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-4 { grid-template-columns: repeat(4, 1fr); }
-/* variante "bento": hairlines compartilhadas (opt-in) */
-.grid--bento { gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.cards--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
+/* Card de texto: --paper-alt, raio 18, padding 44. Sem borda, sem sombra. */
 .card {
-  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 38px 32px; transition: background .3s ease, border-color .3s ease;
-  position: relative; overflow: hidden;
+  position: relative; background: var(--paper-alt); border-radius: var(--radius-lg);
+  padding: 44px; color: var(--text-2);
 }
-.grid--bento .card { border: 0; border-radius: 0; }
-.card:hover { background: var(--carbon); border-color: var(--line-strong); }
-.grid--bento .card:hover { border-color: transparent; }
-.section--light .card:hover { background: #fbfbff; }
-.card-icon {
-  width: 46px; height: 46px; border: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: center; margin-bottom: 22px; border-radius: 10px;
+.card h3 { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.25; color: var(--text-1); margin-bottom: 16px; }
+.card p:not([class]) { font-size: 17px; line-height: 1.7; color: var(--text-2); }
+.card p:not([class]) + p:not([class]) { margin-top: .8em; }
+.card .card-list { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.card .card-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 16px; color: var(--text-2); }
+.card .card-list svg { width: 15px; height: 15px; color: var(--text-1); flex-shrink: 0; margin-top: 6px; }
+.card .link-more, .link-texto {
+  position: relative; display: inline-block; margin-top: 22px;
+  font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--text-1);
 }
-.card-icon svg { width: 22px; height: 22px; color: var(--text-1); }
-.section--light .card-icon { border-color: rgba(0,0,0,.14); }
-.section--light .card-icon svg { color: var(--obsidian); }
-.card h3 { font-size: 1.25rem; margin-bottom: 12px; font-weight: 600; }
-.card p { font-size: .95rem; color: var(--text-2); }
-.card .card-list { margin-top: 16px; display: flex; flex-direction: column; gap: 9px; }
-.card .card-list li { display: flex; align-items: flex-start; gap: 10px; font-size: .9rem; color: var(--text-2); }
-.card .card-list svg { width: 15px; height: 15px; color: var(--text-1); flex-shrink: 0; margin-top: 4px; }
-.section--light .card .card-list svg { color: var(--obsidian); }
-.card .link-more { display: inline-flex; align-items: center; gap: 7px; margin-top: 20px; font-size: .86rem; font-weight: 600; color: var(--text-1); }
-.card .link-more svg { width: 15px; height: 15px; transition: transform .25s; }
-.card:hover .link-more svg { transform: translate(3px,-3px); }
-.section--light .card .link-more { color: var(--obsidian); }
-
-/* ============ COMPATIBILIDADE (skills.html) ============ */
-.compat { max-width: 900px; margin: 34px auto 0; }
-.compat-intro { color: var(--text-2); font-size: .98rem; line-height: 1.6; margin: 0 0 22px; text-align: center; }
-.compat-intro b { color: var(--text-1); }
-.compat-lista {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-  background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+.card .link-more::after, .link-texto::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px;
+  background: currentColor; transform: scaleX(.25); transform-origin: left; transition: transform .32s ease;
 }
-.compat-lista li { background: var(--bg); padding: 18px 16px; display: flex; flex-direction: column; gap: 5px; }
-.compat-lista b { font-size: .93rem; color: var(--text-1); font-weight: 600; }
-.compat-lista span { font-size: .78rem; color: var(--text-3); line-height: 1.45; }
-.compat-lista i { font-style: normal; color: var(--text-2); }
-.compat-nota { margin: 16px 0 0; font-size: .8rem; color: var(--text-3); line-height: 1.5; text-align: center; }
+.card .link-more:hover::after, .link-texto:hover::after,
+.card-servico:hover .link-texto::after, .card-servico:focus-visible .link-texto::after { transform: scaleX(1); }
 
-/* ============ STATS ============ */
-.stats { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.stats-nota { padding: 38px 0 0; margin: 0; color: var(--text-3); font-size: .82rem; line-height: 1.5; max-width: 60ch; }
-.stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); }
-.stat { text-align: left; padding: 54px 24px; border-left: 1px solid var(--line); }
-.stat:first-child { border-left: none; padding-left: 0; }
-.stat b { display: block; font-family: var(--font-head); font-weight: 500; font-size: clamp(2.2rem, 4vw, 3.4rem); color: var(--text-1); letter-spacing: -0.01em; }
-.stat b .plus { color: var(--text-3); }
-.stat small { font-size: .82rem; color: var(--text-3); font-weight: 500; }
-
-/* ============ MARQUEE ============ */
-.marquee { overflow: hidden; position: relative; padding: 26px 0; }
-.marquee::before, .marquee::after { content: ''; position: absolute; top: 0; bottom: 0; width: 140px; z-index: 2; }
-.marquee::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
-.marquee::after { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
-.marquee-track { display: flex; gap: 14px; width: max-content; animation: marquee 40s linear infinite; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
-@keyframes marquee { to { transform: translateX(-50%); } }
-.tech-pill {
-  display: flex; align-items: center; gap: 10px; padding: 11px 20px; border-radius: 100px;
-  background: transparent; border: 1px solid var(--line);
-  font-weight: 500; font-size: .9rem; color: var(--text-2); white-space: nowrap; transition: border-color .25s, color .25s;
+/* Card de serviço 3:4. Sem foto: tipográfico, título serifado no rodapé. */
+.card-servico {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end;
+  aspect-ratio: 3 / 4; overflow: hidden; border-radius: var(--radius-lg);
+  background: var(--paper-alt); color: var(--text-1); padding: 36px;
 }
-.tech-pill:hover { border-color: var(--line-strong); color: var(--text-1); }
-.tech-pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
-
-/* ============ PROCESSO / TIMELINE (linhas numeradas) ============ */
-.timeline { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
-.proc-row {
-  display: grid; grid-template-columns: 90px 1fr auto; gap: 28px; align-items: center;
-  padding: 32px 8px; border-bottom: 1px solid var(--line); transition: padding-left .3s ease, background .3s ease;
+.card-servico-topo { margin-bottom: auto; }
+.card-servico h3 {
+  font-family: var(--display); font-weight: 400; font-size: clamp(28px, 2.4vw, 34px);
+  line-height: 1.1; color: var(--text-1);
 }
-.proc-row:hover { padding-left: 20px; }
-.section--light .proc-row, .section--light .timeline { border-color: rgba(0,0,0,.12); }
-.proc-num { font-family: var(--font-head); font-size: 2.6rem; font-weight: 500; color: var(--text-3); letter-spacing: -0.01em; }
-.section--light .proc-num { color: #b0b0b0; }
-.proc-body h3 { font-size: clamp(1.4rem, 2.6vw, 2.1rem); font-weight: 600; margin-bottom: 8px; }
-.proc-body p { font-size: .95rem; color: var(--text-2); max-width: 620px; }
-.proc-tag { font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; padding: 8px 16px; border: 1px solid var(--line); border-radius: 100px; color: var(--text-3); white-space: nowrap; }
-.section--light .proc-tag { border-color: rgba(0,0,0,.18); color: #5a5a5a; }
+.card-servico p:not([class]) { font-size: 16px; line-height: 1.6; color: var(--text-2); margin-top: 14px; max-width: 34ch; }
+.card-servico .link-texto { margin-top: 20px; align-self: flex-start; }
 
-/* Timeline antiga (home) — reaproveitada como grid de passos simples */
-.step { position: relative; padding: 0; }
-.step-num {
-  width: 44px; height: 44px; margin-bottom: 18px; border-radius: 50%;
-  background: transparent; border: 1px solid var(--line-strong);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 600; color: var(--text-1);
+/* Com foto: imagem em cover, gradiente por cima, texto branco. */
+.card--foto { background: var(--ink-deep); color: var(--paper); }
+.card--foto > img, .card--foto > picture img, .card--foto > picture {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transition: transform .9s ease;
 }
-.step h3 { font-size: 1.05rem; margin-bottom: 8px; }
-.step p { font-size: .86rem; color: var(--text-3); }
+.card--foto::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, transparent 35%, rgba(10,10,10,.78));
+}
+.card--foto > :not(img):not(picture) { position: relative; z-index: 2; }
+.card--foto h3, .card--foto .link-texto { color: var(--paper); }
+.card--foto p:not([class]) { color: rgba(255,255,255,.88); }
+.card--foto:hover > img, .card--foto:hover > picture img { transform: scale(1.04); }
 
-/* ============ FAQ ============ */
-.faq-list { max-width: 860px; margin: 0 auto; border-top: 1px solid var(--line); }
+/* Exemplo ilustrativo: caso hipotético, sinalizado como tal. */
+.card-exemplo {
+  background: var(--paper-alt); border-radius: var(--radius-lg); padding: 44px;
+  color: var(--text-2);
+}
+.selo-exemplo {
+  display: inline-block; margin-bottom: 22px; padding: 5px 12px;
+  border: 1px solid var(--text-1); border-radius: 99px;
+  font-family: var(--micro); font-size: 11px; font-weight: 600; line-height: 1.4;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--text-1);
+}
+.card-exemplo h3 { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.25; color: var(--text-1); margin-bottom: 14px; }
+.card-exemplo p:not([class]) { font-size: 17px; line-height: 1.7; }
+.card-exemplo-dados { margin-top: 24px; border-top: 1px solid var(--line-strong); }
+.card-exemplo-dados div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.card-exemplo-dados dt { font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--text-3); white-space: nowrap; }
+.card-exemplo-dados dd { font-size: 16px; color: var(--text-1); text-align: right; }
+.card-exemplo-dados + p { margin-top: 24px; }
+
+/* ============ PERGUNTAS FREQUENTES ============
+   Lista com filetes. O botão abre a resposta (main.js). Sem JavaScript,
+   todas as respostas ficam abertas: só fecham quando o script liga. */
+.faq-list { max-width: 900px; border-top: 1px solid var(--line-strong); }
 .faq-item { border-bottom: 1px solid var(--line); }
 .faq-q {
-  width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 20px;
-  padding: 26px 8px; background: none; border: none; text-align: left;
-  font-weight: 600; font-size: 1.05rem; color: var(--text-1);
+  width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  padding: 26px 0; background: none; border: none; text-align: left;
+  font-family: var(--display); font-weight: 400; font-size: clamp(20px, 1.4vw + 4px, 24px);
+  line-height: 1.35; color: var(--text-1);
 }
-.faq-q svg { width: 18px; height: 18px; color: var(--text-2); flex-shrink: 0; transition: transform .3s; }
+.faq-q svg { width: 18px; height: 18px; color: var(--text-1); flex-shrink: 0; }
 .faq-item.open .faq-q svg { transform: rotate(45deg); }
-.faq-a { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
-.faq-a p { padding: 0 8px 26px; font-size: .96rem; color: var(--text-2); max-width: 720px; }
-/* categorias de FAQ */
-.faq-cat { font-size: .76rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--text-3); margin: 56px 0 8px; }
-
-/* ============ FORMULÁRIO ============ */
-.form-card { background: var(--carbon); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 46px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.form-field { display: flex; flex-direction: column; gap: 8px; }
-.form-field.full { grid-column: 1 / -1; }
-.form-field label { font-size: .84rem; font-weight: 600; color: var(--text-1); }
-.form-field label em { color: var(--text-3); font-style: normal; }
-.form-field input, .form-field select, .form-field textarea {
-  background: var(--obsidian); border: 1px solid var(--line);
-  border-radius: 10px; padding: 14px 16px; font-family: inherit; font-size: .95rem;
-  color: var(--text-1); transition: border-color .2s; width: 100%; appearance: none;
+/* Ícone de abrir/fechar: um "+" de dois traços que vira "−". */
+.faq-icone { position: relative; width: 16px; height: 16px; flex-shrink: 0; }
+.faq-icone::before, .faq-icone::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; margin-top: -.75px;
+  background: var(--text-1); transition: transform .32s ease;
 }
-.form-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238A8A8A' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
-.form-field textarea { resize: vertical; min-height: 120px; }
-.form-field input:focus, .form-field select:focus, .form-field textarea:focus { outline: none; border-color: var(--ghost); }
-.form-field input::placeholder, .form-field textarea::placeholder { color: var(--text-3); }
-.form-note { font-size: .78rem; color: var(--text-3); display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-.form-note svg { width: 14px; height: 14px; color: var(--text-2); flex-shrink: 0; }
-.form-success { display: none; text-align: center; padding: 60px 20px; }
-.form-success.show { display: block; }
-.form-success .check-circle {
-  width: 72px; height: 72px; margin: 0 auto 24px; border-radius: 50%;
-  background: transparent; border: 1px solid var(--line-strong);
-  display: flex; align-items: center; justify-content: center; animation: popIn .5s cubic-bezier(.2,.9,.3,1.4) both;
+.faq-icone::after { transform: rotate(90deg) scaleX(1); }
+.faq-item.open .faq-icone::after { transform: rotate(90deg) scaleX(0); }
+/* FAQ com <details>: a resposta fica no HTML bruto (bots de IA não executam JS). */
+details.faq-item > summary { list-style: none; cursor: pointer; }
+details.faq-item > summary::-webkit-details-marker { display: none; }
+details.faq-item[open] .faq-icone::after { transform: rotate(90deg) scaleX(0); }
+details.faq-item > .corpo { padding-bottom: 28px; }
+.faq-a p { padding: 0 0 28px; font-size: 18px; line-height: 1.75; color: var(--text-2); max-width: 68ch; }
+.faq-a p + p { margin-top: -12px; }
+.js-anima .faq-a { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+.faq-cat { font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--text-1); margin: 56px 0 8px; }
+
+/* ============ TABELA SIMPLES ============ */
+.tabela-rolagem { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabela-rolagem:focus-visible { outline-offset: 6px; }
+.tabela { width: 100%; min-width: 560px; border-collapse: collapse; font-family: var(--body); }
+.tabela caption {
+  caption-side: bottom; text-align: left; padding-top: 16px;
+  font-family: var(--micro); font-size: 13px; font-weight: 500; letter-spacing: .02em; color: var(--text-3);
 }
-.form-success .check-circle svg { width: 34px; height: 34px; color: var(--ghost); }
-@keyframes popIn { from { transform: scale(.5); opacity: 0; } }
-
-/* ============ CTA FINAL ============ */
-.cta-banner {
-  position: relative; border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
-  background: var(--carbon); padding: 80px 56px; text-align: center; overflow: hidden;
+.tabela th, .tabela td { text-align: left; vertical-align: top; padding: 18px 24px 18px 0; border-bottom: 1px solid var(--line); }
+.tabela thead th {
+  font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .04em;
+  color: var(--text-1); border-bottom: 1px solid var(--ink); padding-top: 0;
 }
-.cta-banner h2 { font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 500; letter-spacing: -0.01em; margin-bottom: 18px; }
-.cta-banner p { max-width: 560px; margin: 0 auto 36px; color: var(--text-2); }
-.cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.tabela tbody th { font-family: var(--display); font-weight: 400; font-size: 20px; line-height: 1.35; color: var(--text-1); }
+.tabela td { font-size: 17px; line-height: 1.6; color: var(--text-2); }
+.tabela td:last-child, .tabela th:last-child { padding-right: 0; }
 
-/* ============ PORTFOLIO ============ */
-.portfolio-card { padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); transition: background .3s; }
-.portfolio-card:hover { background: var(--carbon); }
-.portfolio-thumb { height: 200px; position: relative; overflow: hidden; background: var(--carbon); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); }
-.portfolio-thumb svg { width: 56px; height: 56px; color: var(--text-3); transition: transform .4s, color .3s; }
-.portfolio-card:hover .portfolio-thumb svg { transform: scale(1.1); color: var(--text-1); }
-.portfolio-thumb .tag { position: absolute; top: 16px; left: 16px; padding: 5px 13px; border-radius: 100px; font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: rgba(11,11,11,.8); border: 1px solid var(--line); color: var(--text-2); }
-.portfolio-body { padding: 28px; }
-.portfolio-body .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-.portfolio-body .meta span { font-size: .72rem; padding: 4px 11px; border-radius: 100px; border: 1px solid var(--line); color: var(--text-3); }
+/* No celular, cada linha vira um bloco: o nome da linha em serifa e
+   cada célula com o seu rótulo (atributo data-rotulo no <td>). */
+@media (max-width: 640px) {
+  .tabela { min-width: 0; }
+  .tabela thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); }
+  .tabela tbody tr { display: block; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .tabela tbody tr:first-child { border-top: 1px solid var(--ink); }
+  .tabela tbody th, .tabela tbody td { display: block; padding: 0; border: 0; }
+  .tabela tbody th { margin-bottom: 10px; }
+  .tabela tbody td { display: flex; gap: 16px; justify-content: space-between; padding: 4px 0; }
+  .tabela tbody td::before {
+    content: attr(data-rotulo); flex-shrink: 0; max-width: 45%; text-align: left;
+    font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--text-3); line-height: 1.6;
+  }
+  .tabela tbody td { text-align: right; }
+}
 
-/* ============ SOBRE / VALORES ============ */
-.about-split { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: start; }
-.about-split h2 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); margin-bottom: 24px; }
-.about-split p + p { margin-top: 16px; }
-.values-list { display: flex; flex-direction: column; }
-.value-item { display: flex; gap: 20px; padding: 26px 0; border-top: 1px solid var(--line); transition: padding-left .3s; }
-.value-item:hover { padding-left: 12px; }
-.value-item .card-icon { width: 42px; height: 42px; margin: 0; flex-shrink: 0; }
-.value-item h3 { font-size: 1.1rem; margin-bottom: 6px; }
-.value-item p { font-size: .9rem; color: var(--text-2); }
+/* ============ CITAÇÃO EM TELA ============ */
+.citacao { max-width: 1080px; }
+.citacao .regua { margin-top: 0; }
+.citacao blockquote p {
+  font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3.6vw + 4px, 56px);
+  line-height: 1.25; letter-spacing: -0.01em; color: var(--text-1); max-width: 30ch;
+}
+.citacao figcaption { margin-top: 36px; font-family: var(--body); font-size: 19px; color: var(--text-2); }
 
-/* ============ SEGMENTOS ============ */
-.segments { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.segment-chip { padding: 11px 22px; border-radius: 100px; border: 1px solid var(--line); font-size: .88rem; font-weight: 500; color: var(--text-2); transition: border-color .2s, color .2s; }
-.segment-chip:hover { border-color: var(--line-strong); color: var(--text-1); }
+/* ============ FAIXA DE CHAMADA FINAL ============ */
+.chamada-final { background: var(--paper-alt); padding: 112px 0; }
+.chamada-final h2 {
+  font-family: var(--display); font-weight: 400; font-size: clamp(32px, 3.6vw + 6px, 60px);
+  line-height: 1.12; color: var(--text-1); margin-top: 14px; max-width: 24ch;
+}
+.chamada-final p:not([class]) { font-size: 18px; line-height: 1.75; color: var(--text-2); max-width: 60ch; }
+.chamada-final .btn { margin-top: 40px; }
 
-/* ============ BLOG ============ */
-.blog-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); transition: background .3s; }
-.blog-card:hover { background: var(--carbon); }
-.blog-thumb { height: 170px; background: var(--carbon); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); }
-.blog-thumb svg { width: 42px; height: 42px; color: var(--text-3); }
-.blog-body { padding: 26px; flex: 1; display: flex; flex-direction: column; }
-.blog-body .blog-meta { font-size: .72rem; color: var(--text-3); margin-bottom: 12px; display: flex; gap: 12px; letter-spacing: .06em; text-transform: uppercase; }
-.blog-body .blog-meta b { color: var(--text-2); font-weight: 600; }
-.blog-body h3 { font-size: 1.1rem; margin-bottom: 10px; }
-.blog-body p { font-size: .88rem; flex: 1; color: var(--text-2); }
+/* ============ FORMULÁRIO EM ETAPAS ============
+   Sem JavaScript, todas as etapas aparecem empilhadas e o formulário
+   envia direto. Com o script, ele adiciona .etapas-ligadas e mostra uma
+   etapa por vez. Nada é escondido antes disso. */
+.form-etapas { max-width: 760px; }
+.form-etapas-barra { display: none; gap: 6px; margin-bottom: 36px; }
+.etapas-ligadas .form-etapas-barra { display: flex; }
+.form-etapas-barra span { flex: 1; height: 4px; background: var(--rule); transition: background .35s ease; }
+.form-etapas-barra span.feita { background: var(--ink); }
 
-/* ============ CONTATO ============ */
-.contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-.contact-card { display: flex; flex-direction: column; gap: 16px; padding: 34px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--bg); transition: background .3s; text-align: left; }
-.contact-card:hover { background: var(--carbon); }
-.contact-card .card-icon { margin: 0; }
-.contact-card h3 { font-size: 1.15rem; margin-bottom: 4px; }
-.contact-card p { font-size: .9rem; color: var(--text-2); margin-bottom: 8px; }
+.form-etapa { border: 0; min-width: 0; }
+.form-etapa + .form-etapa { margin-top: 56px; }
+.etapas-ligadas .form-etapa + .form-etapa { margin-top: 0; }
+.etapas-ligadas .form-etapa:not(.is-ativa) { display: none; }
+.form-etapa-titulo { display: block; padding: 0; margin-bottom: 32px; }
+.form-etapa-num {
+  display: block; font-family: var(--micro); font-size: 13px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--text-1); margin-bottom: 10px;
+}
+.form-etapa-nome { display: block; font-family: var(--display); font-weight: 400; font-size: clamp(28px, 2.4vw + 6px, 40px); line-height: 1.15; color: var(--text-1); }
 
-/* ============ FOOTER ============ */
-.footer { border-top: 1px solid var(--line); padding: 90px 0 0; margin-top: 0; }
-.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 50px; padding-bottom: 60px; }
-.footer h2 { font-size: .76rem; margin-bottom: 22px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-3); font-weight: 600; }
+.campo { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+fieldset.campo { border: 0; padding: 0; min-width: 0; }
+fieldset.campo > legend { padding: 0; margin-bottom: 12px; }
+.campo > label, .campo > .campo-rotulo {
+  font-family: var(--micro); font-size: 15px; font-weight: 600; letter-spacing: .01em; line-height: 1.4; color: var(--text-1);
+}
+.campo-opcional { font-weight: 500; color: var(--text-3); }
+.campo-ajuda { font-family: var(--micro); font-size: 14px; line-height: 1.5; color: var(--text-3); margin-top: -2px; }
+.campo input, .campo select, .campo textarea {
+  width: 100%; min-height: 60px; padding: 16px 18px;
+  font-family: var(--body); font-size: 18px; line-height: 1.4; color: var(--text-1);
+  background: var(--paper); border: 1px solid var(--line-strong); border-radius: 0;
+  appearance: none; -webkit-appearance: none; transition: border-color .2s ease, box-shadow .2s ease;
+}
+.campo textarea { min-height: 160px; resize: vertical; }
+.campo select {
+  padding-right: 52px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23141414' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 18px center;
+}
+.campo input::placeholder, .campo textarea::placeholder { color: var(--text-3); opacity: 1; }
+.campo input:hover, .campo select:hover, .campo textarea:hover { border-color: var(--ink); }
+/* Foco: filete de 2px em tinta (não é sombra difusa: é uma borda interna). */
+.campo input:focus-visible, .campo select:focus-visible, .campo textarea:focus-visible {
+  outline: none; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink);
+}
+.campo [aria-invalid="true"] { border-color: var(--erro); box-shadow: inset 0 0 0 1px var(--erro); }
+.campo-erro {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-family: var(--micro); font-size: 14px; font-weight: 600; line-height: 1.45; color: var(--erro);
+}
+.campo-erro::before {
+  content: '!'; flex-shrink: 0; display: grid; place-items: center;
+  width: 18px; height: 18px; margin-top: 1px; border-radius: 50%;
+  background: var(--erro); color: var(--paper); font-size: 12px; line-height: 1;
+}
+.campo-erro[hidden] { display: none; }
+
+/* Opções grandes (rádio/checkbox) — alvo de toque inteiro. */
+.opcoes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; border: 0; }
+.opcao { position: relative; display: block; cursor: pointer; }
+.opcao input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opcao span {
+  display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 14px 18px;
+  border: 1px solid var(--line-strong); background: var(--paper);
+  font-family: var(--body); font-size: 17px; line-height: 1.35; color: var(--text-1);
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.opcao span::before {
+  content: ''; flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid var(--ink); background: var(--paper); box-shadow: inset 0 0 0 4px var(--paper);
+}
+.opcao:hover span { border-color: var(--ink); }
+.opcao input:checked + span { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.opcao input:checked + span::before { background: var(--ink); }
+.opcao input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 3px; }
+.opcoes[aria-invalid="true"] .opcao span { border-color: var(--erro); }
+
+.form-etapas-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 40px; }
+.form-etapas-acoes [data-etapa-voltar], .form-etapas-acoes [data-etapa-seguir] { display: none; }
+.etapas-ligadas .form-etapas-acoes [data-etapa-voltar],
+.etapas-ligadas .form-etapas-acoes [data-etapa-seguir] { display: inline-flex; }
+/* Sem script, só a última etapa mostra um botão: o de envio. */
+.form-nota { font-family: var(--micro); font-size: 13px; line-height: 1.55; color: var(--text-3); margin-top: 24px; max-width: 60ch; }
+.form-nota a { color: var(--text-1); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Estados: sucesso e erro. Mesma moldura, sem cor. */
+.form-estado { max-width: 760px; padding: 44px; border-radius: var(--radius-lg); background: var(--paper-alt); }
+.form-estado:focus { outline: none; }
+.form-estado:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.form-estado[hidden] { display: none; }
+.form-estado h3 { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 2vw + 10px, 40px); line-height: 1.15; color: var(--text-1); margin-top: 14px; }
+.form-estado .regua { margin: 24px 0 28px; }
+.form-estado p:not([class]) { font-size: 18px; line-height: 1.75; color: var(--text-2); max-width: 60ch; }
+.form-estado .form-etapas-acoes { margin-top: 32px; }
+.form-estado--erro { background: var(--paper); border: 1px solid var(--ink); border-left-width: 4px; }
+
+/* ============ RODAPÉ ============
+   Tinta, três colunas (marca | navegar | contato) e linha legal. */
+.footer { background: var(--ink); color: var(--text-2); padding: 96px 0 0; }
+/* Rodapé só com a linha legal (venda, obrigado): sem faixa vazia de tinta. */
+.footer:not(:has(.footer-grid)) { padding-top: 8px; }
+.footer-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 56px; padding-bottom: 72px; }
+.footer-grid:has(> :nth-child(4)) { grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); }
+.footer h2 {
+  font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 22px; line-height: 1.4;
+}
+.footer .logo { color: var(--text-1); }
+.footer-marca p:not([class]), .footer-about p:not([class]) { font-size: 16px; line-height: 1.7; color: var(--text-2); margin: 22px 0 0; max-width: 38ch; }
+.footer-about .btn { margin-top: 26px; }
 .footer-links { display: flex; flex-direction: column; gap: 12px; }
-.footer-links a { font-size: .9rem; color: var(--text-2); transition: color .2s; }
-.footer-links a:hover { color: var(--text-1); }
-.footer-about p { font-size: .92rem; color: var(--text-2); margin: 20px 0 26px; max-width: 340px; }
-.footer-bottom { border-top: 1px solid var(--line); padding: 26px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; font-size: .8rem; color: var(--text-3); }
-.footer-bottom a { color: var(--text-3); }
-.footer-bottom a:hover { color: var(--text-1); }
-.footer-legal { display: flex; gap: 20px; }
-.footer-cnpj { padding: 0 0 26px; margin: 0; font-size: .76rem; color: var(--text-3); line-height: 1.5; }
+.footer-links a { position: relative; font-size: 16px; color: var(--text-1); line-height: 1.5; }
+.footer-links a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .32s ease;
+}
+.footer-links a:hover::after { transform: scaleX(1); }
+.footer-bottom {
+  border-top: 1px solid var(--line); padding: 26px 0; display: flex; justify-content: space-between;
+  align-items: center; gap: 16px; flex-wrap: wrap;
+  font-family: var(--micro); font-size: 13px; letter-spacing: .02em; color: var(--text-3);
+}
+.footer-bottom a { color: var(--text-2); }
+.footer-bottom a:hover { color: var(--text-1); text-decoration: underline; text-underline-offset: 3px; }
+.footer-legal { display: flex; gap: 24px; flex-wrap: wrap; }
+.footer-cnpj { padding: 0 0 32px; margin: 0; font-family: var(--micro); font-size: 12px; letter-spacing: .02em; color: var(--text-3); line-height: 1.6; }
+.footer-cnpj a { color: var(--text-2); }
 
 .seo-areas { padding: 44px 0; border-top: 1px solid var(--line); }
-.seo-areas h2 { font-size: .72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: .18em; margin-bottom: 16px; }
-.seo-areas p { font-size: .74rem; color: #5a5a5a; line-height: 2; }
+.seo-areas h2 { margin-bottom: 16px; }
+.seo-areas p { font-size: 13px; color: var(--text-3); line-height: 2; }
 
-/* ============ REVEAL ============ */
-/* Revelacao forcada, sem transicao.
-
-   Medido em 08/09: o piso de 2s do main.js adicionava `.in` nos 31
-   elementos da servicos.html e a opacidade computada continuava 0.
-   Adicionar a classe nao basta, porque a TRANSICAO tambem precisa de
-   quadro, e quadro e exatamente o que o navegador suspende. Esta classe
-   corta a transicao e escreve o valor final direto, entao o resgate
-   funciona no unico cenario em que ele e necessario. */
-.reveal.revelado, .reveal-left.revelado,
-.reveal-right.revelado, .reveal-zoom.revelado,
-.js-anima .reveal.revelado, .js-anima .reveal-left.revelado,
-.js-anima .reveal-right.revelado, .js-anima .reveal-zoom.revelado {
-  opacity: 1 !important;
-  transform: none !important;
-  transition: none !important;
+/* ============ WHATSAPP FLUTUANTE ============
+   Preto com glifo branco. Sem pulso, sem sombra. O anel branco de 1px
+   some sobre o papel e aparece sobre o rodapé escuro. */
+.whats-float {
+  position: fixed; bottom: 26px; right: 26px; z-index: 990;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--ink); color: var(--paper); border: 1px solid var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .3s ease, color .3s ease, border-color .3s ease;
 }
+.whats-float:hover { background: var(--paper); color: var(--ink); border-color: var(--ink); }
+.whats-float svg { width: 28px; height: 28px; color: currentColor; }
+.whats-float:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
-/* Esconder exige que o script tenha ligado.
+/* ============ REVEAL ============
+   Esconder exige que o script tenha ligado (html.js-anima, adicionado
+   na primeira linha do main.js). Sem isso, tudo aparece. Quando o
+   observador não dispara (navegador embutido do Instagram, aba em
+   segundo plano), o main.js revela por temporizador com .revelado,
+   que corta a transição e escreve o valor final direto.
 
-   `.reveal { opacity: 0 }` sem condicao aposta que o IntersectionObserver
-   vai disparar. Quando ele nao dispara — navegador embutido do Instagram,
-   aba em segundo plano, quadro suspenso — a pagina fica preta e vazia. Ja
-   custou uma campanha inteira aqui.
+   Padrão: fade + translateY 16px, 800ms ease-out, uma vez. Não use em
+   TODA seção — o padrão proíbe. Stagger de 90ms em .reveal-grupo,
+   no máximo 3 filhos. */
+.js-anima .reveal, .js-anima .reveal-left, .js-anima .reveal-right, .js-anima .reveal-zoom {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .8s ease-out, transform .8s ease-out;
+}
+.js-anima .reveal.in, .js-anima .reveal-left.in, .js-anima .reveal-right.in, .js-anima .reveal-zoom.in { opacity: 1; transform: none; }
 
-   Com o seletor preso a `html.js-anima`, que o main.js adiciona na
-   primeira linha, o pior caso vira "a animacao nao acontece" em vez de
-   "o conteudo nao existe". E o main.js ainda revela tudo por
-   temporizador depois de 2s, que e o unico relogio que o navegador nao
-   suspende em segundo plano. */
-.js-anima .reveal { opacity: 0; transform: translateY(28px); transition: opacity .35s cubic-bezier(.2,.7,.3,1), transform .35s cubic-bezier(.2,.7,.3,1); }
-.js-anima .reveal.in { opacity: 1; transform: translateY(0); }
-.js-anima .reveal-left { opacity: 0; transform: translateX(-36px); transition: opacity .35s ease, transform .35s ease; }
-.js-anima .reveal-right { opacity: 0; transform: translateX(36px); transition: opacity .35s ease, transform .35s ease; }
-.js-anima .reveal-left.in, .js-anima .reveal-right.in { opacity: 1; transform: translateX(0); }
-.js-anima .reveal-zoom { opacity: 0; transform: scale(.96); transition: opacity .3s ease, transform .3s ease; }
-.js-anima .reveal-zoom.in { opacity: 1; transform: scale(1); }
-.d1 { transition-delay: .08s; } .d2 { transition-delay: .16s; } .d3 { transition-delay: .24s; }
-.d4 { transition-delay: .32s; } .d5 { transition-delay: .40s; } .d6 { transition-delay: .48s; }
+.js-anima .reveal-grupo > * { opacity: 0; transform: translateY(16px); transition: opacity .8s ease-out, transform .8s ease-out; }
+.js-anima .reveal-grupo.in > * { opacity: 1; transform: none; }
+.js-anima .reveal-grupo.in > :nth-child(2) { transition-delay: .09s; }
+.js-anima .reveal-grupo.in > :nth-child(n+3) { transition-delay: .18s; }
 
-/* Pagina de venda: nada nasce invisivel.
-   O navegador embutido do Instagram e do Facebook nem sempre dispara o
-   IntersectionObserver que adiciona a classe .in — e quando nao dispara, a
-   pessoa que veio do anuncio ve a pagina preta e vazia. Aqui o conteudo e o
-   padrao e a animacao e o extra: o :not(.in) faz a regra valer so ate o
-   observador chegar, entao o efeito 3D dos planos no desktop continua
-   funcionando quando o script roda. */
+/* A régua anima depois do texto, nunca junto. */
+.js-anima .regua { width: 0; transition: width .8s ease-out .45s; }
+.js-anima .regua.in { width: 140px; }
+
+.d1 { transition-delay: .09s; } .d2 { transition-delay: .18s; } .d3, .d4, .d5, .d6 { transition-delay: .18s; }
+
+.reveal.revelado, .reveal-left.revelado, .reveal-right.revelado, .reveal-zoom.revelado,
+.js-anima .reveal.revelado, .js-anima .reveal-left.revelado,
+.js-anima .reveal-right.revelado, .js-anima .reveal-zoom.revelado,
+.js-anima .reveal-grupo.revelado > * {
+  opacity: 1 !important; transform: none !important; transition: none !important;
+}
+.js-anima .regua.revelado { width: 140px !important; transition: none !important; }
+
+/* Página de venda: nada nasce invisível (o :not(.in) deixa o efeito
+   valer quando o script roda). */
 body[data-pagina="venda"] .reveal:not(.in),
 body[data-pagina="venda"] .reveal-left:not(.in),
 body[data-pagina="venda"] .reveal-right:not(.in),
@@ -628,84 +775,236 @@ body[data-pagina="venda"] .plan:not(.in) {
   transform: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  html { scroll-behavior: auto; }
-  .reveal, .reveal-left, .reveal-right, .reveal-zoom { opacity: 1; transform: none; }
-}
+/* ============================================================
+   COMPONENTES ANTIGOS (páginas ainda não refeitas + venda)
+   Mesmos seletores de antes, agora no tema claro. Para página nova,
+   prefira os componentes acima.
+   ============================================================ */
 
-/* Page hero (páginas internas) */
-.page-hero { padding: 170px 0 80px; position: relative; border-bottom: 1px solid var(--line); }
-.page-hero h1 { font-size: clamp(2.2rem, 5.5vw, 4rem); font-weight: 500; letter-spacing: -0.012em; line-height: 1.03; margin-bottom: 22px; }
-.page-hero p { max-width: 640px; font-size: 1.1rem; color: var(--text-2); }
-.breadcrumbs { display: flex; gap: 8px; align-items: center; font-size: .78rem; color: var(--text-3); margin-bottom: 26px; }
-.breadcrumbs a:hover { color: var(--text-1); }
+/* ---- Seção antiga ---- */
+.section { padding: 120px 0; position: relative; border-top: 1px solid var(--line); }
+.section:first-of-type { border-top: none; }
+.section-head { max-width: 760px; margin: 0 auto 70px; }
+.section-head.center { text-align: center; margin-left: auto; margin-right: auto; }
+.kicker { margin-bottom: 18px; }
+.section-head h2 { font-size: clamp(2rem, 4.2vw, 3.2rem); margin-bottom: 20px; }
+.section-head p { font-size: 1.05rem; color: var(--text-2); max-width: 620px; }
+.section-head.center p { margin-left: auto; margin-right: auto; }
+
+.section--light { background: var(--soft-silver); border-top-color: var(--line); }
+.section--light .card { background: var(--paper); }
+
+/* ---- Grades antigas ---- */
+.grid { display: grid; gap: 24px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* ---- Hero antigo (index) ---- */
+.hero-inner { display: block; }
+.hero-badge { display: inline-block; font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--text-1); margin-bottom: 28px; }
+.hero h1 em { font-style: normal; color: inherit; }
+.hero p.sub { font-family: var(--body); font-style: italic; font-size: clamp(19px, 1.9vw, 24px); max-width: 44ch; margin: 32px auto 0; color: var(--text-2); }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 44px; }
+.hero-trust { display: flex; gap: 26px; margin-top: 40px; flex-wrap: wrap; justify-content: center; }
+.hero-trust span { display: flex; align-items: center; gap: 8px; font-family: var(--micro); font-size: 13px; color: var(--text-3); }
+.hero-trust svg { width: 15px; height: 15px; color: var(--text-1); flex-shrink: 0; }
+.hero-card, .hero-chip { display: none; }
+
+/* ---- Compatibilidade (skills.html) ---- */
+.compat { max-width: 900px; margin: 34px auto 0; }
+.compat-intro { color: var(--text-2); font-size: .98rem; line-height: 1.65; margin: 0 0 22px; text-align: center; }
+.compat-intro b { color: var(--text-1); }
+.compat-lista {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+}
+.compat-lista li { background: var(--bg); padding: 18px 16px; display: flex; flex-direction: column; gap: 5px; }
+.compat-lista b { font-family: var(--micro); font-size: .9rem; color: var(--text-1); font-weight: 600; }
+.compat-lista span { font-size: .8rem; color: var(--text-3); line-height: 1.5; }
+.compat-lista i { font-style: normal; color: var(--text-2); }
+.compat-nota { margin: 16px 0 0; font-size: .8rem; color: var(--text-3); line-height: 1.55; text-align: center; }
+
+/* ---- Números (sem contador animado: o número já vem escrito) ---- */
+.stats { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats-nota { padding: 38px 0 0; margin: 0; color: var(--text-3); font-size: .82rem; line-height: 1.5; max-width: 60ch; }
+.stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); }
+.stat { text-align: left; padding: 54px 24px; border-left: 1px solid var(--line); }
+.stat:first-child { border-left: none; padding-left: 0; }
+.stat b { display: block; font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4vw, 3.4rem); color: var(--text-1); line-height: 1.1; }
+.stat b .plus { color: var(--text-3); }
+.stat small { font-family: var(--micro); font-size: .8rem; color: var(--text-3); font-weight: 500; }
+
+/* ---- Antigo "marquee": agora uma lista estática (sem movimento).
+       A trilha tinha os 18 itens duplicados para o laço; a cópia some. */
+.marquee { padding: 8px 0 0; }
+.marquee-track { display: flex; flex-wrap: wrap; gap: 10px; max-width: var(--container); margin: 0 auto; padding: 0 var(--pad); }
+.marquee-track > .tech-pill:nth-child(n+19) { display: none; }
+.tech-pill {
+  display: inline-flex; align-items: center; padding: 9px 18px; border-radius: 99px;
+  border: 1px solid var(--line-strong); font-family: var(--micro); font-weight: 500; font-size: .85rem; color: var(--text-1); white-space: nowrap;
+}
+.tech-pill i { display: none; }
+
+/* ---- Processo / timeline ---- */
+.timeline { display: flex; flex-direction: column; border-top: 1px solid var(--line-strong); }
+.proc-row { display: grid; grid-template-columns: 90px 1fr auto; gap: 28px; align-items: baseline; padding: 32px 0; border-bottom: 1px solid var(--line); }
+.proc-num { font-family: var(--display); font-size: 2.4rem; font-weight: 400; color: var(--text-3); }
+.proc-body h3 { font-size: clamp(1.4rem, 2.6vw, 2.1rem); margin-bottom: 8px; }
+.proc-body p { font-size: 1rem; color: var(--text-2); max-width: 620px; }
+.proc-tag { font-family: var(--micro); font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; padding: 8px 16px; border: 1px solid var(--line-strong); border-radius: 99px; color: var(--text-2); white-space: nowrap; }
+
+/* ---- Formulário antigo (orcamento.html) ---- */
+.form-card { background: var(--paper-alt); border-radius: var(--radius-lg); padding: 46px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-field { display: flex; flex-direction: column; gap: 8px; }
+.form-field.full { grid-column: 1 / -1; }
+.form-field label { font-family: var(--micro); font-size: .9rem; font-weight: 600; color: var(--text-1); }
+.form-field label em { color: var(--text-3); font-style: normal; }
+.form-field input, .form-field select, .form-field textarea {
+  background: var(--paper); border: 1px solid var(--line-strong); border-radius: 0;
+  padding: 14px 16px; font-family: var(--body); font-size: 1rem;
+  color: var(--text-1); transition: border-color .2s; width: 100%; appearance: none;
+}
+.form-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23141414' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+.form-field textarea { resize: vertical; min-height: 120px; }
+.form-field input:focus-visible, .form-field select:focus-visible, .form-field textarea:focus-visible { outline: none; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.form-field input::placeholder, .form-field textarea::placeholder { color: var(--text-3); }
+.form-note { font-family: var(--micro); font-size: .8rem; color: var(--text-3); display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.form-note svg { width: 14px; height: 14px; color: var(--text-2); flex-shrink: 0; }
+.form-success { display: none; text-align: center; padding: 60px 20px; }
+.form-success.show { display: block; }
+.form-success .check-circle { width: 72px; height: 72px; margin: 0 auto 24px; border-radius: 50%; border: 1px solid var(--ink); display: flex; align-items: center; justify-content: center; }
+.form-success .check-circle svg { width: 34px; height: 34px; color: var(--ink); }
+
+/* ---- CTA antigo ---- */
+.cta-banner { position: relative; border-radius: var(--radius-lg); background: var(--paper-alt); padding: 80px 56px; text-align: center; }
+.cta-banner h2 { font-size: clamp(1.9rem, 4vw, 3rem); margin-bottom: 18px; }
+.cta-banner p { max-width: 560px; margin: 0 auto 36px; color: var(--text-2); }
+.cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* ---- Portfólio, sobre, segmentos, blog, contato (antigos) ---- */
+.portfolio-card, .blog-card, .contact-card { position: relative; overflow: hidden; border-radius: var(--radius-lg); background: var(--paper-alt); }
+.portfolio-thumb, .blog-thumb { height: 190px; position: relative; overflow: hidden; background: var(--rule); display: flex; align-items: center; justify-content: center; }
+.portfolio-thumb svg, .blog-thumb svg { width: 48px; height: 48px; color: var(--text-3); }
+.portfolio-thumb .tag { position: absolute; top: 16px; left: 16px; padding: 5px 12px; border-radius: 99px; font-family: var(--micro); font-size: .7rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; background: var(--paper); color: var(--text-1); }
+.portfolio-body, .blog-body { padding: 32px; }
+.portfolio-body .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.portfolio-body .meta span { font-family: var(--micro); font-size: .72rem; padding: 4px 11px; border-radius: 99px; border: 1px solid var(--line-strong); color: var(--text-2); }
+.blog-card { display: flex; flex-direction: column; }
+.blog-body { flex: 1; display: flex; flex-direction: column; }
+.blog-body .blog-meta { font-family: var(--micro); font-size: .75rem; color: var(--text-3); margin-bottom: 12px; display: flex; gap: 12px; letter-spacing: .02em; }
+.blog-body .blog-meta b { color: var(--text-2); font-weight: 600; }
+.blog-body h3 { font-size: 1.35rem; margin-bottom: 10px; }
+.blog-body p { font-size: .95rem; flex: 1; color: var(--text-2); }
+.contact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.contact-card { display: flex; flex-direction: column; gap: 16px; padding: 36px; }
+.about-split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+.about-split h2 { font-size: clamp(1.9rem, 3.4vw, 2.8rem); margin-bottom: 24px; }
+.about-split p + p { margin-top: 16px; }
+.values-list { display: flex; flex-direction: column; }
+.value-item { display: flex; gap: 20px; padding: 26px 0; border-top: 1px solid var(--line); }
+.value-item h3 { font-size: 1.3rem; margin-bottom: 6px; }
+.value-item p { font-size: .95rem; color: var(--text-2); }
+.segments { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.segment-chip { position: relative; padding: 10px 20px; border-radius: 99px; border: 1px solid var(--line-strong); font-family: var(--micro); font-size: .88rem; font-weight: 500; color: var(--text-1); transition: border-color .2s; }
+.segment-chip:hover { border-color: var(--ink); }
+
+/* ---- Hero de página interna antigo + breadcrumbs ---- */
+.page-hero { padding: 170px 0 72px; position: relative; border-bottom: 1px solid var(--line); }
+.page-hero h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.08; margin-bottom: 22px; }
+.page-hero p { max-width: 640px; font-size: 1.12rem; color: var(--text-2); }
+.breadcrumbs { display: flex; gap: 8px; align-items: center; font-family: var(--micro); font-size: .8rem; color: var(--text-3); margin-bottom: 26px; }
+.breadcrumbs a { color: var(--text-1); }
+.breadcrumbs a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .breadcrumbs svg { width: 12px; height: 12px; }
 
-/* Prosa / legal */
-.prose { max-width: 780px; margin: 0 auto; }
-.prose h2 { font-size: 1.5rem; margin: 46px 0 16px; }
-.prose h3 { font-size: 1.15rem; margin: 30px 0 10px; }
-.prose p, .prose li { font-size: .96rem; color: var(--text-2); margin-bottom: 12px; }
+/* ---- Prosa / páginas legais ---- */
+.prose { max-width: 760px; margin: 0 auto; }
+.prose h2 { font-size: 1.9rem; margin: 52px 0 16px; max-width: none; }
+.prose h3 { font-size: 1.35rem; margin: 32px 0 10px; }
+.prose p, .prose li { font-size: 1.05rem; line-height: 1.75; color: var(--text-2); margin-bottom: 14px; }
 .prose ul { padding-left: 22px; list-style: disc; }
 .prose ul li { margin-bottom: 8px; }
 .prose strong { color: var(--text-1); }
 
-/* WhatsApp flutuante */
-.whats-float { position: fixed; bottom: 26px; right: 26px; z-index: 990; width: 56px; height: 56px; border-radius: 50%; background: var(--wa); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(0,0,0,.4); transition: transform .3s; }
-.whats-float:hover { transform: scale(1.08); }
-.whats-float svg { width: 28px; height: 28px; color: #fff; }
-.whats-float::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid rgba(31,168,85,.5); animation: ripple 2.4s infinite; }
-@keyframes ripple { 0% { transform: scale(.9); opacity: 1; } 100% { transform: scale(1.35); opacity: 0; } }
-
 /* ============ RESPONSIVO ============ */
-@media (min-width: 1800px) { :root { --container: 1400px; } body { font-size: 17px; } }
+@media (min-width: 1800px) { :root { --container: 1400px; } }
+
+/* O menu completo (7 itens + CTA) cabe a partir de ~1180px. Abaixo
+   disso, hambúrguer. */
+@media (max-width: 1180px) {
+  .nav { display: none; }
+  .header-inner:has(.nav) .btn-cta { display: none; }
+  .hamburger { display: block; }
+}
 
 @media (max-width: 1080px) {
-  .nav { display: none; }
+  /* Sem menu (página de venda), o CTA do topo some só aqui, como antes. */
   .header .btn-cta { display: none; }
-  .hamburger { display: block; }
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stats-grid { grid-template-columns: repeat(3, 1fr); }
   .compat-lista { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(4) { border-left: none; }
-  .hero-inner { grid-template-columns: 1fr; gap: 20px; }
-  .hero-visual { min-height: 340px; order: -1; opacity: .9; }
   .about-split { grid-template-columns: 1fr; gap: 44px; }
   .contact-grid { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid, .footer-grid:has(> :nth-child(4)) { grid-template-columns: 1fr 1fr; }
+  .footer-marca, .footer-about { grid-column: 1 / -1; }
+  /* 3 colunas até 900px: em 2 colunas o terceiro card ficava sozinho na linha. */
+  .card { padding: 32px; }
+}
+
+@media (max-width: 900px) {
+  :root { --pad: 24px; --gap: 72px; --header-h: 109px; }
+  .header-inner { height: 64px; }
+  .faixa-topo-item--larga { display: none; }
+  .faixa-topo-inner { justify-content: space-between; gap: 16px; }
+  .cards, .cards--2 { grid-template-columns: 1fr; }
+  .card, .card-exemplo, .form-estado { padding: 32px 26px; }
+  .card-servico { aspect-ratio: 4 / 5; padding: 28px; }
+  /* Sem foto, a proporção 4:5 só criava branco. A altura passa a vir do texto. */
+  .card-servico:not(.card--foto) { aspect-ratio: auto; min-height: 220px; }
+  .hero { padding: 72px 0; }
+  .hero--pagina { padding: 48px 0 44px; }
+  .hero-conteudo > .btn { margin-top: 36px; }
+  .chamada-final { padding: 72px 0; }
+  .corpo p, .corpo ul, .faq-a p, .chamada-final p:not([class]), .form-estado p:not([class]) { font-size: 17px; }
+  .resposta-direta { padding-left: 20px; margin-bottom: 40px; }
 }
 
 @media (max-width: 640px) {
-  .container { padding: 0 20px; }
-  .section { padding: 80px 0; }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .section { padding: 72px 0; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr); }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .stat { border-left: none !important; padding: 30px 0; border-top: 1px solid var(--line); }
   .form-grid { grid-template-columns: 1fr; }
   .form-card { padding: 28px 20px; }
-  .cta-banner { padding: 52px 26px; }
-  .hero { padding-top: 110px; }
+  .cta-banner { padding: 52px 24px; }
   .hero-actions .btn { width: 100%; }
-  .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+  .footer { padding-top: 72px; }
+  .footer-grid, .footer-grid:has(> :nth-child(4)) { grid-template-columns: 1fr; gap: 40px; padding-bottom: 56px; }
   .proc-row { grid-template-columns: 60px 1fr; gap: 16px; }
   .proc-tag { grid-column: 2; justify-self: start; }
-  .scroll-hint { display: none; }
+  .opcoes { grid-template-columns: 1fr; }
+  .btn-lg { padding: 18px 26px; }
+  .form-etapas-acoes .btn { flex: 1 1 auto; }
+  .whats-float { right: 18px; bottom: 18px; }
 }
 
 /* ============================================================
-   SKILLS — Planos (Basico / Medium / Premium)
-   Traducao do bloco de pricing para o design system Mono:
-   sem cor, hairlines, Fraunces no preco, cartao do meio elevado.
+   SKILLS — Planos (Analista / Gestor / Empresário)
+   Página de venda. Tema claro: papel, tinta, filetes. O cartão
+   recomendado se destaca por fundo --paper-alt e filete em tinta,
+   não por sombra nem por rotação 3D (o padrão proíbe as duas).
    ============================================================ */
 
 .pricing-head { max-width: 720px; margin: 0 auto 46px; text-align: center; }
-.pricing-head h1, .pricing-head h2 { font-size: clamp(1.9rem, 4.2vw, 3.1rem); margin-bottom: 18px; }
+.pricing-head h1, .pricing-head h2 { font-size: clamp(2rem, 4.2vw, 3.2rem); margin-bottom: 18px; }
 .pricing-head p { color: var(--text-2); font-size: 1.05rem; }
 
-/* Linha do seletor. Fica oculta enquanto a assinatura nao existir:
-   basta ligar PLANOS.assinatura em js/main.js. */
+/* Linha do seletor. Fica oculta enquanto a assinatura nao existir. */
 .pricing-switch {
   display: flex; align-items: center; justify-content: center; gap: 12px;
   margin-bottom: 52px;
@@ -721,23 +1020,18 @@ body[data-pagina="venda"] .plan:not(.in) {
   width: 18px; height: 18px; border-radius: 50%;
   background: var(--text-2); transition: transform .28s cubic-bezier(.22,1,.36,1), background .25s;
 }
-.switch[aria-checked="true"] { background: var(--ghost); border-color: var(--ghost); }
-.switch[aria-checked="true"]::after { transform: translateX(20px); background: var(--obsidian); }
-.switch:focus-visible { outline: 2px solid var(--ghost); outline-offset: 3px; }
+.switch[aria-checked="true"] { background: var(--ink); border-color: var(--ink); }
+.switch[aria-checked="true"]::after { transform: translateX(20px); background: var(--paper); }
+.switch:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .pricing-switch .switch-label { font-size: .9rem; color: var(--text-2); }
 .pricing-switch .switch-label b { color: var(--text-1); font-weight: 600; }
 
 /* ---------- Grade dos planos ---------- */
 .plans {
   display: grid; grid-template-columns: 1fr; gap: 20px;
-  align-items: start; perspective: 1400px;
+  align-items: start;
 }
-/* Cinco cartoes em 3 / 2, com a segunda fileira centrada.
-
-   Grade de seis colunas em vez de tres: cada cartao ocupa duas. Os tres de
-   cima caem em 1-2, 3-4 e 5-6; os dois de baixo comecam em 2 e em 4, o que
-   os deixa centrados sob os de cima. Com grade de tres colunas os dois
-   ultimos encostariam na esquerda e a fileira sairia torta. */
+/* Cinco cartoes em 3 / 2, com a segunda fileira centrada (grade de 6). */
 @media (min-width: 900px) {
   .plans { grid-template-columns: repeat(6, 1fr); gap: 16px; }
   .plan { grid-column: span 2; }
@@ -749,42 +1043,36 @@ body[data-pagina="venda"] .plan:not(.in) {
   position: relative; display: flex; flex-direction: column;
   background: var(--bg); border: 1px solid var(--line);
   border-radius: var(--radius-lg); padding: 34px 28px;
-  opacity: 0; transform: translateY(24px);
-  transition: opacity .3s ease, transform .45s cubic-bezier(.22,1,.36,1),
-              border-color .3s ease, background .3s ease;
+  transition: opacity .8s ease-out, transform .8s ease-out, border-color .3s ease;
 }
-.plan.in { opacity: 1; transform: none; }
+/* Entrada: só esconde depois que o script ligou. */
+.js-anima .plan { opacity: 0; transform: translateY(16px); }
+.js-anima .plan.in { opacity: 1; transform: none; }
 .plan:hover { border-color: var(--line-strong); }
 
-/* Perspectiva: laterais recuam e giram, o do meio sobe. So no desktop. */
 @media (min-width: 900px) {
-  .plan { transform-style: preserve-3d; }
-  .plans .plan:nth-child(1) { transform-origin: right center; }
-  .plans .plan:nth-child(3) { transform-origin: left  center; }
-  .plans .plan:nth-child(1).in { transform: translate3d(12px, 0, -50px) rotateY(9deg)  scale(.955); }
-  .plans .plan:nth-child(3).in { transform: translate3d(-12px,0, -50px) rotateY(-9deg) scale(.955); }
-  .plans .plan--popular.in     { transform: translateY(-20px); z-index: 2; }
+  .js-anima .plans .plan--popular.in { transform: translateY(-16px); }
+  .plans .plan--popular { z-index: 2; }
 }
 
 .plan--popular {
-  background: var(--carbon);
-  border-color: var(--line-strong);
-  border-width: 1px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 30px 80px rgba(0,0,0,.55);
+  background: var(--paper-alt);
+  border-color: var(--ink);
 }
+.plan--popular:hover { border-color: var(--ink); }
 
 .plan-badge {
   position: absolute; top: -1px; right: -1px;
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 13px; background: var(--ghost); color: var(--obsidian);
-  border-radius: 0 var(--radius-lg) 0 var(--radius);
-  font-size: .72rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  padding: 7px 13px; background: var(--ink); color: var(--paper);
+  border-radius: 0 var(--radius-lg) 0 var(--radius-lg);
+  font-family: var(--micro); font-size: .7rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
 }
-.plan-badge svg { width: 13px; height: 13px; }
+.plan-badge svg { width: 12px; height: 12px; }
 
 .plan-name {
-  font-family: var(--font); font-size: .76rem; font-weight: 600;
-  letter-spacing: .2em; text-transform: uppercase; color: var(--text-3);
+  font-family: var(--micro); font-size: .78rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--text-1);
   text-align: center;
 }
 
@@ -792,42 +1080,43 @@ body[data-pagina="venda"] .plan:not(.in) {
   display: flex; align-items: baseline; justify-content: center; gap: 7px;
   margin-top: 22px;
 }
-.plan-price .cur { font-size: 1.1rem; color: var(--text-2); }
+.plan-price .cur { font-family: var(--micro); font-size: 1rem; color: var(--text-2); }
 .plan-price .val {
-  font-family: var(--font-head); font-weight: 500;
+  font-family: var(--display); font-weight: 400;
   font-size: clamp(2.6rem, 5vw, 3.5rem); line-height: 1;
-  letter-spacing: -0.02em; color: var(--text-1);
-  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em; color: var(--text-1);
+  font-variant-numeric: lining-nums tabular-nums;
 }
-.plan-note { text-align: center; font-size: .76rem; color: var(--text-3); margin-top: 9px; }
+.plan-note { text-align: center; font-family: var(--micro); font-size: .76rem; color: var(--text-3); margin-top: 9px; }
 
-/* O cartao inteiro e clicavel (ver js/skills.js). O cursor precisa
-   dizer isso, senao a area continua parecendo texto morto. O botao
-   dentro dele mantem o proprio cursor. */
+/* O cartao inteiro e clicavel (ver js/skills.js). */
 .plan { cursor: pointer; }
 .plan a, .plan button, .plan input { cursor: revert; }
 
 .plan-features { margin-top: 26px; display: flex; flex-direction: column; gap: 11px; flex: 1; }
-.plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: .92rem; color: var(--text-2); }
-.plan-features svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 4px; color: var(--text-1); }
+.plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: .95rem; line-height: 1.55; color: var(--text-2); }
+.plan-features svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 5px; color: var(--text-1); }
+.plan-features b { color: var(--text-1); font-weight: 600; }
 
 .plan hr { border: 0; border-top: 1px solid var(--line); margin: 26px 0 22px; }
+.plan--popular hr { border-top-color: var(--line-strong); }
 
-.plan .btn { width: 100%; justify-content: center; }
-.plan-desc { margin-top: 18px; text-align: center; font-size: .78rem; color: var(--text-3); line-height: 1.5; }
+.plan .btn { width: 100%; justify-content: center; white-space: normal; padding-left: 18px; padding-right: 18px; }
+.plan-desc { margin-top: 18px; text-align: center; font-size: .82rem; color: var(--text-3); line-height: 1.6; }
+.plan-desc b { color: var(--text-1); }
 
 /* ---------- Painel lateral de checkout ---------- */
 .checkout-backdrop {
   position: fixed; inset: 0; z-index: 1200;
-  background: rgba(0,0,0,.62); backdrop-filter: blur(3px);
+  background: rgba(20,20,20,.45);
   opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility .35s ease;
 }
 .checkout-backdrop.open { opacity: 1; visibility: visible; }
 
 .checkout-panel {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 1300;
-  width: min(460px, 100%); background: var(--bg);
-  border-left: 1px solid var(--line);
+  width: min(460px, 100%); background: var(--paper);
+  border-left: 1px solid var(--ink);
   transform: translateX(100%); transition: transform .42s cubic-bezier(.22,1,.36,1);
   display: flex; flex-direction: column;
 }
@@ -838,20 +1127,33 @@ body[data-pagina="venda"] .plan:not(.in) {
 }
 .checkout-head .label { margin: 0; }
 .checkout-close {
-  width: 34px; height: 34px; display: grid; place-items: center;
-  background: transparent; border: 1px solid var(--line); border-radius: 8px;
-  color: var(--text-2); transition: border-color .25s, color .25s;
+  width: 40px; height: 40px; display: grid; place-items: center;
+  background: transparent; border: 1px solid var(--line-strong); border-radius: 0;
+  color: var(--text-1); transition: border-color .25s, background .25s, color .25s;
 }
-.checkout-close:hover { border-color: var(--line-strong); color: var(--text-1); }
+.checkout-close:hover { border-color: var(--ink); background: var(--ink); color: var(--paper); }
 .checkout-close svg { width: 15px; height: 15px; }
 .checkout-body { padding: 26px; overflow-y: auto; flex: 1; }
 .checkout-summary { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 22px; }
 .checkout-summary .row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
 .checkout-summary .row + .row { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
-.checkout-summary .row span { font-size: .9rem; color: var(--text-2); }
-.checkout-summary .row b { font-family: var(--font-head); font-weight: 500; font-size: 1.5rem; color: var(--text-1); }
+.checkout-summary .row span { font-size: .92rem; color: var(--text-2); }
+.checkout-summary .row b { font-family: var(--display); font-weight: 400; font-size: 1.6rem; color: var(--text-1); }
 #checkout-mount { min-height: 260px; }
-.checkout-pending { font-size: .88rem; color: var(--text-3); line-height: 1.6; }
+.checkout-pending { font-size: .9rem; color: var(--text-3); line-height: 1.6; }
+
+/* O <style> embutido da skills.html desenha os campos do Pix com
+   valores do tema escuro (fundo branco translúcido, borda --line, aviso
+   de erro em laranja). Estas regras vencem por especificidade e
+   ajustam para o tema claro sem tocar no HTML. */
+.checkout-panel .pg-campo span { font-family: var(--micro); font-weight: 600; letter-spacing: .1em; color: var(--text-1); }
+.checkout-panel .pg-campo input { border-color: var(--line-strong); background: var(--paper); font-family: var(--body); }
+.checkout-panel .pg-campo input:focus,
+.checkout-panel .pg-campo input:focus-visible { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); background: var(--paper); outline: none; }
+.checkout-panel .pg-erro { color: var(--erro); font-family: var(--micro); font-weight: 600; border-left: 3px solid var(--erro); padding-left: 10px; }
+.checkout-panel .pg-copiar { background: var(--paper-alt); }
+.checkout-panel .pg-itens li::before { background: var(--text-1); }
+.checkout-panel .pg-qr { border: 1px solid var(--line); }
 
 /* A aba de venda encolhe quando o painel abre (so em telas largas). */
 @media (min-width: 1100px) {
@@ -859,31 +1161,29 @@ body[data-pagina="venda"] .plan:not(.in) {
   .page-shift { transition: transform .42s cubic-bezier(.22,1,.36,1); transform-origin: center left; }
 }
 
-/* ============ ESTANTE (skills.html) ============
-   O que a pessoa que veio do anuncio precisa ver antes do preco. Nada aqui
-   depende de rolagem nem de script: e HTML e CSS, e aparece renderizado. */
+/* ============ ESTANTE (skills.html) ============ */
 
 .prova {
   max-width: 780px; margin: 0 auto 56px; padding: 26px 28px;
-  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg);
   background: var(--surface);
 }
-.prova-linha { display: flex; gap: 18px; align-items: baseline; padding: 9px 0; }
-.prova-linha + .prova-linha { border-top: 1px solid var(--line); }
+.prova-linha { display: flex; gap: 18px; align-items: baseline; padding: 10px 0; }
+.prova-linha + .prova-linha { border-top: 1px solid var(--rule); }
 .prova-rot {
-  font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+  font-family: var(--micro); font-weight: 600; font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
   color: var(--text-3); min-width: 62px; flex-shrink: 0;
 }
-.prova-txt { color: var(--text-2); font-size: .95rem; line-height: 1.55; }
+.prova-txt { color: var(--text-2); font-size: .98rem; line-height: 1.6; }
 .prova-linha--depois .prova-txt { color: var(--text-1); }
-.prova-num { font-family: var(--font-head); font-size: 1.05rem; color: var(--ghost); }
+.prova-num { font-family: var(--display); font-size: 1.1rem; color: var(--text-1); }
 
 .estante-head { text-align: center; max-width: 720px; margin: 0 auto 40px; }
 .estante-head h2 {
-  font-family: var(--font-head); font-weight: 600;
-  font-size: clamp(1.5rem, 4vw, 2.1rem); line-height: 1.18; margin: 0 0 12px;
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.15; margin: 0 0 12px;
 }
-.estante-head p { color: var(--text-2); font-size: .96rem; line-height: 1.6; margin: 0; }
+.estante-head p { color: var(--text-2); font-size: 1rem; line-height: 1.65; margin: 0; }
 
 .estante {
   display: grid; grid-template-columns: 1fr; gap: 14px;
@@ -900,37 +1200,34 @@ body[data-pagina="venda"] .plan:not(.in) {
 .prateleira:hover { border-color: var(--line-strong); background: var(--surface); }
 .prateleira-topo { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
 .prateleira-num {
-  font-family: var(--font-head); font-weight: 600; font-size: 1.9rem;
-  line-height: 1; color: var(--ghost);
+  font-family: var(--display); font-weight: 400; font-size: 2rem;
+  line-height: 1; color: var(--text-1);
 }
-.prateleira-tipo { font-size: .7rem; letter-spacing: .13em; text-transform: uppercase; color: var(--text-3); }
+.prateleira-tipo { font-family: var(--micro); font-weight: 600; font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-3); }
 .prateleira h3 {
-  font-family: var(--font-head); font-weight: 500; font-size: 1.06rem;
+  font-family: var(--display); font-weight: 400; font-size: 1.15rem;
   margin: 0 0 14px; color: var(--text-1);
 }
 .prateleira ul { list-style: none; margin: 0; padding: 0; }
-.prateleira li { padding: 7px 0; font-size: .86rem; line-height: 1.5; color: var(--text-2); }
-.prateleira li + li { border-top: 1px solid rgba(255,255,255,.06); }
+.prateleira li { padding: 7px 0; font-size: .88rem; line-height: 1.55; color: var(--text-2); }
+.prateleira li + li { border-top: 1px solid var(--line); }
 .prateleira li b { color: var(--text-1); font-weight: 600; }
-.prateleira-rodape { margin-top: 14px; font-size: .78rem; color: var(--text-3); line-height: 1.5; }
+.prateleira-rodape { margin-top: 14px; font-size: .8rem; color: var(--text-3); line-height: 1.55; }
 
 .estante-total {
   max-width: 1080px; margin: 0 auto 64px; padding: 22px 26px; text-align: center;
   border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
 }
-.estante-total strong { font-family: var(--font-head); font-weight: 600; color: var(--ghost); }
-.estante-total p { margin: 0; color: var(--text-2); font-size: .94rem; line-height: 1.6; }
+.estante-total strong { font-family: var(--display); font-weight: 500; color: var(--text-1); }
+.estante-total p { margin: 0; color: var(--text-2); font-size: .96rem; line-height: 1.65; }
 
-/* A prateleira leva aos planos. Card que parece conteudo e se comporta como
-   botao irrita, entao a afordancia e explicita: cursor, linha dizendo para
-   onde vai, e foco visivel para quem navega por teclado. */
+/* A prateleira leva aos planos: cursor, linha dizendo para onde vai,
+   foco visivel. */
 .prateleira[role="button"] { cursor: pointer; }
-.prateleira[role="button"]:focus-visible {
-  outline: 2px solid var(--ghost); outline-offset: 3px;
-}
+.prateleira[role="button"]:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .prateleira-cta {
   display: inline-block; margin-top: 16px;
-  font-size: .78rem; letter-spacing: .02em; color: var(--text-3);
+  font-family: var(--micro); font-size: .78rem; letter-spacing: .02em; color: var(--text-3);
   transition: color .25s ease;
 }
 .prateleira-cta span { display: inline-block; transition: transform .25s ease; }
@@ -938,51 +1235,38 @@ body[data-pagina="venda"] .plan:not(.in) {
 .prateleira:hover .prateleira-cta span { transform: translateY(3px); }
 .prateleira-cta + .prateleira-rodape { margin-top: 10px; }
 
-/* ============ OFERTA DE LANCAMENTO (skills.html) ============
-   Faixa unica acima dos planos, em vez de um selo por card: o card do
-   meio ja carrega o "Mais escolhido" e dois selos brigam.
-   Tudo estatico, sem depender de script — a licao do reveal vale aqui. */
+/* ============ OFERTA (skills.html) ============ */
 .oferta {
-  max-width: 1080px; margin: 0 auto 26px; padding: 18px 24px;
+  max-width: 1080px; margin: 0 auto 26px; padding: 20px 24px;
   display: flex; align-items: center; justify-content: center;
   flex-wrap: wrap; gap: 10px 16px; text-align: center;
-  border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg);
   background: var(--surface);
 }
 .oferta-selo {
-  font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--obsidian); background: var(--ghost);
+  font-family: var(--micro); font-weight: 600; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--paper); background: var(--ink);
   padding: 5px 11px; border-radius: 999px; white-space: nowrap;
 }
-.oferta p { margin: 0; font-size: .9rem; line-height: 1.55; color: var(--text-2); }
+.oferta p { margin: 0; font-size: .95rem; line-height: 1.6; color: var(--text-2); }
 .oferta p b { color: var(--text-1); }
 
 .plan-cheio {
-  margin: 0 0 6px; font-size: .92rem; color: var(--text-2);
-  letter-spacing: .01em; font-style: italic; line-height: 1.35;
-  min-height: 2.5em;
+  margin: 0 0 6px; font-size: .95rem; color: var(--text-2);
+  letter-spacing: .01em; font-style: italic; line-height: 1.4;
+  min-height: 2.5em; text-align: center;
 }
 .plan-cheio s { text-decoration-thickness: 1px; text-underline-offset: 2px; }
 
 .estante-nota {
   margin: 12px 0 0; text-align: center;
-  font-size: .8rem; line-height: 1.6; color: var(--text-3);
+  font-size: .82rem; line-height: 1.6; color: var(--text-3);
 }
 
-/* O cabecalho e fixo e tem 75px. Sem esta margem, qualquer rolagem ate uma
-   ancora para o alvo colado no topo da janela — e o nome do plano e a linha
-   do valor cheio ficam escondidos atras dele. */
 #precos, #planos { scroll-margin-top: 96px; }
 
 /* ============================================================
    Página de venda — ação acima da dobra e barra fixa de compra
-   Acrescentado em 01/09/2026, depois da primeira campanha paga.
-   O diagnóstico: o anúncio entregava (CTR de saída 3,26%, acima
-   da faixa de mercado), a página é que não pedia a compra. Não
-   havia botão nenhum na primeira tela, e o único elemento
-   colorido do layout inteiro era o botão flutuante do WhatsApp —
-   que levou 37% do tráfego pago para a conversa em vez do
-   checkout.
    ============================================================ */
 
 .hero-acao {
@@ -996,12 +1280,12 @@ body[data-pagina="venda"] .plan:not(.in) {
 .hero-acao-nota {
   margin: 0;
   max-width: 460px;
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.6;
   color: var(--text-3);
 }
 
-.hero-acao-nota b { color: var(--text-2); font-weight: 600; }
+.hero-acao-nota b { color: var(--text-1); font-weight: 600; }
 
 /* ---------- Barra fixa de compra ---------- */
 
@@ -1014,10 +1298,8 @@ body[data-pagina="venda"] .plan:not(.in) {
   justify-content: space-between;
   gap: 16px;
   padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
-  background: rgba(11, 11, 11, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid var(--line);
+  background: var(--paper);
+  border-top: 1px solid var(--ink);
   transform: translateY(110%);
   transition: transform .32s cubic-bezier(.22, 1, .36, 1);
 }
@@ -1027,6 +1309,8 @@ body[data-pagina="venda"] .plan:not(.in) {
 .compra-fixa-info { display: flex; flex-direction: column; line-height: 1.15; }
 
 .compra-fixa-plano {
+  font-family: var(--micro);
+  font-weight: 600;
   font-size: 11px;
   letter-spacing: .16em;
   text-transform: uppercase;
@@ -1034,38 +1318,27 @@ body[data-pagina="venda"] .plan:not(.in) {
 }
 
 .compra-fixa-preco {
-  font-family: var(--font-head);
+  font-family: var(--display);
   font-size: 22px;
   color: var(--text-1);
 }
 
-.compra-fixa .btn { flex: 0 0 auto; padding: 13px 20px; font-size: 14px; }
+.compra-fixa .btn { flex: 0 0 auto; min-height: 46px; padding: 12px 18px; font-size: 12px; }
 
-/* A barra é uma solução de polegar: no desktop o cartão de preço já
-   fica visível e ela só rouba altura útil. */
 @media (min-width: 861px) { .compra-fixa { display: none; } }
 
-/* O painel de checkout já é a camada da vez — a barra sai de baixo dele. */
 body.checkout-open .compra-fixa { transform: translateY(110%); }
 
-/* ============ Depois de comprar ============
-   A objecao que sobra depois do preco nao e "vale a pena", e "e se eu travar
-   depois de pagar". Quem nunca comprou de um desconhecido pergunta isso ANTES
-   de digitar o Pix — e a pagina so respondia no /obrigado, que por definicao
-   so aparece para quem ja pagou.
-
-   Usa a moldura do bloco "Antes de comprar" para os dois lerem como par; muda
-   so o miolo, que aqui e lista de passos em vez de paragrafo. Por isso .oferta
-   ganha o modificador em vez de um componente novo. */
-.oferta--passos { display: block; text-align: left; padding: 20px 24px 6px; }
+/* ============ Depois de comprar ============ */
+.oferta--passos { display: block; text-align: left; padding: 22px 26px 8px; }
 .oferta--passos > .oferta-selo { display: inline-block; margin-bottom: 12px; }
 .oferta--passos > p { text-align: left; margin-bottom: 4px; }
 
 .pos-compra { margin: 10px 0 0; }
 .pos-compra div {
   display: flex; gap: 16px; padding: 12px 0;
-  border-top: 1px solid var(--line);
-  font-size: .88rem; line-height: 1.55; color: var(--text-2);
+  border-top: 1px solid var(--rule);
+  font-size: .9rem; line-height: 1.6; color: var(--text-2);
 }
 .pos-compra b { flex: 0 0 176px; color: var(--text-1); font-weight: 600; }
 @media (max-width: 620px) {
@@ -1073,9 +1346,6 @@ body.checkout-open .compra-fixa { transform: translateY(110%); }
   .pos-compra b { flex: none; }
 }
 
-/* Link que nao parece link e clique morto — ja medimos isso nesta pagina em
-   03/09, quando 11 de 44 pessoas clicaram em coisa nao clicavel 2,2 vezes cada.
-   O endereco de suporte e o unico link dentro do bloco, entao sublinha. */
 .oferta--passos a {
   color: var(--text-1); text-decoration: underline;
   text-decoration-thickness: 1px; text-underline-offset: 3px;
@@ -1084,23 +1354,12 @@ body.checkout-open .compra-fixa { transform: translateY(110%); }
 .oferta--passos a:hover { text-decoration-color: currentColor; }
 
 /* ============================================================
-   SINTOMAS (skills.html)
-
-   Acrescentado em 07/09/2026. Em 05/09 entraram 119 pessoas na
-   pagina e 15 rolaram alem de 25%. O tempo de atencao subiu para
-   39 segundos: elas leem a primeira tela inteira e vao embora.
-   Ler por 40 segundos e nao rolar nao e falta de paciencia, e
-   falta de reconhecimento. O texto explicava o que o produto e,
-   nao o que a pessoa esta sentindo.
-
-   Cada cartao abre a resposta no lugar, sem sair da pagina. E um
-   <details>, entao funciona sem JavaScript: se o script falhar no
-   navegador do Instagram, o conteudo continua acessivel.
+   SINTOMAS (skills.html) — <details>, funciona sem JavaScript.
    ============================================================ */
 
 .sintomas-head { max-width: 760px; margin: 0 auto 26px; text-align: center; }
-.sintomas-head h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); line-height: 1.15; }
-.sintomas-head p { margin-top: 12px; color: var(--text-2); font-size: .98rem; line-height: 1.6; }
+.sintomas-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); line-height: 1.15; }
+.sintomas-head p { margin-top: 12px; color: var(--text-2); font-size: 1rem; line-height: 1.65; }
 
 .sintomas {
   max-width: 1080px; margin: 0 auto;
@@ -1110,7 +1369,7 @@ body.checkout-open .compra-fixa { transform: translateY(110%); }
 @media (max-width: 860px) { .sintomas { grid-template-columns: 1fr; } }
 
 .sintoma {
-  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  border: 1px solid transparent; border-radius: var(--radius-lg);
   background: var(--surface);
   transition: border-color .25s ease, background .25s ease;
 }
@@ -1121,115 +1380,94 @@ body.checkout-open .compra-fixa { transform: translateY(110%); }
   list-style: none; cursor: pointer;
   padding: 20px 22px;
   display: flex; align-items: flex-start; gap: 14px;
-  font-size: 1rem; line-height: 1.45; color: var(--text-1);
+  font-size: 1.02rem; line-height: 1.5; color: var(--text-1);
 }
 .sintoma > summary::-webkit-details-marker { display: none; }
 
 .sintoma-aspas {
-  flex: 0 0 auto; font-family: var(--font-head); font-size: 1.5rem;
+  flex: 0 0 auto; font-family: var(--display); font-size: 1.6rem;
   line-height: 1; color: var(--text-3); margin-top: -2px;
 }
-.sintoma-frase { flex: 1; font-weight: 500; }
+.sintoma-frase { flex: 1; font-weight: 400; }
 .sintoma-mais {
   flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
-  border: 1px solid var(--line-strong); color: var(--text-2);
-  display: grid; place-items: center; font-size: .82rem; line-height: 1;
+  border: 1px solid var(--line-strong); color: var(--text-1);
+  display: grid; place-items: center; font-family: var(--micro); font-size: .82rem; line-height: 1;
   transition: transform .25s ease, color .25s ease, border-color .25s ease;
 }
-.sintoma[open] .sintoma-mais { transform: rotate(45deg); color: var(--text-1); border-color: var(--text-2); }
+.sintoma[open] .sintoma-mais { transform: rotate(45deg); border-color: var(--ink); }
 
 .sintoma-corpo { padding: 0 22px 22px 58px; }
-.sintoma-corpo p { color: var(--text-2); font-size: .93rem; line-height: 1.65; }
+.sintoma-corpo p { color: var(--text-2); font-size: .95rem; line-height: 1.7; }
 .sintoma-corpo p + p { margin-top: 10px; }
 .sintoma-corpo b { color: var(--text-1); font-weight: 600; }
 .sintoma-nome {
-  display: inline-block; margin-top: 14px; padding: 6px 12px;
-  border: 1px solid var(--line-strong); border-radius: 999px;
-  font-size: .74rem; letter-spacing: .04em; color: var(--text-1);
+  display: inline-block; margin-top: 14px; padding: 7px 14px;
+  border: 1px solid var(--ink); border-radius: 999px;
+  font-family: var(--micro); font-weight: 600; font-size: .74rem; letter-spacing: .04em; color: var(--text-1);
   text-decoration: none; transition: background .25s ease, color .25s ease;
 }
-.sintoma-nome:hover { background: var(--ghost); color: var(--obsidian); }
+.sintoma-nome:hover { background: var(--ink); color: var(--paper); }
 
 @media (max-width: 520px) {
-  .sintoma > summary { padding: 17px 16px; font-size: .95rem; gap: 11px; }
+  .sintoma > summary { padding: 17px 16px; font-size: .97rem; gap: 11px; }
   .sintoma-corpo { padding: 0 16px 18px 41px; }
 }
 
 /* ---------- WhatsApp tardio (skills.html) ----------
-   O botao volta em 07/09 por decisao do Gabriel, com tres mudancas em
-   relacao a versao que em 31/08 levou 37% do trafego pago embora: entra
-   so depois dos cartoes de preco, fica do lado esquerdo (a barra fixa
-   de compra ocupa a direita, que e onde o polegar cai primeiro) e perde
-   o pulso animado que puxava o olho na chegada. */
+   Entra so depois dos cartoes de preco, do lado esquerdo, menor e sem
+   pulso. Sem transicao de opacidade, de proposito. */
 .whats-float--tardio {
   left: 22px; right: auto; bottom: 92px;
   width: 46px; height: 46px;
   display: none;
 }
 .whats-float--tardio[data-visivel] { display: flex; }
-
-/* Sem transicao de opacidade aqui, de proposito. Transicao precisa de
-   quadro, e quadro e exatamente o que o navegador suspende quando a aba
-   sai de vista. Testado: com o atributo aplicado numa aba em segundo
-   plano, a regra casava e a opacidade computada continuava 0. Este
-   projeto ja perdeu uma campanha inteira para essa classe de defeito no
-   `reveal`, e um preco errado na tela por causa dela. Aparecer sem
-   elegancia e melhor que nao aparecer. */
 .whats-float--tardio svg { width: 23px; height: 23px; }
 .whats-float--tardio::before { content: none; }
 
 @media (max-width: 860px) { .whats-float--tardio { bottom: 96px; } }
 @media (min-width: 861px) { .whats-float--tardio { bottom: 26px; } }
 
-/* ---------- Faixa de suporte dentro do header ----------
-   Ela era um bloco estatico logo acima de um header `position: fixed`.
-   Os dois comecavam em y=0: medido no celular, 60,6px de faixa por
-   baixo de 75px de header, e o texto passava atras do logotipo. Dentro
-   do header eles empilham sozinhos, sem altura calculada a mao. */
-.header .cupom {
-  background: var(--carbon);
-  border-bottom: 1px solid var(--line);
-}
-.header.scrolled .cupom { background: rgba(29,29,29,.92); }
+/* ---------- Faixa de suporte dentro do header (skills.html) ----------
+   Ganha a cara da faixa utilitária do padrão: tinta com texto branco.
+   O <style> embutido da página pinta com var(--carbon) e var(--text-*);
+   como .header .cupom entra no contexto escuro (lá no topo), esses
+   tokens já resolvem para tinta e branco aqui dentro. */
+.header .cupom { background: var(--ink); border-bottom: 0; font-family: var(--micro); line-height: 1.5; }
+.header.scrolled .cupom { background: var(--ink); }
+.header .cupom :focus-visible { outline-color: var(--paper); }
 
-/* No celular a faixa quebra em duas linhas e come a primeira tela.
-   Ela some ali: quem chega pelo anuncio precisa da manchete no
-   primeiro quadro, e a promessa de suporte se repete nos selos. */
 @media (max-width: 700px) { .header .cupom { display: none; } }
 
-/* ---------- Ancora que nao para debaixo do cabecalho ----------
-   O header e `position: fixed` com 74px, entao todo link para #precos
-   ou #planos parava com o titulo escondido atras do logotipo. Isso
-   valia inclusive para o CTA do topo, que e o caminho mais usado da
-   pagina. `scroll-padding-top` resolve no elemento que rola, e vale
-   para link, foco de teclado e scrollIntoView de uma vez. */
+/* O header agora é branco com filete: o kicker colado nele (padding de
+   110px embutido na seção, para um header de 111px) passou a parecer
+   espremido. Só no desktop, onde a faixa aparece; o preço continua na
+   primeira tela. */
+@media (min-width: 701px) { body[data-pagina="venda"] .pricing-head { padding-top: 28px; } }
+
+/* O título dos sintomas vinha colado no seletor por ofício. */
+.planos-oficio + .sintomas-head { margin-top: 88px; }
+@media (max-width: 860px) { .planos-oficio + .sintomas-head { margin-top: 64px; } }
+
 html { scroll-padding-top: 96px; }
 @media (max-width: 700px) { html { scroll-padding-top: 88px; } }
 
-/* ---------- Listas que abrem, para a pagina caber ----------
-   Medido em 07/09 no celular: a pagina tinha 16,7 telas. Os cartoes de
-   preco ocupavam 6,3 delas (cinco planos empilhados, oito itens cada) e
-   a estante mais 3,3. Juntos, 57% da altura, quase toda abaixo do ponto
-   onde a maioria para de rolar.
-
-   A lista nao saiu, so deixou de comecar aberta. E <details>, entao
-   abre sem JavaScript, como os sintomas. O cartao recomendado nasce
-   aberto de proposito: com todos fechados, a pagina fica sem nenhum
-   argumento visivel entre o preco e o botao. */
+/* ---------- Listas que abrem, para a pagina caber ---------- */
 
 .plan-itens, .prateleira-itens { margin-top: 4px; }
 .plan-itens > summary,
 .prateleira-itens > summary {
   list-style: none; cursor: pointer;
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 9px 0; font-size: .84rem; color: var(--text-2);
+  padding: 9px 0; font-family: var(--micro); font-size: .84rem; color: var(--text-2);
   transition: color .2s ease;
 }
 .plan-itens > summary::-webkit-details-marker,
 .prateleira-itens > summary::-webkit-details-marker { display: none; }
 .plan-itens > summary::after,
 .prateleira-itens > summary::after {
-  content: '+'; display: grid; place-items: center;
+  content: '+'; display: grid; place-items: center; flex-shrink: 0;
   width: 18px; height: 18px; border-radius: 50%;
   border: 1px solid var(--line-strong); font-size: .72rem; line-height: 1;
   transition: transform .2s ease;
@@ -1240,32 +1478,40 @@ html { scroll-padding-top: 96px; }
 .prateleira-itens > summary:hover { color: var(--text-1); }
 .plan-itens .plan-features { margin-top: 6px; }
 
-/* O cartao inteiro e clicavel e abre o pagamento. O resumo precisa
-   engolir o proprio clique, senao abrir a lista compra o plano. */
 .plan-itens > summary, .prateleira-itens > summary { position: relative; z-index: 2; }
 
-/* ---------- Pacotes por oficio, atras de uma linha ----------
-   Cinco cartoes empilhados no celular eram 3,8 telas e cinco decisoes.
-   Os tres de cargo formam uma escada (executa, coordena, decide) em que
-   a pessoa se acha em um segundo. Marketing e Design sao recorte por
-   oficio: no meio da escada, trocavam "qual e o meu?" por "qual destes
-   cinco?". Continuam na pagina, so nao competem mais com a escada. */
+/* ---------- Pacotes por oficio, atras de uma linha ---------- */
 .planos-oficio { max-width: 1080px; margin: 26px auto 0; }
 .planos-oficio > summary {
   list-style: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 15px 20px; text-align: center;
+  padding: 16px 20px; text-align: center;
   border: 1px dashed var(--line-strong); border-radius: var(--radius-lg);
-  font-size: .92rem; color: var(--text-2);
+  font-size: .95rem; color: var(--text-2);
   transition: color .2s ease, border-color .2s ease;
 }
 .planos-oficio > summary::-webkit-details-marker { display: none; }
 .planos-oficio > summary::after {
-  content: '+'; display: grid; place-items: center;
+  content: '+'; display: grid; place-items: center; flex-shrink: 0;
   width: 20px; height: 20px; border-radius: 50%;
   border: 1px solid var(--line-strong); font-size: .78rem; line-height: 1;
   transition: transform .2s ease;
 }
 .planos-oficio[open] > summary::after { transform: rotate(45deg); }
-.planos-oficio > summary:hover { color: var(--text-1); border-color: var(--text-2); }
+.planos-oficio > summary:hover { color: var(--text-1); border-color: var(--ink); }
 .plans--oficio { margin-top: 18px; }
+
+/* ============ MOVIMENTO REDUZIDO (obrigatório) ============
+   Fica no fim para vencer qualquer regra acima. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  html { scroll-behavior: auto; }
+  .reveal, .reveal-left, .reveal-right, .reveal-zoom, .plan,
+  .js-anima .reveal, .js-anima .reveal-left, .js-anima .reveal-right, .js-anima .reveal-zoom,
+  .js-anima .reveal-grupo > *, .js-anima .plan { opacity: 1; transform: none; }
+  .js-anima .regua { width: 140px; }
+  .card--foto:hover > img, .card--foto:hover > picture img { transform: none; }
+}

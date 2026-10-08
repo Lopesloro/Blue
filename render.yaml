@@ -11,6 +11,16 @@
 #
 #  Este arquivo só entra em ação se o serviço for criado/
 #  gerenciado como Blueprint (New -> Blueprint).
+#
+#  Redirecionamentos (bloco "routes" no fim): no serviço
+#  criado pelo painel, cadastre os mesmos três em
+#      Dashboard -> seu serviço -> Redirects/Rewrites
+#  O Render NÃO aplica uma regra se existir um arquivo no
+#  caminho de origem. Enquanto contato.html, blog.html e
+#  tecnologias.html existirem no repositório (hoje são
+#  páginas-ponte com meta refresh), o 301 não dispara.
+#  Para o 301 valer, apague esses três arquivos depois de
+#  cadastrar as regras.
 # =====================================================
 
 services:
@@ -89,3 +99,16 @@ services:
       - path: /llms.txt
         name: Cache-Control
         value: public, max-age=86400
+
+    # ---------- Redirecionamentos 301 (páginas que saíram) ----------
+    # Só disparam se o arquivo de origem NÃO existir (ver aviso no topo).
+    routes:
+      - type: redirect
+        source: /contato.html
+        destination: /orcamento.html
+      - type: redirect
+        source: /blog.html
+        destination: /
+      - type: redirect
+        source: /tecnologias.html
+        destination: /servicos.html

@@ -1,12 +1,17 @@
 /* ============================================================
-   BLUESHIELDPRO — Interações + animação (design "mono")
+   BLUESHIELDPRO — Interações (padrão "Autoridade", preto e branco)
+
+   Saíram em 07/10/2026, porque o padrão de design proíbe: loader,
+   cursor personalizado, barra de progresso de rolagem, contadores
+   animados (data-count) e o "burst" de nós do hero em canvas. O
+   número dos contadores já vem escrito no HTML, então nada some.
    ============================================================ */
 
 // ------------- CONFIGURAÇÃO CENTRAL (edite aqui) -------------
 const BSP = {
   // Número do WhatsApp (não é exibido no site — usado só para abrir a conversa)
   whatsapp: '5519998334896',
-  whatsappMsg: 'Olá! Visitei o site da BlueShieldPro e quero falar com um atendente sobre um projeto.',
+  whatsappMsg: 'Olá! Vim pelo site da BlueShieldPro e quero conversar sobre um projeto.',
 
   /* Ações de conversão do Google Ads (AW-17972527330).
 
@@ -87,301 +92,303 @@ function bspConversao(sendTo, valor, origem) {
 
    Enquanto esta classe nao existe, `.reveal` fica visivel: e o que
    garante que uma pagina sem JavaScript, ou com o script quebrado,
-   nunca apareca preta e vazia. Fica FORA do DOMContentLoaded de
-   proposito, para valer no primeiro quadro em vez de depois do parse. */
+   nunca apareca vazia. Fica FORA do DOMContentLoaded de proposito,
+   para valer no primeiro quadro em vez de depois do parse. */
 document.documentElement.classList.add('js-anima');
+
+/* Rede de seguranca da rede de seguranca.
+
+   Se o bloco de reveal abaixo nunca chegar a rodar (um erro antes dele,
+   o arquivo cortado no meio do download), a classe acima ficaria
+   escondendo conteudo para sempre. Tres segundos depois, sem o sinal de
+   que o reveal ligou, a autorizacao e retirada e tudo aparece. */
+window.setTimeout(function () {
+  if (!window.__bspRevealLigado) document.documentElement.classList.remove('js-anima');
+}, 3000);
 
 document.addEventListener('DOMContentLoaded', () => {
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Pagina de venda: sem cursor custom nem canvas de fundo. Sao enfeites que
-  // custam quadro numa pagina cujo unico trabalho e mostrar preco e botao.
-  const paginaDeVenda = document.body.dataset.pagina === 'venda';
+  // Cada bloco roda isolado: um erro em um nao derruba os outros.
+  const bloco = (nome, fn) => {
+    try { fn(); } catch (err) { if (window.console) console.error('[main.js] ' + nome, err); }
+  };
 
-  // ---------- Loader ----------
-  const loader = document.querySelector('.loader');
-  if (loader) {
-    requestAnimationFrame(() => loader.classList.add('hidden'));
-    setTimeout(() => loader.classList.add('hidden'), 800);
-  }
+  // ---------- Scroll reveal (primeiro, de proposito) ----------
+  bloco('reveal', () => {
+    const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-zoom, .reveal-grupo, .regua');
+    const pendentes = new Set(els);
+    window.__bspRevealLigado = true;
 
-  // ---------- Links WhatsApp (número oculto) ----------
-  const waUrl = `https://wa.me/${BSP.whatsapp}?text=${encodeURIComponent(BSP.whatsappMsg)}`;
-  document.querySelectorAll('[data-whats]').forEach(el => {
-    el.setAttribute('href', waUrl);
-    el.setAttribute('target', '_blank');
-    el.setAttribute('rel', 'noopener');
+    /* `direto` usa `.revelado`, que corta a transicao e escreve o valor
+       final. Medido em 08/09 na servicos.html: com a aba em segundo plano,
+       `.in` sozinho deixava a opacidade computada em 0, porque transicao
+       precisa de quadro e o navegador suspende quadro. */
+    const revelar = (el, direto) => {
+      if (!pendentes.has(el)) return;
+      pendentes.delete(el);
+      el.classList.add('in');
+      if (direto) el.classList.add('revelado');
+    };
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      els.forEach(el => revelar(el, true));
+      return;
+    }
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { revelar(e.target, false); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.18 });
+
+    /* A régua acende quando a SEÇÃO entra, não quando o filete de 6px
+       aparece: o observador vigia o pai dela (o cabeçalho da seção) e
+       dispara quando ele passa da linha de 88% da tela. Assim a régua
+       cresce logo depois do título, nunca junto com ele. */
+    const reguasPorPai = new Map();
+    const ioRegua = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        (reguasPorPai.get(e.target) || []).forEach(r => revelar(r, false));
+        ioRegua.unobserve(e.target);
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
+
+    els.forEach(el => {
+      if (!el.classList.contains('regua')) { io.observe(el); return; }
+      const pai = el.parentElement || el;
+      if (!reguasPorPai.has(pai)) { reguasPorPai.set(pai, []); ioRegua.observe(pai); }
+      reguasPorPai.get(pai).push(el);
+    });
+
+    /* Piso de tempo, independente do observador.
+
+       O caso real nao e navegador SEM IntersectionObserver: e o que TEM e
+       nao dispara (navegador embutido do Instagram, aba em segundo plano).
+       setTimeout continua contando nessas situacoes. A partir de 2s, a
+       cada segundo, tudo o que ja esta na tela (ou acima dela, pulado por
+       um link de ancora) aparece direto. O que esta abaixo continua
+       esperando a rolagem, entao a animacao de entrada segue valendo para
+       quem rola normalmente. */
+    let relogio = null;
+    const varrer = () => {
+      if (!pendentes.size) { if (relogio) clearInterval(relogio); return; }
+      const alt = window.innerHeight || document.documentElement.clientHeight;
+      pendentes.forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom <= 0 || (r.top < alt * 0.85 && r.bottom > 0)) {
+          io.unobserve(el);
+          revelar(el, true);
+        }
+      });
+    };
+    setTimeout(() => { varrer(); relogio = setInterval(varrer, 1000); }, 2000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) varrer(); });
   });
 
-  // ---------- Conversão: clique em qualquer CTA de WhatsApp ----------
-  document.addEventListener('click', e => {
-    const link = e.target.closest('a[href*="wa.me"], [data-whats]');
-    if (link) bspConversao(BSP.conversaoWhatsapp, 1.0, 'whatsapp');
+  // ---------- Links WhatsApp (número oculto) ----------
+  bloco('whatsapp', () => {
+    const waUrl = `https://wa.me/${BSP.whatsapp}?text=${encodeURIComponent(BSP.whatsappMsg)}`;
+    document.querySelectorAll('[data-whats]').forEach(el => {
+      el.setAttribute('href', waUrl);
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener');
+    });
+
+    // ---------- Conversão: clique em qualquer CTA de WhatsApp ----------
+    document.addEventListener('click', e => {
+      const link = e.target.closest('a[href*="wa.me"], [data-whats]');
+      if (link) bspConversao(BSP.conversaoWhatsapp, 1.0, 'whatsapp');
+    });
   });
 
   // ---------- Item ativo do menu ----------
-  const page = (location.pathname.split('/').pop() || 'index.html');
-  document.querySelectorAll('.nav a, .mobile-nav a').forEach(a => {
-    if (a.getAttribute('href') === page) a.classList.add('active');
+  bloco('menu-ativo', () => {
+    // Compara pelo nome da página, com ou sem ".html" e com "/" = início,
+    // para funcionar tanto com links relativos quanto com URL limpa.
+    const nome = caminho => {
+      const arq = (caminho || '').split('#')[0].split('?')[0].split('/').pop() || 'index.html';
+      return arq.replace(/\.html?$/, '') || 'index';
+    };
+    const atual = nome(location.pathname);
+    document.querySelectorAll('.nav a, .mobile-nav a').forEach(a => {
+      const href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || href.indexOf('#') > -1 || /^[a-z]+:/i.test(href)) return;
+      if (a.classList.contains('btn')) return;
+      if (nome(href) === atual) {
+        a.classList.add('active');
+        a.setAttribute('aria-current', 'page');
+      }
+    });
   });
 
-  // ---------- Header scroll + progress ----------
-  const header = document.querySelector('.header');
-  const progress = document.querySelector('.scroll-progress');
-  const onScroll = () => {
-    if (header) header.classList.toggle('scrolled', window.scrollY > 24);
-    if (progress) {
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      progress.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
-    }
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  // ---------- Header: recolhe a faixa utilitária depois de 80px ----------
+  bloco('header', () => {
+    const header = document.querySelector('.header');
+    if (!header) return;
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 80);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  });
 
   // ---------- Menu mobile ----------
-  const burger = document.querySelector('.hamburger');
-  const mobileNav = document.querySelector('.mobile-nav');
-  if (burger && mobileNav) {
-    burger.addEventListener('click', () => {
-      const open = mobileNav.classList.toggle('open');
+  bloco('menu-mobile', () => {
+    const burger = document.querySelector('.hamburger');
+    const mobileNav = document.querySelector('.mobile-nav');
+    if (!burger || !mobileNav) return;
+    const definir = open => {
+      mobileNav.classList.toggle('open', open);
       burger.classList.toggle('open', open);
-      burger.setAttribute('aria-expanded', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
       document.body.style.overflow = open ? 'hidden' : '';
+    };
+    burger.addEventListener('click', () => definir(!mobileNav.classList.contains('open')));
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => definir(false)));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && mobileNav.classList.contains('open')) { definir(false); burger.focus(); }
     });
-    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      mobileNav.classList.remove('open');
-      burger.classList.remove('open');
-      document.body.style.overflow = '';
-    }));
-  }
-
-  // ---------- Scroll reveal ----------
-  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-zoom');
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    revealEls.forEach(el => io.observe(el));
-  } else {
-    revealEls.forEach(el => el.classList.add('in'));
-  }
-
-  /* Piso de tempo, independente do observador.
-
-     O `else` acima so cobre navegador SEM IntersectionObserver. O caso
-     que de fato acontece e outro: o navegador TEM o observador e nao o
-     dispara, porque suspendeu o quadro. setTimeout continua contando
-     nessa situacao; rAF e o proprio observador, nao. Dois segundos e
-     tempo de sobra para a animacao normal ter acontecido, e curto o
-     bastante para ninguem encarar tela vazia. */
-  setTimeout(() => {
-    /* `revelado` e nao `in`: a classe `.in` muda a opacidade por
-       TRANSICAO, e transicao tambem precisa de quadro. Medido hoje na
-       servicos.html com a aba em segundo plano, os 31 elementos ficaram
-       com `.in` e opacidade computada 0. `revelado` corta a transicao e
-       escreve o valor final direto. */
-    revealEls.forEach(el => { el.classList.add('in'); el.classList.add('revelado'); });
-  }, 2000);
-
-  // ---------- Contadores animados ----------
-  const counters = document.querySelectorAll('[data-count]');
-  if (counters.length && 'IntersectionObserver' in window) {
-    const cio = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        cio.unobserve(e.target);
-        const el = e.target;
-        const target = parseInt(el.dataset.count, 10);
-        const suffix = el.dataset.suffix || '';
-        const dur = 1600;
-        const t0 = performance.now();
-        const tick = now => {
-          const p = Math.min((now - t0) / dur, 1);
-          const eased = 1 - Math.pow(1 - p, 3);
-          el.firstChild.textContent = Math.round(target * eased);
-          if (p < 1) requestAnimationFrame(tick);
-          else el.firstChild.textContent = target;
-        };
-        el.innerHTML = '0<span class="plus">' + suffix + '</span>';
-        requestAnimationFrame(tick);
-      });
-    }, { threshold: 0.5 });
-    counters.forEach(el => cio.observe(el));
-  }
+    // Girou o celular ou abriu a janela com o menu aberto: destrava a rolagem.
+    const largo = window.matchMedia('(min-width: 1181px)');
+    const aoMudar = ev => { if (ev.matches && mobileNav.classList.contains('open')) definir(false); };
+    if (largo.addEventListener) largo.addEventListener('change', aoMudar);
+  });
 
   // ---------- FAQ accordion ----------
-  document.querySelectorAll('.faq-item').forEach(item => {
-    const q = item.querySelector('.faq-q');
-    const a = item.querySelector('.faq-a');
-    if (!q || !a) return;
-    q.addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-      item.parentElement.querySelectorAll('.faq-item.open').forEach(o => {
-        o.classList.remove('open');
-        o.querySelector('.faq-a').style.maxHeight = null;
-        o.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+  bloco('faq', () => {
+    document.querySelectorAll('.faq-item').forEach(item => {
+      // <details> abre e fecha sozinho; o acordeão daqui só inverteria o estado.
+      if (item.tagName === 'DETAILS') return;
+      const q = item.querySelector('.faq-q');
+      const a = item.querySelector('.faq-a');
+      if (!q || !a) return;
+      q.addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+        item.parentElement.querySelectorAll('.faq-item.open').forEach(o => {
+          o.classList.remove('open');
+          o.querySelector('.faq-a').style.maxHeight = null;
+          o.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          a.style.maxHeight = a.scrollHeight + 'px';
+          q.setAttribute('aria-expanded', 'true');
+        }
       });
-      if (!isOpen) {
-        item.classList.add('open');
-        a.style.maxHeight = a.scrollHeight + 'px';
-        q.setAttribute('aria-expanded', 'true');
-      }
     });
   });
 
-  // ---------- Cursor personalizado ----------
-  if (!paginaDeVenda && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const dot = document.createElement('div');
-    const ring = document.createElement('div');
-    dot.className = 'cursor-dot';
-    ring.className = 'cursor-ring';
-    document.body.append(dot, ring);
-    let mx = -100, my = -100, rx = -100, ry = -100;
-    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
-    (function loop() {
-      rx += (mx - rx) * 0.16;
-      ry += (my - ry) * 0.16;
-      dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
-      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
-      requestAnimationFrame(loop);
-    })();
-    document.querySelectorAll('a, button, .card, input, select, textarea').forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
-    });
-  }
+  // ---------- Formulário de orçamento (Web3Forms) ----------
+  bloco('formulario', () => {
+    const form = document.querySelector('#form-orcamento');
+    if (!form) return;
 
-  // ---------- HERO — burst radial de nós conectados ----------
-  // Constelação radial: pontos brancos de tamanhos variados ligados por raios
-  // finos a um núcleo central + teias entre vizinhos. Reage sutilmente ao mouse.
-  const heroCanvas = document.querySelector('.hero-nodes');
-  if (heroCanvas) {
-    const ctx = heroCanvas.getContext('2d');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let W = 0, H = 0, cx = 0, cy = 0;
-    const isMobile = window.matchMedia('(max-width: 640px)').matches;
-    const N = isMobile ? 46 : 88;              // nós
-    let mouseX = 0, mouseY = 0, tmx = 0, tmy = 0;
+    /* Formulário em etapas (opcional: <form data-etapas>).
+       Sem este script, todas as etapas ficam visíveis e o formulário
+       envia direto para o Web3Forms. Com ele, uma etapa por vez, com
+       validação antes de avançar. */
+    const etapas = form.hasAttribute('data-etapas')
+      ? Array.prototype.slice.call(form.querySelectorAll('.form-etapa'))
+      : [];
+    let atual = 0;
+    const barra = form.querySelectorAll('.form-etapas-barra span');
 
-    // Modelo de cada nó: ângulo, distância base, raio, fase de "respiração"
-    const nodes = Array.from({ length: N }, (_, i) => {
-      const ang = Math.random() * Math.PI * 2;
-      // distribuição de distância: mistura curto/longo (mais denso perto do centro)
-      const t = Math.pow(Math.random(), 0.7);
-      return {
-        ang,
-        dist: t,                                // 0..1 (multiplicado por raio depois)
-        size: Math.random() * 2.6 + 0.6 + (t > 0.75 ? Math.random() * 2 : 0),
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.4 + Math.random() * 0.8,
-        sortA: ang
-      };
-    }).sort((a, b) => a.sortA - b.sortA);        // ordena por ângulo p/ teia entre vizinhos
-
-    const resize = () => {
-      const rect = heroCanvas.getBoundingClientRect();
-      W = rect.width; H = rect.height;
-      heroCanvas.width = W * dpr; heroCanvas.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cx = W * 0.52; cy = H * 0.5;
+    const erroDe = campo => {
+      const caixa = campo.closest('.campo') || campo.parentElement;
+      let msg = caixa.querySelector('.campo-erro');
+      if (!msg) {
+        msg = document.createElement('p');
+        msg.className = 'campo-erro';
+        msg.id = (campo.id || campo.name || 'campo').replace(/[^a-z0-9_-]/gi, '') + '-erro';
+        msg.hidden = true;
+        caixa.appendChild(msg);
+      }
+      return msg;
     };
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-    window.addEventListener('load', resize);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
-    // ResizeObserver: garante medir o container real mesmo quando o layout muda
-    // (stack mobile -> desktop, orientação) sem depender só do evento window.resize.
-    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(heroCanvas);
+    const marcar = (campo, invalido) => {
+      const msg = erroDe(campo);
+      const grupo = campo.closest('.opcoes');
+      const alvo = grupo || campo;
+      if (invalido) {
+        msg.textContent = campo.dataset.erro || (grupo && grupo.dataset.erro) || campo.validationMessage;
+        msg.hidden = false;
+        alvo.setAttribute('aria-invalid', 'true');
+        const desc = (campo.getAttribute('aria-describedby') || '').split(' ').filter(Boolean);
+        if (desc.indexOf(msg.id) < 0) { desc.push(msg.id); campo.setAttribute('aria-describedby', desc.join(' ')); }
+      } else {
+        msg.hidden = true;
+        alvo.removeAttribute('aria-invalid');
+      }
+    };
+    const validar = escopo => {
+      let primeiro = null;
+      escopo.querySelectorAll('input, select, textarea').forEach(c => {
+        if (c.type === 'hidden' || c.name === 'botcheck' || c.disabled) return;
+        const ok = c.checkValidity();
+        marcar(c, !ok);
+        if (!ok && !primeiro) primeiro = c;
+      });
+      if (primeiro) primeiro.focus();
+      return !primeiro;
+    };
+    form.addEventListener('input', e => {
+      const c = e.target;
+      if (c.matches && c.matches('[aria-invalid="true"], .opcoes[aria-invalid="true"] input') && c.checkValidity()) marcar(c, false);
+    });
+    form.addEventListener('change', e => {
+      const c = e.target;
+      if (c.type === 'radio' && c.checkValidity()) marcar(c, false);
+    });
 
-    if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
-      window.addEventListener('mousemove', e => {
-        const rect = heroCanvas.getBoundingClientRect();
-        tmx = ((e.clientX - rect.left) / rect.width - 0.5);
-        tmy = ((e.clientY - rect.top) / rect.height - 0.5);
-      }, { passive: true });
+    const mostrar = (i, focar) => {
+      atual = Math.max(0, Math.min(i, etapas.length - 1));
+      etapas.forEach((f, n) => f.classList.toggle('is-ativa', n === atual));
+      barra.forEach((b, n) => b.classList.toggle('feita', n <= atual));
+      if (focar) {
+        const alvo = etapas[atual].querySelector('input:not([type="hidden"]), select, textarea');
+        if (alvo) alvo.focus();
+        else etapas[atual].scrollIntoView({ block: 'start' });
+      }
+    };
+
+    if (etapas.length) {
+      form.setAttribute('novalidate', '');   // a validação passa a ser nossa, por etapa
+      form.classList.add('etapas-ligadas');
+      mostrar(0, false);
+      form.addEventListener('click', e => {
+        const seguir = e.target.closest('[data-etapa-seguir]');
+        const voltar = e.target.closest('[data-etapa-voltar]');
+        if (seguir) { e.preventDefault(); if (validar(etapas[atual])) mostrar(atual + 1, true); }
+        if (voltar) { e.preventDefault(); mostrar(atual - 1, true); }
+      });
     }
 
-    const maxR = () => Math.min(W, H) * 0.46;
+    const moldura = form.closest('[data-form]') || document;
+    const sucesso = moldura.querySelector('[data-form-sucesso]');
+    const falha = moldura.querySelector('[data-form-erro]');
+    const tentar = moldura.querySelector('[data-form-tentar]');
+    if (tentar && falha) {
+      tentar.addEventListener('click', () => {
+        falha.hidden = true;
+        form.hidden = false;
+        form.style.display = '';
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) btn.focus();
+      });
+    }
 
-    const positions = new Array(N);
-    const render = (time) => {
-      // O tamanho do buffer e sincronizado pelo ResizeObserver acima. Medir
-      // getBoundingClientRect() aqui dentro forcaria um reflow sincrono a cada
-      // quadro — era a maior tarefa longa da pagina no Lighthouse.
-      const R = maxR();
-      // parallax suave do mouse
-      mouseX += (tmx - mouseX) * 0.06;
-      mouseY += (tmy - mouseY) * 0.06;
-      const ox = mouseX * 26, oy = mouseY * 26;
-      const rot = reduceMotion ? 0 : time * 0.00002;   // rotação lenta global
-
-      ctx.clearRect(0, 0, W, H);
-      const ccx = cx + ox, ccy = cy + oy;
-
-      // posições
-      for (let i = 0; i < N; i++) {
-        const n = nodes[i];
-        const breathe = reduceMotion ? 0 : Math.sin(time * 0.0006 * n.speed + n.phase) * 0.05;
-        const d = (n.dist + breathe) * R;
-        const a = n.ang + rot;
-        positions[i] = { x: ccx + Math.cos(a) * d, y: ccy + Math.sin(a) * d, s: n.size, d: n.dist };
-      }
-
-      // raios centro -> nó
-      for (let i = 0; i < N; i++) {
-        const p = positions[i];
-        ctx.beginPath();
-        ctx.moveTo(ccx, ccy);
-        ctx.lineTo(p.x, p.y);
-        ctx.strokeStyle = `rgba(231,231,231,${0.05 + (1 - p.d) * 0.10})`;
-        ctx.lineWidth = 0.6;
-        ctx.stroke();
-      }
-
-      // teia entre vizinhos (por ângulo) — apenas se próximos
-      for (let i = 0; i < N; i++) {
-        const p = positions[i], q = positions[(i + 1) % N];
-        const dx = p.x - q.x, dy = p.y - q.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < (R * 0.5) * (R * 0.5)) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(199,199,199,${0.10 * (1 - d2 / ((R * 0.5) * (R * 0.5)))})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
-
-      // núcleo
-      ctx.beginPath();
-      ctx.arc(ccx, ccy, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = '#F7F7FF';
-      ctx.fill();
-
-      // nós
-      for (let i = 0; i < N; i++) {
-        const p = positions[i];
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
-        ctx.fillStyle = p.d > 0.75 ? '#F7F7FF' : 'rgba(231,231,231,0.85)';
-        ctx.fill();
-      }
-
-      if (!reduceMotion) requestAnimationFrame(render);
-    };
-
-    if (reduceMotion) render(0);
-    else requestAnimationFrame(render);
-  }
-
-  // ---------- Formulário de orçamento (Web3Forms) ----------
-  const form = document.querySelector('#form-orcamento');
-  if (form) {
     form.addEventListener('submit', async e => {
       e.preventDefault();
+
+      // Enter numa etapa intermediária avança em vez de enviar.
+      if (etapas.length && atual < etapas.length - 1) {
+        if (validar(etapas[atual])) mostrar(atual + 1, true);
+        return;
+      }
+      if (etapas.length && !validar(etapas[atual])) return;
+
       const btn = form.querySelector('button[type="submit"]');
       const originalHTML = btn.innerHTML;
       btn.disabled = true;
@@ -398,19 +405,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.success) {
           bspConversao(BSP.conversaoFormulario, 1.0, 'formulario_orcamento');
           form.style.display = 'none';
-          const ok = document.querySelector('.form-success');
-          if (ok) ok.classList.add('show');
+          if (sucesso) {
+            sucesso.hidden = false;
+            sucesso.focus();
+          } else {
+            const ok = document.querySelector('.form-success');
+            if (ok) ok.classList.add('show');
+          }
         } else {
           throw new Error(data.message || 'Falha no envio');
         }
       } catch (err) {
-        alert('Não foi possível enviar agora. Tente novamente ou fale com um atendente pelo WhatsApp.');
         btn.disabled = false;
         btn.innerHTML = originalHTML;
+        if (falha) {
+          form.style.display = 'none';
+          falha.hidden = false;
+          falha.focus();
+        } else {
+          alert('Não foi possível enviar agora. Tente novamente ou fale com um atendente pelo WhatsApp.');
+        }
       }
     });
-  }
+  });
 
   // ---------- Ano no rodapé ----------
-  document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
+  bloco('ano', () => {
+    document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
+  });
 });
