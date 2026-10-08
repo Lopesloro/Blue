@@ -86,13 +86,18 @@ também lá.
 -----------------------------------------------------
 5. VISUAL (cores e fontes)
 -----------------------------------------------------
-Fundo branco, detalhes em preto, sem cor de destaque.
+Fundo branco, detalhes em preto, com neutros quentes no lugar
+do cinza (o cinza deixava o site frio e cansativo de ler).
 
     Fundo da página      #FFFFFF
-    Texto e botões       #141414   (nunca #000)
-    Cinza de cards       #EFEFEF
-    Filetes              #D8D8D8
-    Texto secundário     #3A3A3A e #666666
+    Texto e botões       #1C1A17   (preto quente, nunca #000)
+    Cards e faixas       #F7F4EF   (linho claro)
+    Filetes e réguas     #DDD5C9
+    Texto de leitura     #2F2B26
+    Texto pequeno        #6A645B
+    Dourado (acento)     #C6A664 na régua do topo da home e
+                         #9C7A3C nos números dos passos.
+                         No máximo 2 usos por página.
 
 Fontes (Google Fonts):
     Playfair Display   títulos
@@ -103,6 +108,11 @@ Todo o visual está em css/styles.css. Para criar uma página
 nova, copie a estrutura de uma página parecida que já existe
 (por exemplo, site-para-dentista.html para um segmento novo):
 cabeçalho, rodapé e componentes já estão no padrão.
+
+Os prints dos trabalhos (midia/trabalhos/) são a página inicial
+de cada site de cliente, em 960 e 640 px de largura (WebP). Se
+um cliente mudar o site, troque o print para continuar fiel ao
+que está no ar. No Mazzuca aparece o logotipo do escritório.
 
 A imagem de compartilhamento (og-image.png, 1200x630) já está
 no preto e branco, com Playfair, Lora e Inter. É a que aparece
