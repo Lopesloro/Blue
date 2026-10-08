@@ -112,7 +112,7 @@ cabeçalho, rodapé e componentes já estão no padrão.
 Os prints dos trabalhos (midia/trabalhos/) são a página inicial
 de cada site de cliente, em 960 e 640 px de largura (WebP). Se
 um cliente mudar o site, troque o print para continuar fiel ao
-que está no ar. No Mazzuca aparece o logotipo do escritório.
+que está no ar. Hoje são dois: Cíntia Godoy e PH Águas.
 
 A imagem de compartilhamento (og-image.png, 1200x630) já está
 no preto e branco, com Playfair, Lora e Inter. É a que aparece
