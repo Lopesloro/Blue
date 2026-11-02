@@ -11,7 +11,21 @@
 const BSP = {
   // Número do WhatsApp (não é exibido no site — usado só para abrir a conversa)
   whatsapp: '5519998334896',
-  whatsappMsg: 'Olá! Vim pelo site da BlueShieldPro e quero conversar sobre um projeto.',
+  whatsappMsg: 'Olá! Vim pelo site da BlueShieldPro. Minha empresa é de ____ e preciso de ____.',
+
+  /* Mensagem do WhatsApp por página: o lead já chega dizendo o ramo e o
+     que procura, e a primeira resposta vai direto ao ponto. Página que não
+     está aqui usa a mensagem geral acima, com as lacunas para preencher. */
+  whatsappMsgPagina: {
+    'site-para-dentista': 'Olá! Vim pelo site da BlueShieldPro. Tenho consultório odontológico e quero saber sobre um site.',
+    'site-para-clinica-medica': 'Olá! Vim pelo site da BlueShieldPro. Tenho clínica/consultório médico e quero saber sobre um site.',
+    'site-para-contabilidade': 'Olá! Vim pelo site da BlueShieldPro. Tenho escritório de contabilidade e quero saber sobre um site.',
+    'site-para-advogado': 'Olá! Vim pelo site da BlueShieldPro. Tenho escritório de advocacia e quero saber sobre um site.',
+    'sistema-para-industria': 'Olá! Vim pelo site da BlueShieldPro. Tenho uma indústria e quero saber sobre um sistema para organizar a produção.',
+    'campinas': 'Olá! Vim pelo site da BlueShieldPro. Sou de Campinas e região e quero marcar uma conversa. Minha empresa é de ____.',
+    'skills': 'Olá! Vim pelo site da BlueShieldPro e tenho uma dúvida sobre as Skills de IA.',
+    'orcamento': 'Olá! Vim pelo site da BlueShieldPro e prefiro explicar por aqui. Minha empresa é de ____ e preciso de ____.'
+  },
 
   /* Ações de conversão do Google Ads (AW-17972527330).
 
@@ -190,7 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ---------- Links WhatsApp (número oculto) ----------
   bloco('whatsapp', () => {
-    const waUrl = `https://wa.me/${BSP.whatsapp}?text=${encodeURIComponent(BSP.whatsappMsg)}`;
+    const pagina = (location.pathname.split('/').pop() || 'index').replace(/\.html?$/, '') || 'index';
+    const msg = BSP.whatsappMsgPagina[pagina] || BSP.whatsappMsg;
+    const waUrl = `https://wa.me/${BSP.whatsapp}?text=${encodeURIComponent(msg)}`;
     document.querySelectorAll('[data-whats]').forEach(el => {
       el.setAttribute('href', waUrl);
       el.setAttribute('target', '_blank');

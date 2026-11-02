@@ -361,6 +361,32 @@ a.faixa-topo-item:hover::after, a.faixa-topo-item:focus-visible::after { transfo
 }
 .hero-atribuicao { font-family: var(--micro); font-size: 14px; letter-spacing: .06em; color: var(--text-3); margin-top: 16px; }
 .hero-conteudo > .btn { margin-top: 44px; }
+/* Ações do hero e da chamada final: UM botão sólido + link de texto
+   para o WhatsApp (o lead que prefere conversar não precisa achar o
+   botão flutuante). Garantias curtas logo abaixo, em Inter pequena. */
+.hero-acoes { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 44px; }
+.hero-acoes .btn { margin-top: 0; }
+.hero-acoes .link-texto { font-size: 15px; }
+.chamada-final .hero-acoes { align-items: flex-start; margin-top: 40px; }
+.hero-garantias {
+  list-style: none; display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 10px 28px; margin: 36px auto 0; padding: 0;
+  font-family: var(--micro); font-size: 14px; font-weight: 500; color: var(--text-3);
+}
+.hero-garantias li { display: inline-flex; align-items: center; gap: 8px; }
+.hero-garantias li::before {
+  content: ""; width: 12px; height: 7px; border: solid var(--text-1);
+  border-width: 0 0 2px 2px; transform: rotate(-45deg) translateY(-2px); flex-shrink: 0;
+}
+/* Subtítulo curto de seção e nota de rodapé de seção. */
+.secao-sub { font-size: 18px; line-height: 1.65; color: var(--text-2); max-width: 60ch; margin-top: 24px; }
+.nota-secao { font-size: 17px; line-height: 1.65; color: var(--text-2); max-width: 70ch; margin-top: 40px; }
+/* Card de problema → solução: a solução fica separada por filete. */
+.card-exemplo-solucao {
+  margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--rule);
+  font-size: 17px; line-height: 1.65; color: var(--text-1);
+}
+.card-exemplo-solucao strong { font-family: var(--micro); font-size: 13px; font-weight: 600; letter-spacing: .04em; display: block; margin-bottom: 4px; }
 
 .js-anima .hero h1 { animation: heroTracking 1.4s cubic-bezier(.22,.61,.36,1) .3s both; }
 @keyframes heroTracking {
