@@ -1,11 +1,12 @@
 # BlueShieldPro
 
-> A BlueShieldPro faz sites, sistemas para organizar a empresa e automações para pequenos negócios, como clínicas, escritórios, lojas e pequenas indústrias, e também vende Skills de IA. Cada projeto parte da rotina de quem vai usar. O atendimento é online para todo o Brasil e presencial em Campinas e região. Você explica em palavras simples, recebe preço e prazo por escrito antes de começar e fala direto com quem faz.
+> A BlueShieldPro faz sites, sistemas para organizar a empresa e automações sob medida para empresas de qualquer porte, de consultórios, escritórios e lojas a indústrias, e também vende Skills de IA. Cada projeto parte da rotina de quem vai usar. O atendimento é online para todo o Brasil e presencial em Campinas e região. Você explica em palavras simples, recebe preço e prazo por escrito antes de começar e fala direto com quem faz.
 
 - Empresa: BlueShieldPro, Microempreendedor Individual (MEI), CNPJ 68.117.082/0001-92
 - E-mail: blueshieldpro01@gmail.com
 - Contato: WhatsApp (pelos botões do site), e-mail ou formulário de orçamento
 - Site: https://blueshieldpro.com.br/
+- Instagram: https://www.instagram.com/blueshieldpro01/
 - Atendimento: online em todo o Brasil; presencial em Campinas e região (SP)
 - Preço dos serviços: depende do tamanho do projeto e vem por escrito, na proposta, antes de começar
 - Prazos de referência: página para anúncio, poucos dias; site institucional, de 1 a 3 semanas; sistema, de 1 a 4 meses. O prazo exato vem por escrito na proposta.
